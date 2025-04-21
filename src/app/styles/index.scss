@@ -1,0 +1,15 @@
+
+// libs
+
+@use "./libs/reset" as *;
+@use "./libs/utils" as *;
+// vars
+
+@use "./vars/global" as *;
+@use "./vars/breakpoints" as *;
+* {
+  box-sizing: border-box;
+}
+
+body{
+}

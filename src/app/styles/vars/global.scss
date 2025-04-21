@@ -1,0 +1,22 @@
+:root {
+  /* C - color */
+  --C-accent: red;
+  --C-secondary: blue;
+
+  /* Z indexs */
+  --Z-modal: 10;
+
+  /* Animations */
+  --A-duration: 0.3s;
+
+  // -----
+  /* Fonts */
+  --F-h1-size: 40px;
+  // Жирность шрифта
+  --F-h1-weight: 700;
+  // Высота строки
+  --F-h1-lineHeight: 1.2;
+
+  --F-h1: var(--F-h1-weight) var(--F-h1-size) / var(--F-h1-lineHeight)
+    var(--font-main);
+}
