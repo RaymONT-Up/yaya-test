@@ -1,41 +1,52 @@
-import { LoginPage } from "@/pages/LoginPage/LoginPage";
-import { MainPage } from "@/pages/MainPage";
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { getToken } from '@/entities/currentSession'
+import { LoginPage } from '@/pages/LoginPage'
+import { MainPage } from '@/pages/MainPage'
+import { JSX } from 'react'
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
-// type AuthGuardProps = {
-//   mustBe: 'authorized' | 'unauthorized'
-//   children: ReactElement
-// }
+type AuthGuardProps = {
+  mustBe: 'authorized' | 'unauthorized'
+  children: JSX.Element
+}
 
-// const AuthGuard: FC<AuthGuardProps> = ({ mustBe, children }) => {
-//   const token = useAppSelector((state) => state.user.token)
-//   const isAuthorized = Boolean(token)
+export const AuthGuard = ({ mustBe, children }: AuthGuardProps) => {
+  const token = getToken()
+  const isAuthorized = Boolean(token)
 
-//   if (mustBe === 'authorized') return isAuthorized ? children : <Navigate to="/login" />
+  if (mustBe === 'authorized') {
+    return isAuthorized ? children : <Navigate to="/login" />
+  }
 
-//   return isAuthorized ? <Navigate to="/" /> : children
-// }
+  return isAuthorized ? <Navigate to="/" /> : children
+}
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Outlet />,
+    path: '/',
+    element: (
+      <AuthGuard mustBe="authorized">
+        <Outlet />
+      </AuthGuard>
+    ),
     children: [
       {
         index: true,
-        element: <MainPage />,
-      },
-    ],
+        element: <MainPage />
+      }
+    ]
   },
   {
-    path: "/login",
-    // добавить AuthWrapper для страниц подобных логину / регистрации
-    element: <Outlet />,
+    path: '/login',
+    element: (
+      <AuthGuard mustBe="unauthorized">
+        <Outlet />
+      </AuthGuard>
+    ),
     children: [
       {
         index: true,
-        element: <LoginPage />,
-      },
+        element: <LoginPage />
+      }
     ]
   }
-]);
+])
