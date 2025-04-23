@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import styles from './LoginPage.module.css'
+import styles from './LoginPage.module.scss'
 import { LoginForm } from '@/features/auth/login'
 
 export const LoginPage: FC = () => {

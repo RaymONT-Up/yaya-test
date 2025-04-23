@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import styles from './LoginForm.module.css'
+import styles from './LoginForm.module.scss'
 import { LoginFormValues, schema } from '@/shared/schemes/loginSheme'
 import { loginThunk } from '@/entities/currentSession'
 import { useAppDispatch, useAppSelector } from '@/app/config/store'
 import { useNavigate } from 'react-router-dom'
+import { RoutePath } from '@/shared/consts/routerPaths'
 
 export const LoginForm = () => {
   const {
@@ -23,7 +24,7 @@ export const LoginForm = () => {
     const result = await dispatch(loginThunk(data))
 
     if (loginThunk.fulfilled.match(result)) {
-      navigate('/')
+      navigate(RoutePath.MAIN)
     }
   }
 

@@ -7,3 +7,7 @@ export const getToken = (): string | null => {
 export const setToken = (token: string): void => {
   localStorage.setItem(TOKEN_KEY, token)
 }
+// Удаление токена доступа
+export const removeToken = (): void => {
+  localStorage.removeItem(TOKEN_KEY)
+}

@@ -1,6 +1,7 @@
 import { getToken } from '@/entities/currentSession'
 import { LoginPage } from '@/pages/LoginPage'
 import { MainPage } from '@/pages/MainPage'
+import { RoutePath } from '@/shared/consts/routerPaths'
 import { JSX } from 'react'
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
@@ -14,15 +15,15 @@ export const AuthGuard = ({ mustBe, children }: AuthGuardProps) => {
   const isAuthorized = Boolean(token)
 
   if (mustBe === 'authorized') {
-    return isAuthorized ? children : <Navigate to="/login" />
+    return isAuthorized ? children : <Navigate to={RoutePath.LOGIN} />
   }
 
-  return isAuthorized ? <Navigate to="/" /> : children
+  return isAuthorized ? <Navigate to={RoutePath.MAIN} /> : children
 }
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: RoutePath.MAIN,
     element: (
       <AuthGuard mustBe="authorized">
         <Outlet />
@@ -36,7 +37,7 @@ export const router = createBrowserRouter([
     ]
   },
   {
-    path: '/login',
+    path: RoutePath.LOGIN,
     element: (
       <AuthGuard mustBe="unauthorized">
         <Outlet />
