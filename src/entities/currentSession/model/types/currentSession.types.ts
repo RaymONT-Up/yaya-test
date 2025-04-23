@@ -1,5 +1,7 @@
 export interface CurrentSessionState {
-  userId: string | null;
-  token: string | null;
-  username: string | null;
+  user_id: string | null
+  token: string | null
+  username: string | null
+  loading: boolean
+  error: string | null
 }

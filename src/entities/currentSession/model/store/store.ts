@@ -1,29 +1,45 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CurrentSessionState } from '../types/currentSession.types';
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { CurrentSessionState } from '../types/currentSession.types'
+import { loginThunk } from '../services/loginThunk'
 
 const initialState: CurrentSessionState = {
-  userId: null,
+  user_id: null,
   token: null,
   username: null,
-};
+  loading: false,
+  error: null
+}
 
 const currentSessionSlice = createSlice({
   name: 'currentSession',
   initialState,
   reducers: {
     setSession(state, action: PayloadAction<CurrentSessionState>) {
-      state.userId = action.payload.userId;
-      state.token = action.payload.token;
-      state.username = action.payload.username;
+      state.user_id = action.payload.user_id
+      state.token = action.payload.token
+      state.username = action.payload.username
     },
     clearSession(state) {
-      state.userId = null;
-      state.token = null;
-      state.username = null;
-    },
+      state.user_id = null
+      state.token = null
+      state.username = null
+    }
   },
-});
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginThunk.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(loginThunk.fulfilled, (state) => {
+        state.loading = false
+      })
+      .addCase(loginThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = (action.payload as string) || 'Ошибка входа'
+      })
+  }
+})
 
-export const { setSession, clearSession } = currentSessionSlice.actions;
+export const { setSession, clearSession } = currentSessionSlice.actions
 export const currentSessionSliceReducer = currentSessionSlice.reducer
