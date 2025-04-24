@@ -1,0 +1,18 @@
+.layout {
+display: flex;
+flex-direction: column;
+height: 100vh;
+}
+
+.main {
+display: flex;
+flex: 1;
+// На высоту хедера отступ сверху
+margin-top: 70px;
+}
+
+.content {
+flex: 1;
+padding: 24px;
+margin-left: 60px;
+}

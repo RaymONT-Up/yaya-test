@@ -19,6 +19,13 @@ export const logoutThunk = createAsyncThunk<
   } catch (err) {
     const error = err as AxiosError<{ message?: string }>
     const message = error.response?.data?.message || 'Не удалось выйти из аккаунта'
+    const status = error.response?.status
+
+    if (status === 401 || !error.response) {
+      removeToken()
+      dispatch(clearSession())
+      navigate(RoutePath.LOGIN)
+    }
     return rejectWithValue(message)
   }
 })

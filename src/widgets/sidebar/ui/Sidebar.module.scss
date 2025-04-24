@@ -1,0 +1,53 @@
+.sidebar {
+    width: 60px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 68px;
+    background-color: #ffffff;
+    overflow-x: hidden;
+    transition: 0.3s width ease;
+    z-index: 999;
+    border-right: 1px solid rgba(128, 128, 128, 0.2);
+  
+    &:hover {
+      width: 220px;
+    }
+  
+    &:hover .label {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  
+  .nav {
+    padding: 24px 8px;
+  
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+  
+  .item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .icon {
+    width: 32px;
+    text-align: center;
+  }
+  
+  .label {
+    // margin-left: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+  }
+  

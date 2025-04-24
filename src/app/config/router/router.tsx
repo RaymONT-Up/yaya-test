@@ -2,6 +2,7 @@ import { getToken } from '@/entities/currentSession'
 import { LoginPage } from '@/pages/LoginPage'
 import { MainPage } from '@/pages/MainPage'
 import { RoutePath } from '@/shared/consts/routerPaths'
+import { MainLayout } from '@/widgets/layout'
 import { JSX } from 'react'
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
@@ -26,7 +27,7 @@ export const router = createBrowserRouter([
     path: RoutePath.MAIN,
     element: (
       <AuthGuard mustBe="authorized">
-        <Outlet />
+        <MainLayout />
       </AuthGuard>
     ),
     children: [
