@@ -1,11 +1,10 @@
-import { LogoutButton } from '@/features/auth/logout'
+import { ScheduleCalendar } from '@/widgets/scheduleCalendar'
 import { FC } from 'react'
 
 export const MainPage: FC = () => {
   return (
     <div>
-      mainPage
-      <LogoutButton />
+      <ScheduleCalendar />
     </div>
   )
 }
