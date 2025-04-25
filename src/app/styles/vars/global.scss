@@ -19,4 +19,28 @@
 
   --F-h1: var(--F-h1-weight) var(--F-h1-size) / var(--F-h1-lineHeight)
     var(--font-main);
+
+    /* Text */
+  --text-brand: #17298B;
+  --text-primary: #262527;
+  --text-secondary: #6B6B6F;
+  --text-white: #ffffff;
+  --text-disabled: #AFAFB1;
+
+  /* Border */
+  --border-gray-light: #e6e6e7;
+  --border-gray-hover: #d0d0d1;
+  --border-gray-dark: #89898D;
+  --border-active: #6B6B6F;
+
+  /* Surface */
+  --surface-card: #f9f9f9;
+  --surface-white: #ffffff;
+
+  /* Action */
+  --action-brand: #3F68FF;
+  --action-success: #2FB866;
+  --action-danger: #F43F3F;
+  --action-info: #3F68FF;
+  --action-warning: #F2B705;
 }

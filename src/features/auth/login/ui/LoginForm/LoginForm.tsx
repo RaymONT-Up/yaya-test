@@ -6,6 +6,7 @@ import { loginThunk } from '@/entities/currentSession'
 import { useAppDispatch, useAppSelector } from '@/app/config/store'
 import { useNavigate } from 'react-router-dom'
 import { RoutePath } from '@/shared/consts/routerPaths'
+import { Input } from '@/shared/ui/Input/Input'
 
 export const LoginForm = () => {
   const {
@@ -20,6 +21,7 @@ export const LoginForm = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const error = useAppSelector((state) => state.currentSessionSliceReducer.error)
+
   const onSubmit = async (data: LoginFormValues) => {
     const result = await dispatch(loginThunk(data))
 
@@ -31,24 +33,25 @@ export const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.field}>
-        <input
+        <Input
           type="text"
-          {...register('username')}
+          label="Имя пользователя"
           placeholder="Имя пользователя"
-          className={styles.input}
+          {...register('username')}
+          error={errors.username}
         />
-        {errors.username && <p className={styles.error}>{errors.username.message}</p>}
       </div>
 
       <div className={styles.field}>
-        <input
+        <Input
           type="password"
-          {...register('password')}
+          label="Пароль"
           placeholder="Пароль"
-          className={styles.input}
+          {...register('password')}
+          error={errors.password}
         />
-        {errors.password && <p className={styles.error}>{errors.password.message}</p>}
       </div>
+
       {error && <p className={styles.error}>{error}</p>}
 
       <button type="submit" disabled={!isValid || isSubmitting} className={styles.button}>
