@@ -1,8 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.logo{
+    margin-bottom: 24px;
+}
+.title{
+    margin-bottom: 8px;
+    font-family: Lato;
+font-weight: 600;
+font-size: 24px;
+line-height: 120%;
+letter-spacing: -1%;
+text-align: center;
+color: var(--text-primary);
+}
+.text{
+margin-bottom: 40px;
+color: var(--text-secondary);
+
+}
 .form {
+width: 100%;
 max-width: 400px;
 margin: 0 auto;
 display: grid;
-gap: 16px;
+gap: 24px;
 }
 
 .field {
@@ -35,3 +59,4 @@ cursor: pointer;
 background-color: grey;
 cursor: not-allowed;
 }
+

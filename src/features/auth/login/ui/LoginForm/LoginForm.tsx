@@ -7,6 +7,9 @@ import { useAppDispatch, useAppSelector } from '@/app/config/store'
 import { useNavigate } from 'react-router-dom'
 import { RoutePath } from '@/shared/consts/routerPaths'
 import { Input } from '@/shared/ui/Input/Input'
+import { Logo } from '@/shared/assets/svg/Logo'
+import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
+import { Text, TextTheme } from '@/shared/ui/Text/Text'
 
 export const LoginForm = () => {
   const {
@@ -31,32 +34,44 @@ export const LoginForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <div className={styles.field}>
-        <Input
-          type="text"
-          label="Имя пользователя"
-          placeholder="Имя пользователя"
-          {...register('username')}
-          error={errors.username}
-        />
+    <div className={styles.container}>
+      <div className={styles.logo}>
+        <Logo />
       </div>
+      <h2 className={styles.title}>Добро пожаловать!</h2>
+      <Text className={styles.text} theme={TextTheme.DEFAULT}>
+        Ваш личный кабинет партнера{' '}
+      </Text>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <div className={styles.field}>
+          <Input
+            type="text"
+            placeholder="Имя пользователя"
+            {...register('username')}
+            error={errors.username}
+          />
+        </div>
 
-      <div className={styles.field}>
-        <Input
-          type="password"
-          label="Пароль"
-          placeholder="Пароль"
-          {...register('password')}
-          error={errors.password}
-        />
-      </div>
+        <div className={styles.field}>
+          <Input
+            type="password"
+            placeholder="Пароль"
+            {...register('password')}
+            error={errors.password}
+          />
+        </div>
 
-      {error && <p className={styles.error}>{error}</p>}
-
-      <button type="submit" disabled={!isValid || isSubmitting} className={styles.button}>
-        Войти
-      </button>
-    </form>
+        <Button
+          type="submit"
+          size={ButtonSize.Medium}
+          variant={ButtonVariant.Primary}
+          disabled={!isValid || isSubmitting}
+          loading={isSubmitting}
+        >
+          Войти
+        </Button>
+        {error && <Text theme={TextTheme.ERROR}>{error}</Text>}
+      </form>
+    </div>
   )
 }

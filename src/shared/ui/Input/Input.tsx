@@ -2,6 +2,7 @@ import { InputHTMLAttributes, forwardRef } from 'react'
 import { FieldError } from 'react-hook-form'
 import clsx from 'clsx'
 import styles from './Input.module.scss'
+import { Text, TextTheme } from '@/shared/ui/Text/Text'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -35,9 +36,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error && (
-          <span className={styles.errorMessage}>
+          <Text className={styles.errorMessage} theme={TextTheme.ERROR}>
             {typeof error === 'string' ? error : error.message}
-          </span>
+          </Text>
         )}
       </div>
     )
