@@ -6,6 +6,7 @@
 // vars
 
 @use "./vars/global" as *;
+@use "./vars/colors" as *;
 @use "./vars/breakpoints" as *;
 * {
   box-sizing: border-box;

@@ -9,7 +9,9 @@ import { RoutePath } from '@/shared/consts/routerPaths'
 import { Input } from '@/shared/ui/Input/Input'
 import { Logo } from '@/shared/assets/svg/Logo'
 import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
-import { Text, TextTheme } from '@/shared/ui/Text/Text'
+import { Text, TextTheme, TextVariant } from '@/shared/ui/Text/Text'
+import { AuthErrorMessage } from '@/shared/consts/errorMessages'
+import { AlertCircle } from '@/shared/assets/svg/AlertCircle'
 
 export const LoginForm = () => {
   const {
@@ -38,8 +40,10 @@ export const LoginForm = () => {
       <div className={styles.logo}>
         <Logo />
       </div>
-      <h2 className={styles.title}>Добро пожаловать!</h2>
-      <Text className={styles.text} theme={TextTheme.DEFAULT}>
+      <Text variant={TextVariant.HEADING} headingLevel="h6" className={styles.title}>
+        Добро пожаловать!
+      </Text>
+      <Text bodySize="medium" className={styles.text}>
         Ваш личный кабинет партнера{' '}
       </Text>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
@@ -70,8 +74,16 @@ export const LoginForm = () => {
         >
           Войти
         </Button>
-        {error && <Text theme={TextTheme.ERROR}>{error}</Text>}
       </form>
+      {error && (
+        <div className={styles.errorWrapper}>
+          {(error === AuthErrorMessage['UNKNOWN'] ||
+            error === AuthErrorMessage['SERVER_ERROR']) && (
+            <AlertCircle className={styles.errorIcon} />
+          )}
+          <Text theme={TextTheme.ERROR}>{error}</Text>
+        </div>
+      )}
     </div>
   )
 }

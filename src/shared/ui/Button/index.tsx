@@ -1,6 +1,7 @@
 import { FC, ButtonHTMLAttributes } from 'react'
 import clsx from 'clsx'
 import styles from './Button.module.scss'
+import { Loader } from '@/shared/ui/Loader/Loader'
 
 interface BaseProps {
   variant?: ButtonVariant
@@ -50,7 +51,7 @@ export const Button: FC<ButtonProps> = ({
       {...rest}
     >
       {loading ? (
-        <span className={styles.loader}></span>
+        <Loader size={size === ButtonSize.Small ? 28 : 40} />
       ) : (
         <>
           <span>{children}</span>
