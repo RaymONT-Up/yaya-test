@@ -1,21 +1,110 @@
 .text {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #333;
-  }
-  
-  .default {
-    color: #333;
-  }
-  
-  .success {
-    color: #28a745;
-  }
-  
-  .warning {
-    color: #ffc107;
-  }
-  
-  .error {
-    color: #dc3545;
-  }
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Темы */
+.default {
+  color: var(--text-primary);
+}
+
+.success {
+  color: var(--action-success);
+}
+
+.warning {
+  color: var(--action-warning);
+
+}
+
+.error {
+  color: var(--action-danger);
+}
+
+/* Варианты */
+.heading {
+  font-family: 'Rubik', sans-serif;
+  line-height: 120%;
+  font-weight: 600;
+}
+
+.h1 {
+  font-size: 56px;
+}
+
+.h2 {
+  font-size: 48px;
+}
+
+.h3 {
+  font-size: 40px;
+}
+
+.h4 {
+  font-size: 34px;
+}
+
+.h5 {
+  font-size: 28px;
+}
+
+.h6 {
+  font-size: 24px;
+}
+
+.h7 {
+  font-size: 20px;
+}
+
+.h8 {
+  font-size: 16px;
+}
+
+/* Label */
+.label {
+  font-family: 'Rubik', sans-serif;
+  line-height: 120%;
+  font-weight: 400;
+}
+
+.label-large {
+  font-size: 20px;
+}
+
+.label-medium {
+  font-size: 16px;
+}
+
+.label-small {
+  font-size: 14px;
+}
+
+/* Body */
+.body {
+  font-family: 'Inter', sans-serif;
+  line-height: 150%;
+}
+
+.body-large {
+  font-size: 20px;
+}
+
+.body-medium {
+  font-size: 16px;
+}
+
+.body-small {
+  font-size: 14px;
+}
+
+.body-tiny {
+  font-size: 12px;
+}
+
+.weight-400 {
+  font-weight: 400;
+}
+
+.weight-600 {
+  font-weight: 600;
+}
