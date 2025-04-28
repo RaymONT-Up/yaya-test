@@ -2,6 +2,8 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import styles from './CreateSchedule.module.scss'
 import { Input } from '@/shared/ui/Input/Input'
+import { Text, TextVariant } from '@/shared/ui/Text/Text'
+import { Button, ButtonVariant } from '@/shared/ui/Button'
 
 interface Props {
   start: string
@@ -35,7 +37,9 @@ export const CreateSchedule: React.FC<Props> = ({ start, end, onClose }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <h2>Создать расписание</h2>
+      <Text variant={TextVariant.HEADING} headingLevel="h7">
+        Создать расписание
+      </Text>
 
       <Input
         label="Название занятия:"
@@ -59,10 +63,10 @@ export const CreateSchedule: React.FC<Props> = ({ start, end, onClose }) => {
       />
 
       <div className={styles.buttons}>
-        <button type="submit">Создать</button>
-        <button type="button" onClick={onClose}>
+        <Button type="submit">Создать</Button>
+        <Button variant={ButtonVariant.Neutral} type="button" onClick={onClose}>
           Отмена
-        </button>
+        </Button>
       </div>
     </form>
   )

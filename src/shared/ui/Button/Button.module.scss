@@ -1,194 +1,126 @@
-.root {
-  display: flex;
+.button {
+  font-family: 'Rubik', sans-serif;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  width: fit-content;
-  height: 2.5rem;
-
-  padding-inline: 1.25rem;
-
-  white-space: nowrap;
-  font-size: 0.875rem;
-  line-height: 150%;
   font-weight: 500;
-  text-decoration: none;
-  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+ 
+  &.medium {
+    height: 44px;
+    padding: 0 16px;
+    font-size: 16px;
+    line-height: 16px;
+    border-radius: 12px;
+    &.loading{
+      padding: 1px 24px;
+    }
+  }
 
-  background-color: var(--color-primary);
+  &.small {
+    padding: 0 12px;
+    height: 32px;
+    font-size: 14px;
+    line-height: 12px;
+    border-radius: 8px;
 
-  outline: none !important;
-  border-radius: 30px;
-
-  transition: all 0.15s linear;
-
-  &:disabled,
-  &[disabled] {
-    background-color: var(--color-border);
-    cursor: not-allowed;
   }
 
   &.primary {
-    &:hover:not(:disabled) {
-      background-color: #4368ed;
+    background-color: var(--action-brand);
+    color: white;
+
+    &:hover:not(:disabled):not(.loading) {
+      background-color: var(--blue-600);
+    }
+
+    &:disabled {
+      background-color: var(--blue-100);
+      color: var(--text-white);
+      cursor: not-allowed;
+    }
+
+    &.loading {
+      background-color: var(--blue-100);
     }
   }
 
-  &.primary-inverted {
-    color: var(--color-primary);
-    background-color: #fff;
-    path {
-      stroke: var(--color-primary);
+  &.neutral {
+    background-color: var(--gray-50);
+    color: var(--text-primary);
+
+    &:hover:not(:disabled):not(.loading) {
+      background-color: var(--gray-75);
     }
-    &:hover {
-      color: #fff;
-      background-color: var(--color-primary);
-      path {
-        stroke: #fff;
-      }
+
+    &:disabled {
+      background-color: var(--gray-50);
+      color: var(--text-disabled);
+      cursor: not-allowed;
+    }
+
+    &.loading {
+      background-color: var(--gray-50);
     }
   }
-  &.border-inverted {
+
+  &.subtle {
     background-color: transparent;
-    border: 1px solid #fff;
-    color: #fff;
-  }
+    color: var(--text-primary);
+    border: 1px solid var(--border-gray-light);
+    &:hover:not(:disabled):not(.loading) {
+      background-color: var(--gray-50);
+      border: 1px solid var(--border-gray-hover);
+    }
 
-  &.secondary {
-    color: var(--color-primary);
-    background-color: #fff;
-    border: 1px solid #e4e8ef;
-  }
-  &.secondary-2 {
-    color: var(--color-primary);
-    background-color: var(--color-secondary-2);
-  }
-  &.secondary:hover,
-  &.secondary-2:hover {
-    background-color: rgba(31, 75, 234, 0.08);
-    border-color: var(--color-primary);
-  }
-  &.tertiary {
-    height: auto;
-    padding: 0;
+    &:disabled {
+      background-color: transparent;
+      color: var(--text-disabled);
+      cursor: not-allowed;
+    }
 
-    color: var(--color-primary);
-    font-weight: 400;
-
-    background-color: #fff;
-  }
-
-  &.defaultSize {
-  }
-
-  &.largeSize {
-    height: auto-clamp(48, 60);
-    padding-inline: 1.5rem;
-    border-radius: 12px;
-    font-size: 1rem;
-  }
-  &.largeSizeModify {
-    height: auto-clamp(48, 60);
-    padding-inline: 1.5rem;
-    border-radius: 30px;
-    font-size: 1rem;
-  }
-
-  &.hideLabelOnMobile {
-    @media (max-width: $mobile-bp) {
-      padding: 0.75rem;
-
-      .label {
-        display: none;
-      }
+    &.loading {
+      background-color: transparent;
     }
   }
+  &.text {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid transparent;
 
-  &.hideIconOnMobile {
-    @media (max-width: 1200px) {
-      padding: 0.8rem 1rem;
+    &:disabled {
+      color: #aaa;
+      cursor: not-allowed;
+    }
 
-      .icon {
-        display: none;
-      }
+    &:hover:not(:disabled):not(.loading) {
+      border: 1px solid var(--border-gray-light);
+    }
+
+    &.loading {
+      background-color: #f5f5f5;
     }
   }
-  &.isOnlyIcon {
-    border-radius: 50%;
-    width: var(--btn-icon-size);
-    height: var(--btn-icon-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-  }
 }
 
-.icon {
-  width: 1rem;
-  height: 1rem;
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  path {
-    stroke: currentColor;
-  }
+.iconStart,
+.iconEnd {
+  display: inline-flex;
 }
 
-.label {
-  line-height: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
 }
 
-.iconLeft,
-.iconRight {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.iconLeft {
-  margin-right: 8px;
-}
-
-.iconRight {
-  margin-left: 8px;
-}
-
-// Варианты радиуса
-.root {
-  &.smallRadius {
-    border-radius: 4px;
-  }
-
-  &.mediumRadius {
-    border-radius: 12px;
-  }
-
-  &.largeRadius {
-    border-radius: 30px;
-  }
-  &.circle {
-    border-radius: 50%;
-  }
-}
-//
-.mlAuto {
-  margin-left: auto;
-}
-.mrAuto {
-  margin-right: auto;
-}
-.minSize {
-  min-width: 180px;
-}
-
-.text {
-  &Small {
-    font-size: 14px !important;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

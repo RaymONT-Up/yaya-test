@@ -3,7 +3,7 @@ export enum AuthErrorMessage {
   UNAUTHORIZED = 'Неправильный логин или пароль',
   FORBIDDEN = 'Ваш аккаунт заблокирован, обратитесь в поддержку',
   SERVER_ERROR = 'Сервер временно недоступен, попробуйте позже',
-  UNKNOWN = 'Неизвестная ошибка'
+  UNKNOWN = 'Что-то пошло не так. Попробуйте еще раз.'
 }
 export const authErrorByStatus: Record<number, AuthErrorMessage> = {
   400: AuthErrorMessage.BAD_REQUEST,
