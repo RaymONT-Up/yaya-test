@@ -3,11 +3,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   font-weight: 500;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
- 
+  outline: none;
   &.medium {
     height: 44px;
     padding: 0 16px;

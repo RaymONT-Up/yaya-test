@@ -8,6 +8,7 @@ import { Modal } from '@/shared/ui/Modal/Modal'
 import { CreateSchedule } from '@/features/schedule/CreateSchedule'
 // import { useSchedule } from '@/entities/schedule';
 import { parseScheduleEvents } from '@/shared/libs/parseScheduleEvents'
+import { DuplicateSchedule } from '@/features/schedule/DuplicateSchedule'
 
 // Мок данные пока cors ошибку кидает
 const res = {
@@ -332,6 +333,7 @@ const res = {
 }
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
+  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false)
   const [range, setRange] = useState<{ start: string; end: string } | null>(null)
 
   // const today = new Date();
@@ -376,20 +378,31 @@ export const ScheduleCalendar: React.FC = () => {
         selectable={true}
         select={handleSelect}
         headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'timeGridWeek,timeGridDay'
+          left: 'prev,next today ',
+          center: 'title schedule',
+          right: 'timeGridWeek,timeGridDay,'
         }}
         // events={parsedEvents}
         events={parseScheduleEvents(res.events)}
         allDaySlot={false}
         // datesSet={handleDatesSet}
+        customButtons={{
+          schedule: {
+            text: 'Дублировать',
+            click: () => {
+              setDuplicateModalOpen(true)
+            }
+          }
+        }}
       />
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         {range && (
           <CreateSchedule start={range.start} end={range.end} onClose={() => setModalOpen(false)} />
         )}
+      </Modal>
+      <Modal isOpen={duplicateModalOpen} onClose={() => setDuplicateModalOpen(false)}>
+        <DuplicateSchedule onSubmit={() => setDuplicateModalOpen(false)} />
       </Modal>
     </>
   )

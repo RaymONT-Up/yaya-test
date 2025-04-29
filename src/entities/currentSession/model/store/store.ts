@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { CurrentSessionState } from '../types/currentSession.types'
 import { loginThunk } from '../services/loginThunk'
+import { logoutThunk } from '../services/logoutThunk'
 
 const initialState: CurrentSessionState = {
   user_id: null,
@@ -35,6 +36,17 @@ const currentSessionSlice = createSlice({
         state.loading = false
       })
       .addCase(loginThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = (action.payload as string) || 'Ошибка входа'
+      })
+      .addCase(logoutThunk.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(logoutThunk.fulfilled, (state) => {
+        state.loading = false
+      })
+      .addCase(logoutThunk.rejected, (state, action) => {
         state.loading = false
         state.error = (action.payload as string) || 'Ошибка входа'
       })
