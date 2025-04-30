@@ -54,4 +54,11 @@
   /* Цвета теней */
   --sds-color-black-100: rgba(0, 0, 0, 0.12);
   --sds-color-black-200: rgba(0, 0, 0, 0.24);
+
+  // Высота элементов
+  --header-height:62px;
+
+  // Ширина элементов
+  --sidebar-colapsed-width:76px;
+  --sidebar-open-width:300px;
 }

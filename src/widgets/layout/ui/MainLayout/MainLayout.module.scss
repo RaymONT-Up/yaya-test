@@ -8,7 +8,7 @@ height: 100vh;
 display: flex;
 flex: 1;
 // На высоту хедера отступ сверху
-margin-top: 70px;
+margin-top: var(--header-height);
 }
 
 .content {

@@ -1,5 +1,5 @@
 .header {
-height: 62px;
+height: var(--header-height);
 width: 100vw;
 background-color: var(--surface-white);
 border-bottom: 1px solid var(--border-gray-light);
