@@ -8,11 +8,12 @@ interface CenterItemProps {
   imageSrc: string
   name: string
   address: string
+  handleSelect: (id: number) => void
 }
 
-export const CenterItem: FC<CenterItemProps> = ({ imageSrc, name, address }) => {
+export const CenterItem: FC<CenterItemProps> = ({ id, imageSrc, name, address, handleSelect }) => {
   return (
-    <div className={styles.centerItem}>
+    <div className={styles.centerItem} onClick={() => handleSelect(id)}>
       <img src={imageSrc} alt={name} className={styles.image} />
       <div className={styles.info}>
         <Text className={styles.name} variant={TextVariant.HEADING} headingLevel="h7">

@@ -9,7 +9,7 @@ import { CreateSchedule } from '@/features/schedule/CreateSchedule'
 import { useSchedule } from '@/entities/schedule'
 import { parseScheduleEvents } from '@/shared/libs/parseScheduleEvents'
 import { DuplicateSchedule } from '@/features/schedule/DuplicateSchedule'
-
+import './ScheduleCalendar.css'
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [duplicateModalOpen, setDuplicateModalOpen] = useState(false)
