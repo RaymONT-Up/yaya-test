@@ -1,6 +1,7 @@
 import { getToken } from '@/entities/currentSession'
 import { LoginPage } from '@/pages/LoginPage'
 import { MainPage } from '@/pages/MainPage'
+import { SelectCenterPage } from '@/pages/SelectCentetPage'
 import { RoutePath } from '@/shared/consts/routerPaths'
 import { MainLayout } from '@/widgets/layout'
 import { JSX } from 'react'
@@ -34,6 +35,20 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <MainPage />
+      }
+    ]
+  },
+  {
+    path: RoutePath.SELECT_CENTER,
+    element: (
+      <AuthGuard mustBe="authorized">
+        <Outlet />
+      </AuthGuard>
+    ),
+    children: [
+      {
+        index: true,
+        element: <SelectCenterPage />
       }
     ]
   },

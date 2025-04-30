@@ -1,4 +1,4 @@
-import { FC, ButtonHTMLAttributes } from 'react'
+import { FC, ButtonHTMLAttributes, ReactNode } from 'react'
 import clsx from 'clsx'
 import styles from './Button.module.scss'
 import { Loader } from '@/shared/ui/Loader/Loader'
@@ -6,8 +6,8 @@ import { Loader } from '@/shared/ui/Loader/Loader'
 interface BaseProps {
   variant?: ButtonVariant
   size?: ButtonSize
-  iconStart?: string
-  iconEnd?: string
+  iconStart?: ReactNode
+  iconEnd?: ReactNode
   loading?: boolean
 }
 
@@ -35,6 +35,8 @@ export const Button: FC<ButtonProps> = ({
   children,
   type = 'button',
   className,
+  iconStart,
+  iconEnd,
   ...rest
 }) => {
   return (
@@ -54,7 +56,9 @@ export const Button: FC<ButtonProps> = ({
         <Loader size={size === ButtonSize.Small ? 28 : 40} />
       ) : (
         <>
-          <span>{children}</span>
+          {iconStart && <span className={styles.icon}>{iconStart}</span>}
+          <span className={styles.content}>{children}</span>
+          {iconEnd && <span className={styles.icon}>{iconEnd}</span>}
         </>
       )}
     </button>

@@ -24,6 +24,7 @@
   --text-default: #1E1E1E;
   --text-brand: #17298B;
   --text-primary: #262527;
+  --text-primary-rgb: 38, 37, 39;
   --text-secondary: #6B6B6F;
   --text-white: #ffffff;
   --text-disabled: #AFAFB1;
@@ -44,4 +45,13 @@
   --action-danger: #F43F3F;
   --action-info: #3F68FF;
   --action-warning: #F2B705;
+
+  /* Размеры для теней */
+  --sds-size-depth-0: 0px;
+  --sds-size-depth-025: 1px;
+  --sds-size-depth-100: 4px;
+
+  /* Цвета теней */
+  --sds-color-black-100: rgba(0, 0, 0, 0.12);
+  --sds-color-black-200: rgba(0, 0, 0, 0.24);
 }
