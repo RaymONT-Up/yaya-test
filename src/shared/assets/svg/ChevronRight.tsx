@@ -12,7 +12,7 @@ export const ChevronRight = (props: SVGProps<SVGSVGElement>) => {
     >
       <path
         d="M7.5 15.5L12.5 10.5L7.5 5.5"
-        stroke="#6B6B6F"
+        stroke={props.color ? props.color : '#6B6B6F'}
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
