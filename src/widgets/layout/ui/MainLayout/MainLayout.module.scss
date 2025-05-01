@@ -7,12 +7,11 @@ height: 100vh;
 .main {
 display: flex;
 flex: 1;
-// На высоту хедера отступ сверху
-margin-top: 70px;
+margin-top: var(--header-height);
 }
 
 .content {
 flex: 1;
 padding: 24px;
-margin-left: 60px;
+margin-left: var(--sidebar-colapsed-width);
 }

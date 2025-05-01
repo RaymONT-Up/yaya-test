@@ -6,8 +6,8 @@ import { Text, TextVariant } from '@/shared/ui/Text/Text'
 import { Button, ButtonVariant } from '@/shared/ui/Button'
 
 interface Props {
-  start: string
-  end: string
+  start?: string
+  end?: string
   onClose: () => void
 }
 

@@ -1,17 +1,15 @@
-import { Text, TextVariant } from '@/shared/ui/Text/Text'
 import styles from './Header.module.scss'
-import { CenterSelector } from '@/widgets/centerSelector'
+// import { CenterSelector } from '@/widgets/centerSelector'
 import { LogoutButton } from '@/features/auth/logout'
+import { Logo } from '@/shared/assets/svg/Logo'
 
 export const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.header__inner}>
-        <Text variant={TextVariant.HEADING} headingLevel="h6">
-          App Header
-        </Text>
+        <Logo width={80} height={34} />
         <div className={styles.actions}>
-          <CenterSelector />
+          {/* <CenterSelector /> */}
           <LogoutButton />
         </div>
       </div>

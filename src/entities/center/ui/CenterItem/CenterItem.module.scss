@@ -1,5 +1,6 @@
 .centerItem {
     width: 100%;
+    max-width: 100%;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -30,6 +31,7 @@
     flex-direction: column;
     justify-content: center;
     overflow: hidden;
+    min-width: 0;
   }
   
   .name {
@@ -46,4 +48,34 @@
     white-space: nowrap;
   }
   
+  @media (max-width: 600px) {
+    .centerItem {
+      max-width: 90%;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-end;
+      max-height: none;
+    }
   
+    .image {
+      width: 100%;
+      height: auto;
+      max-height: 100px;
+    }
+  
+    .info {
+      width: 100%;
+    }
+  }
+@media (max-width: 520px) {
+    .centerItem{
+      max-width: 75%;
+    }
+}
+    
+@media (max-width: 400px) {
+    .centerItem{
+      max-width: 300px;
+    }
+}
+    

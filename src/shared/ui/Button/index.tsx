@@ -9,6 +9,7 @@ interface BaseProps {
   iconStart?: ReactNode
   iconEnd?: ReactNode
   loading?: boolean
+  isIconButton?: boolean
 }
 
 type ButtonProps = BaseProps &
@@ -37,6 +38,7 @@ export const Button: FC<ButtonProps> = ({
   className,
   iconStart,
   iconEnd,
+  isIconButton = false,
   ...rest
 }) => {
   return (
@@ -47,6 +49,7 @@ export const Button: FC<ButtonProps> = ({
         styles[variant],
         styles[size],
         loading && styles.loading,
+        isIconButton && styles.iconOnly,
         className
       )}
       disabled={disabled || loading}
@@ -54,6 +57,8 @@ export const Button: FC<ButtonProps> = ({
     >
       {loading ? (
         <Loader size={size === ButtonSize.Small ? 28 : 40} />
+      ) : isIconButton ? (
+        iconStart || iconEnd
       ) : (
         <>
           {iconStart && <span className={styles.icon}>{iconStart}</span>}
