@@ -1,10 +1,4 @@
-export interface Lesson {
-  id: number
-  name: string
-  center_id: number
-  min_age_str: string
-  max_age_str: string
-}
+import { Lesson } from './lesson'
 
 export interface ScheduleEvent {
   id: number
@@ -22,8 +16,10 @@ export interface ScheduleResponse {
 }
 
 export interface CreateScheduleDto {
-  lesson: number
-  start_timestamp: string
-  end_timestamp: string
+  lesson_id: number
+  day: string
+  from_time: string
+  to_time: string
   places: number
+  trainer_id?: number
 }
