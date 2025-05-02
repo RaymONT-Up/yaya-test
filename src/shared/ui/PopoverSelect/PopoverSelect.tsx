@@ -1,13 +1,17 @@
 import React, { useEffect, useRef } from 'react'
-import { DropdownOption } from '@/shared/ui/Dropdown/Dropdown'
-import { Text } from '@/shared/ui/Text/Text'
+import { Text, TextVariant } from '@/shared/ui/Text/Text'
 import styles from './PopoverSelect.module.scss'
 
+export type SelectItem = {
+  title: string
+  text: string
+  value: string | number
+}
 interface PopoverSelectProps {
   isOpen: boolean
-  options: DropdownOption[]
+  options: SelectItem[]
   selectedValue: number | null
-  onSelect: (option: DropdownOption) => void
+  onSelect: (option: SelectItem) => void
   onClose: () => void
 }
 
@@ -38,7 +42,7 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
     }
   }, [isOpen, onClose])
 
-  const handleSelectOption = (option: DropdownOption) => {
+  const handleSelectOption = (option: SelectItem) => {
     onSelect(option)
     onClose()
   }
@@ -53,7 +57,12 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
               className={`${styles.option} ${option.value === selectedValue ? styles.selected : ''}`}
               onClick={() => handleSelectOption(option)}
             >
-              <Text>{option.label}</Text>
+              <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
+                {option.title}
+              </Text>
+              <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
+                {option.text}
+              </Text>
             </div>
           ))}
         </div>

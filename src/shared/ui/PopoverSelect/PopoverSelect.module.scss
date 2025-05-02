@@ -11,29 +11,45 @@
   }
   
   .popoverContent {
+    z-index: 10;
     position: absolute;
-    top: 100%;
     left: 0;
     right: 0;
-    max-width: 360px;
-    width: 100%;
+    top: 10px;
+    width: 360px;
     max-height: 320px;
-    overflow-y: auto;
-    margin-top: 4px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    padding: 4px;
+    overflow-y: scroll;
+    border: 1px solid var(--border-gray-light);
+    border-radius: 12px;
     background-color: white;
-    z-index: 10;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .option {
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  
-    &:hover {
-      background-color: #f0f0f0;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-gray-light);
+      border-radius: 4px;
     }
   }
   
+  .option {
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    &.selected{
+      background-color: var(--gray-75);
+      
+    }
+    &:hover {
+      background-color: var(--surface-card);
+    }
+  }
+.title{
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+.text{
+  color: var(--text-secondary);
+}

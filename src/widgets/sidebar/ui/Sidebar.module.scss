@@ -8,7 +8,7 @@
     left: 0;
     top: var(--header-height);
     background-color: var(--surface-white);
-    overflow-x: hidden;
+    overflow-x: visible;
     transition: 0.3s width ease;
     z-index: 12;
     border-right: 1px solid var(--border-gray-light);
@@ -123,7 +123,9 @@
   display: block; 
   width: 100%;
 }
-
+.centerAddress{
+  color: var(--text-secondary);
+}
 .chevron {
   transition: transform 0.3s ease-in-out;
 }

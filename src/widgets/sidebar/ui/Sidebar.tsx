@@ -3,11 +3,14 @@ import { sidebarItems } from '../config/sidebarConfig'
 import styles from './Sidebar.module.scss'
 import { Text, TextVariant } from '@/shared/ui/Text/Text'
 import { useLocation } from 'react-router-dom'
-import centerImg from '@/shared/assets/png/Login-img.png'
+import centerImg from '@/shared/assets/png/centerImage.png'
 import { ChevronDown } from '@/shared/assets/svg/ChevronDown'
 import { useState } from 'react'
 import { CenterSelector } from '@/widgets/centerSelector'
+import { useAppSelector } from '@/app/config/store'
+import { selectCurrentCenter } from '@/entities/center'
 export const Sidebar = () => {
+  const currentCenter = useAppSelector(selectCurrentCenter)
   const location = useLocation()
   const [isSelectCenterOpen, setIsSelectCenterOpen] = useState(false)
   return (
@@ -22,10 +25,10 @@ export const Sidebar = () => {
           </div>
           <div className={styles.centerInfo}>
             <Text variant={TextVariant.HEADING} headingLevel="h8" className={styles.centerName}>
-              Центр музыкального образования
+              {currentCenter?.name || 'Выберите центр'}
             </Text>
             <Text bodySize="small" className={styles.centerAddress}>
-              Улица Динмухамед Конаев, 12/2, 407 офис, Есиль район, Астана, Z05H9B1
+              {currentCenter?.address}
             </Text>
           </div>
           <ChevronDown
@@ -36,7 +39,10 @@ export const Sidebar = () => {
           />
         </div>
         <div className={styles.centerSelectorComponent}>
-          <CenterSelector isOpen={isSelectCenterOpen} />
+          <CenterSelector
+            isOpen={isSelectCenterOpen}
+            onSelect={() => setIsSelectCenterOpen(false)}
+          />
         </div>
       </div>
       {/* Navigation */}
