@@ -7,12 +7,17 @@ import {
   setCenterId,
   selectCenterError
 } from '@/entities/center/'
-import { Dropdown, DropdownOption } from '@/shared/ui/Dropdown/Dropdown'
+import { PopoverSelect } from '@/shared/ui/PopoverSelect/PopoverSelect'
 import styles from './CenterSelector.module.scss'
 import { useAppDispatch, useAppSelector } from '@/app/config/store'
 import { Text, TextTheme } from '@/shared/ui/Text/Text'
+import { DropdownOption } from '@/shared/ui/Dropdown/Dropdown'
 
-export const CenterSelector = () => {
+interface CenterSelectorProps {
+  isOpen: boolean
+}
+
+export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen }) => {
   const dispatch = useAppDispatch()
   const centers = useAppSelector(selectCenters)
   const error = useAppSelector(selectCenterError)
@@ -33,7 +38,7 @@ export const CenterSelector = () => {
     }
   }, [centers])
 
-  const dropdownOptions: DropdownOption[] = useMemo(() => {
+  const dropdownOptions = useMemo(() => {
     return centers.map((center) => ({
       label: `${center.name} - ${center.address}`,
       value: center.id
@@ -51,11 +56,13 @@ export const CenterSelector = () => {
 
   return (
     <div className={styles.wrapper}>
-      {dropdownOptions.length > 0 && (
-        <Dropdown
+      {isOpen && (
+        <PopoverSelect
+          isOpen={isOpen}
           options={dropdownOptions}
-          defaultValue={selectedId || undefined}
+          selectedValue={selectedId || null}
           onSelect={handleSelect}
+          onClose={() => {}}
         />
       )}
     </div>

@@ -1,6 +1,79 @@
+
+/* Calendar Header */
+.fc th{
+    text-align: left;
+}
+.fc .fc-col-header-cell-cushion{
+    padding: 0;
+    display: block;
+}
+.fc-custom-header {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-between;
+    height: 100%;
+    padding: 8px 16px;
+    font-family: 'Rubik', sans-serif;
+  }
+  
+  .fc-custom-day {
+    color: #262527;
+    font-family: 'Lato';
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 120%;
+    letter-spacing: -1%;
+
+  }
+  
+  .fc-custom-weekday {
+    font-family: 'Lato';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: 0%;
+    color: #6B6B6F;
+  }
+  
+  .fc-day-today .fc-custom-header {
+    border-bottom: 3px solid var(--action-brand);
+  }
+/* Calendar body */
 .fc .fc-timegrid-slot {
     height: 3.5rem;
 }
 .fc-day{
     height: 70px;
+}
+.fc-scrollgrid{
+    border-radius: 16px;
+}
+
+
+.fc-timegrid-slot-now {
+    background-color: var(--gray-100);
+  }
+
+.fc-timegrid-now-indicator-line {
+background-color: var(--action-danger);
+height: 2px;
+position: relative;
+z-index: 5;
+}
+.fc-timegrid-now-indicator-line::before,
+.fc-timegrid-now-indicator-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: var(--action-danger);
+  border-radius: 50%;
+}
+
+
+.fc-timegrid-now-indicator-line::after {
+  right: 0;
 }

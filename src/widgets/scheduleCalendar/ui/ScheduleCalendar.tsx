@@ -142,12 +142,18 @@ export const ScheduleCalendar: React.FC = () => {
         events={parsedEvents}
         allDaySlot={false}
         datesSet={handleDatesSet}
-        customButtons={{
-          schedule: {
-            text: 'Дублировать',
-            click: () => {
-              setDuplicateModalOpen(true)
-            }
+        nowIndicator={true}
+        dayHeaderContent={(arg) => {
+          const date = arg.date
+          const dayNumber = date.toLocaleDateString('ru-RU', { day: '2-digit' })
+          const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' })
+          return {
+            html: `
+              <div class="fc-custom-header">
+                <div class="fc-custom-day">${dayNumber}</div>
+                <div class="fc-custom-weekday">${weekday.charAt(0).toUpperCase() + weekday.slice(1)}</div>
+              </div>
+            `
           }
         }}
       />
