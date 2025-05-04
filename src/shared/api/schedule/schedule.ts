@@ -1,4 +1,9 @@
-import { CreateScheduleDto, ScheduleEvent, ScheduleResponse } from '../../types/schedule'
+import {
+  CreateScheduleDto,
+  EditScheduleDto,
+  ScheduleEvent,
+  ScheduleResponse
+} from '../../types/schedule'
 import { apiWithTokenAndCenter } from '../api'
 import { AxiosResponse } from 'axios'
 
@@ -15,5 +20,18 @@ export const $createSchedule = async (
   data: CreateScheduleDto
 ): Promise<AxiosResponse<ScheduleEvent>> => {
   const response = await apiWithTokenAndCenter.post<ScheduleEvent>('/partners/schedules/', data)
+  return response
+}
+export const $updateSchedule = async (
+  data: EditScheduleDto
+): Promise<AxiosResponse<ScheduleEvent>> => {
+  const response = await apiWithTokenAndCenter.patch<ScheduleEvent>(
+    `/partners/schedules/${data.id}/edit/`,
+    {
+      trainer_id: data.trainer_id,
+      places: data.places
+    },
+    {}
+  )
   return response
 }

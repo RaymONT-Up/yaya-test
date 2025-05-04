@@ -8,6 +8,7 @@ export const parseScheduleEvents = (events: ScheduleEvent[]) => {
     end: event.end_timestamp,
     extendedProps: {
       lesson: event.lesson,
+      lesson_id: event.lesson.id,
       trainer: event.trainer,
       places: event.places,
       booked_counts: event.booked_counts

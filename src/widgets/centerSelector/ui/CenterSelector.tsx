@@ -5,14 +5,20 @@ import {
   selectCenterLoading,
   getCenterId,
   setCenterId,
-  selectCenterError
+  selectCenterError,
+  centerActions
 } from '@/entities/center/'
-import { Dropdown, DropdownOption } from '@/shared/ui/Dropdown/Dropdown'
+import { PopoverSelect, SelectItem } from '@/shared/ui/PopoverSelect/PopoverSelect'
 import styles from './CenterSelector.module.scss'
 import { useAppDispatch, useAppSelector } from '@/app/config/store'
 import { Text, TextTheme } from '@/shared/ui/Text/Text'
 
-export const CenterSelector = () => {
+interface CenterSelectorProps {
+  isOpen: boolean
+  onSelect: () => void
+}
+
+export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect }) => {
   const dispatch = useAppDispatch()
   const centers = useAppSelector(selectCenters)
   const error = useAppSelector(selectCenterError)
@@ -23,39 +29,46 @@ export const CenterSelector = () => {
     if (centers.length === 0) {
       dispatch(fetchCenters())
     }
-  }, [dispatch, centers.length])
-
-  useEffect(() => {
     if (centers.length > 0) {
       const savedId = getCenterId()
       const found = centers.find((center) => center.id === savedId)
-      setSelectedId(found ? found.id : centers[0].id)
+      if (found) {
+        setSelectedId(found.id)
+        dispatch(centerActions.setCurrentCenter(found))
+      }
     }
-  }, [centers])
+  }, [dispatch, centers])
 
-  const dropdownOptions: DropdownOption[] = useMemo(() => {
+  const selectOptions = useMemo(() => {
     return centers.map((center) => ({
-      label: `${center.name} - ${center.address}`,
-      value: center.id
+      value: center.id,
+      title: center.name,
+      text: center.address
     }))
   }, [centers])
 
-  const handleSelect = (option: DropdownOption) => {
+  const handleSelect = (option: SelectItem) => {
     const selectedId = Number(option.value)
     setSelectedId(selectedId)
     setCenterId(selectedId)
+    const center = centers.find((center) => center.id === selectedId)
+    if (center) {
+      dispatch(centerActions.setCurrentCenter(center))
+    }
+    onSelect()
   }
-
   if (isLoading) return <Text theme={TextTheme.SUCCESS}>Загрузка...</Text>
   if (error) return <Text theme={TextTheme.ERROR}>{error}</Text>
 
   return (
     <div className={styles.wrapper}>
-      {dropdownOptions.length > 0 && (
-        <Dropdown
-          options={dropdownOptions}
-          defaultValue={selectedId || undefined}
+      {isOpen && (
+        <PopoverSelect
+          isOpen={isOpen}
+          options={selectOptions}
+          selectedValue={selectedId || null}
           onSelect={handleSelect}
+          onClose={() => {}}
         />
       )}
     </div>

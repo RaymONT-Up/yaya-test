@@ -1,0 +1,55 @@
+.popoverContainer {
+    position: relative;
+  }
+  
+  .popoverTrigger {
+    cursor: pointer;
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+  }
+  
+  .popoverContent {
+    z-index: 10;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10px;
+    width: 360px;
+    max-height: 320px;
+    padding: 4px;
+    overflow-y: scroll;
+    border: 1px solid var(--border-gray-light);
+    border-radius: 12px;
+    background-color: white;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-gray-light);
+      border-radius: 4px;
+    }
+  }
+  
+  .option {
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    &.selected{
+      background-color: var(--gray-75);
+      
+    }
+    &:hover {
+      background-color: var(--surface-card);
+    }
+  }
+.title{
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+.text{
+  color: var(--text-secondary);
+}

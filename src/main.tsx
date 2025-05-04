@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { store } from '@/app/config/store'
 import { App } from '@/app/App'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,

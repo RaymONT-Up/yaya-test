@@ -5,12 +5,14 @@ import { isAxiosError } from 'axios'
 import { centerErrorByStatus, CenterErrorMessage } from './consts/centerError'
 
 interface CenterState {
+  currentCenter: Center
   center_list: Center[]
   isLoading: boolean
   error: string | null
 }
 
 const initialState: CenterState = {
+  currentCenter: {} as Center,
   center_list: [],
   isLoading: false,
   error: null
@@ -19,7 +21,11 @@ const initialState: CenterState = {
 const centerSlice = createSlice({
   name: 'center',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentCenter: (state, action: PayloadAction<Center>) => {
+      state.currentCenter = action.payload
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCenters.pending, (state) => {
