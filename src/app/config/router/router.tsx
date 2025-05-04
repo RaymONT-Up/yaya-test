@@ -2,6 +2,7 @@ import { getToken } from '@/entities/currentSession'
 import { LoginPage } from '@/pages/LoginPage'
 import { MainPage } from '@/pages/MainPage'
 import { SelectCenterPage } from '@/pages/SelectCentetPage'
+import { VisiPage } from '@/pages/VisitPage'
 import { RoutePath } from '@/shared/consts/routerPaths'
 import { MainLayout } from '@/widgets/layout'
 import { JSX } from 'react'
@@ -35,6 +36,20 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <MainPage />
+      }
+    ]
+  },
+  {
+    path: RoutePath.VISITS,
+    element: (
+      <AuthGuard mustBe="authorized">
+        <MainLayout />
+      </AuthGuard>
+    ),
+    children: [
+      {
+        index: true,
+        element: <VisiPage />
       }
     ]
   },

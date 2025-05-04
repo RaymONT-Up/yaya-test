@@ -5,9 +5,15 @@ import { useLessons } from '../model/useLessons'
 
 interface SelectLessonProps {
   onSelect: (lessonId: number) => void
+  selectedLessonId?: number | null
+  disabled?: boolean
 }
 
-export const SelectLesson: React.FC<SelectLessonProps> = ({ onSelect }) => {
+export const SelectLesson: React.FC<SelectLessonProps> = ({
+  onSelect,
+  selectedLessonId = null,
+  disabled = false
+}) => {
   const { data: lessons, isLoading, isError } = useLessons()
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -23,7 +29,12 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({ onSelect }) => {
         Выберите занятие
       </Text>
       <div className={styles.lessonList}>
-        <select onChange={handleChange} className={styles.select}>
+        <select
+          onChange={handleChange}
+          className={styles.select}
+          value={selectedLessonId ?? ''}
+          disabled={disabled}
+        >
           <option value="">-- Выберите занятие --</option>
           {lessons?.map((lesson) => (
             <option key={lesson.id} value={lesson.id}>

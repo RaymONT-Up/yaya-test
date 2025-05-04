@@ -24,7 +24,7 @@ type Props = {
 export const CalendarToolbar: React.FC<Props> = ({
   calendarRef,
   dateRange,
-  setDuplicateModalOpen,
+  // setDuplicateModalOpen,
   setModalOpen
 }) => {
   return (
@@ -74,7 +74,7 @@ export const CalendarToolbar: React.FC<Props> = ({
           iconEnd={<ChevronDown />}
           size={ButtonSize.Small}
           variant={ButtonVariant.Neutral}
-          onClick={() => setDuplicateModalOpen(true)}
+          // onClick={() => setDuplicateModalOpen(true)}
         >
           Редактировать
         </Button>

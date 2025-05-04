@@ -12,6 +12,20 @@ import { DuplicateSchedule } from '@/features/schedule/DuplicateSchedule'
 import './ScheduleCalendar.css'
 import { CalendarToolbar } from './CalendarToolbar'
 import { EventApi } from '@fullcalendar/core'
+import { useAppSelector } from '@/app/config/store'
+import { selectCurrentCenter } from '@/entities/center'
+
+export const renderDayHeader = ({ date }: { date: Date }) => {
+  const dayNumber = date.toLocaleDateString('ru-RU', { day: '2-digit' })
+  const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' })
+
+  return (
+    <div className="fc-custom-header">
+      <div className="fc-custom-day">{dayNumber}</div>
+      <div className="fc-custom-weekday">{weekday.charAt(0).toUpperCase() + weekday.slice(1)}</div>
+    </div>
+  )
+}
 
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -24,10 +38,12 @@ export const ScheduleCalendar: React.FC = () => {
     endDate: new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().slice(0, 10)
   })
   const [selectedEvent, setSelectedEvent] = useState<EventApi | null>(null)
+  const { id } = useAppSelector(selectCurrentCenter)
 
   const { data, isLoading, isError } = useSchedule({
     startDate: dateRange.startDate,
-    endDate: dateRange.endDate
+    endDate: dateRange.endDate,
+    centerId: id
   })
 
   const parsedEvents = data ? parseScheduleEvents(data.events) : []
@@ -52,7 +68,11 @@ export const ScheduleCalendar: React.FC = () => {
     setEditModalOpen(true)
   }
   const calendarRef = useRef<FullCalendar | null>(null)
-
+  const handleOnClose = () => {
+    setModalOpen(false)
+    setRange(null)
+    setRange({ start: '', end: '' })
+  }
   if (isLoading) return <p>Загрузка...</p>
   if (isError) return <p>Ошибка загрузки расписания</p>
   return (
@@ -64,6 +84,7 @@ export const ScheduleCalendar: React.FC = () => {
         setModalOpen={setModalOpen}
       />
       <FullCalendar
+        timeZone="Asia/Aqtobe"
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
@@ -74,27 +95,15 @@ export const ScheduleCalendar: React.FC = () => {
         allDaySlot={false}
         datesSet={handleDatesSet}
         nowIndicator={true}
-        dayHeaderContent={(arg) => {
-          const date = arg.date
-          const dayNumber = date.toLocaleDateString('ru-RU', { day: '2-digit' })
-          const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' })
-          return {
-            html: `
-              <div class="fc-custom-header">
-                <div class="fc-custom-day">${dayNumber}</div>
-                <div class="fc-custom-weekday">${weekday.charAt(0).toUpperCase() + weekday.slice(1)}</div>
-              </div>
-            `
-          }
-        }}
+        dayHeaderContent={renderDayHeader}
         eventClick={handleEventClick}
       />
 
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+      <Modal isOpen={modalOpen} onClose={handleOnClose}>
         {range ? (
-          <CreateSchedule start={range.start} end={range.end} onClose={() => setModalOpen(false)} />
+          <CreateSchedule start={range.start} end={range.end} onClose={handleOnClose} />
         ) : (
-          <CreateSchedule onClose={() => setModalOpen(false)} />
+          <CreateSchedule onClose={handleOnClose} />
         )}
       </Modal>
       <Modal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)}>

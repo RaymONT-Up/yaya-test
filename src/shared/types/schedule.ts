@@ -23,3 +23,8 @@ export interface CreateScheduleDto {
   places: number
   trainer_id?: number
 }
+export interface EditScheduleDto {
+  id: string
+  places: number
+  trainer_id: number
+}
