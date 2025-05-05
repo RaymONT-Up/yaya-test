@@ -2,6 +2,8 @@ import React from 'react'
 import { Text, TextVariant } from '@/shared/ui/Text/Text'
 import styles from './SelectTrainer.module.scss'
 import { useTrainers } from '../model/useTrainers'
+import { useAppSelector } from '@/app/config/store'
+import { selectCurrentCenter } from '@/entities/center'
 
 interface SelectTrainerProps {
   onSelect: (trainerId: number) => void
@@ -12,7 +14,9 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
   onSelect,
   selectedTrainerId = null
 }) => {
-  const { data: trainers, isLoading, isError } = useTrainers()
+  const { id } = useAppSelector(selectCurrentCenter)
+
+  const { data: trainers, isLoading, isError } = useTrainers(id)
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onSelect(Number(event.target.value))
