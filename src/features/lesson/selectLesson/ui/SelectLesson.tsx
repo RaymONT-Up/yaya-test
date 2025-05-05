@@ -2,6 +2,8 @@ import React from 'react'
 import { Text, TextVariant } from '@/shared/ui/Text/Text'
 import styles from './SelectLesson.module.scss'
 import { useLessons } from '../model/useLessons'
+import { selectCurrentCenter } from '@/entities/center'
+import { useAppSelector } from '@/app/config/store'
 
 interface SelectLessonProps {
   onSelect: (lessonId: number) => void
@@ -14,7 +16,8 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   selectedLessonId = null,
   disabled = false
 }) => {
-  const { data: lessons, isLoading, isError } = useLessons()
+  const { id } = useAppSelector(selectCurrentCenter)
+  const { data: lessons, isLoading, isError } = useLessons(id)
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onSelect(Number(event.target.value))

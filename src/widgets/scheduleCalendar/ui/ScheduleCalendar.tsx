@@ -15,7 +15,7 @@ import { EventApi } from '@fullcalendar/core'
 import { useAppSelector } from '@/app/config/store'
 import { selectCurrentCenter } from '@/entities/center'
 
-export const renderDayHeader = ({ date }: { date: Date }) => {
+const renderDayHeader = ({ date }: { date: Date }) => {
   const dayNumber = date.toLocaleDateString('ru-RU', { day: '2-digit' })
   const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' })
 
@@ -40,7 +40,7 @@ export const ScheduleCalendar: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<EventApi | null>(null)
   const { id } = useAppSelector(selectCurrentCenter)
 
-  const { data, isLoading, isError } = useSchedule({
+  const { data, isError } = useSchedule({
     startDate: dateRange.startDate,
     endDate: dateRange.endDate,
     centerId: id
@@ -49,6 +49,13 @@ export const ScheduleCalendar: React.FC = () => {
   const parsedEvents = data ? parseScheduleEvents(data.events) : []
 
   const handleSelect = (arg: DateSelectArg) => {
+    const now = new Date()
+    const selectionStart = new Date(arg.start)
+
+    if (selectionStart < now) {
+      return
+    }
+
     const start = arg.startStr.slice(0, 16)
     const end = arg.endStr.slice(0, 16)
     setRange({ start, end })
@@ -73,7 +80,7 @@ export const ScheduleCalendar: React.FC = () => {
     setRange(null)
     setRange({ start: '', end: '' })
   }
-  if (isLoading) return <p>Загрузка...</p>
+  // if (isLoading) return <p>Загрузка...</p>
   if (isError) return <p>Ошибка загрузки расписания</p>
   return (
     <>

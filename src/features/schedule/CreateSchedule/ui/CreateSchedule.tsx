@@ -10,6 +10,8 @@ import { useCreateSchedule, useUpdateSchedule } from '@/entities/schedule'
 import { CreateScheduleDto } from '@/shared/types/schedule'
 import { SelectTrainer } from '@/features/trainer'
 import { useTrainers } from '@/features/trainer/model/useTrainers'
+import { useAppSelector } from '@/app/config/store'
+import { selectCurrentCenter } from '@/entities/center'
 
 interface Props {
   start?: string
@@ -34,7 +36,9 @@ export const CreateSchedule: React.FC<Props> = ({
   isEditing = false,
   selectedEvent
 }) => {
-  const { data: trainers } = useTrainers()
+  const { id } = useAppSelector(selectCurrentCenter)
+
+  const { data: trainers } = useTrainers(id)
   const {
     register,
     handleSubmit,
@@ -73,9 +77,14 @@ export const CreateSchedule: React.FC<Props> = ({
         lesson_id: data.lesson_id,
         from_time: new Date(data.start).toLocaleTimeString([], {
           hour: '2-digit',
-          minute: '2-digit'
+          minute: '2-digit',
+          hour12: false
         }),
-        to_time: new Date(data.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        to_time: new Date(data.end).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }),
         places: data.places,
         trainer_id: data.trainer_id
       }
