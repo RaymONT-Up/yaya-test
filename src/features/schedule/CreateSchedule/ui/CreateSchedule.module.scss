@@ -1,12 +1,22 @@
+
 .form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    button{
-      width: 50%;
-    }
-  }
-.buttons{
-  display: flex;
-  gap: 8px;
+  max-width: 752px;
+  width: 100%;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  grid-gap: 16px;
+  row-gap: 32px;
+}
+
+.gridContainer > * {
+  width: 100%;
+}
+.gridRow {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }

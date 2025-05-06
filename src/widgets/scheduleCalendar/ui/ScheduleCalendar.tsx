@@ -14,7 +14,6 @@ import { CalendarToolbar } from './CalendarToolbar'
 import { EventApi } from '@fullcalendar/core'
 import { useAppSelector } from '@/app/config/store'
 import { selectCurrentCenter } from '@/entities/center'
-
 const renderDayHeader = ({ date }: { date: Date }) => {
   const dayNumber = date.toLocaleDateString('ru-RU', { day: '2-digit' })
   const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' })
@@ -30,7 +29,7 @@ const renderDayHeader = ({ date }: { date: Date }) => {
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [duplicateModalOpen, setDuplicateModalOpen] = useState(false)
-  const [editModalOpen, setEditModalOpen] = useState(false)
+  // const [editModalOpen, setEditModalOpen] = useState(false)
   const [range, setRange] = useState<{ start: string; end: string } | null>(null)
   const today = new Date()
   const [dateRange, setDateRange] = useState({
@@ -38,6 +37,7 @@ export const ScheduleCalendar: React.FC = () => {
     endDate: new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().slice(0, 10)
   })
   const [selectedEvent, setSelectedEvent] = useState<EventApi | null>(null)
+  //
   const { id } = useAppSelector(selectCurrentCenter)
 
   const { data, isError } = useSchedule({
@@ -72,7 +72,8 @@ export const ScheduleCalendar: React.FC = () => {
   }
   const handleEventClick = (info: EventClickArg) => {
     setSelectedEvent(info.event)
-    setEditModalOpen(true)
+    console.log(selectedEvent)
+    // setEditModalOpen(true)
   }
   const calendarRef = useRef<FullCalendar | null>(null)
   const handleOnClose = () => {
@@ -104,16 +105,23 @@ export const ScheduleCalendar: React.FC = () => {
         nowIndicator={true}
         dayHeaderContent={renderDayHeader}
         eventClick={handleEventClick}
+        slotMinTime="06:00:00"
+        slotMaxTime="22:00:00"
+        slotLabelFormat={{
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }}
+        selectMirror={true}
       />
 
-      <Modal isOpen={modalOpen} onClose={handleOnClose}>
-        {range ? (
-          <CreateSchedule start={range.start} end={range.end} onClose={handleOnClose} />
-        ) : (
-          <CreateSchedule onClose={handleOnClose} />
-        )}
-      </Modal>
-      <Modal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)}>
+      <CreateSchedule
+        isOpen={modalOpen}
+        start={range?.start}
+        end={range?.end}
+        onClose={handleOnClose}
+      />
+      {/* <Modal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)}>
         {selectedEvent && (
           <CreateSchedule
             isEditing={true}
@@ -121,7 +129,7 @@ export const ScheduleCalendar: React.FC = () => {
             onClose={() => setEditModalOpen(false)}
           />
         )}
-      </Modal>
+      </Modal> */}
       <Modal isOpen={duplicateModalOpen} onClose={() => setDuplicateModalOpen(false)}>
         <DuplicateSchedule onSubmit={() => setDuplicateModalOpen(false)} />
       </Modal>

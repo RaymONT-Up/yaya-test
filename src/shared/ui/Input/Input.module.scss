@@ -1,9 +1,16 @@
 .inputWrapper {
+  cursor: pointer;
   display: flex;
   align-items: center;
   position: relative;
 }
-
+.label{
+  margin-bottom: 8px;
+  display: block;
+}
+.requiredLabel{
+  color: var(--action-danger);
+}
 .input {
   padding: 9px 16px;
   font-size: 16px;
@@ -14,6 +21,8 @@
   transition: border 0.2s;
   width: 100%;
   color: var(--text-default);
+  cursor: pointer;
+
   &[type='password'] {
     padding-right: 40px;
   }
@@ -57,5 +66,48 @@
   svg {
     width: 20px;
     height: 20px;
+  }
+}
+.leftIcon {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.rightIcon {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.withLeftIcon {
+  padding-left: 40px;
+}
+
+.withRightIcon {
+  padding-right: 40px;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }
