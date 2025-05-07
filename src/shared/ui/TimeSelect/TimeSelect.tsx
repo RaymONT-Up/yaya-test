@@ -9,6 +9,7 @@ import { parseTimeToMinutes } from '@/shared/libs/formaDate'
 interface TimeSelectProps {
   mode: 'start' | 'end'
   value: string | null
+  minTime: string
   startTime?: string
   onChange: (value: string) => void
   label?: string
@@ -26,6 +27,7 @@ export const TimeSelect = ({
   mode,
   value,
   startTime,
+  minTime,
   onChange,
   label,
   required = false
@@ -48,8 +50,13 @@ export const TimeSelect = ({
     const endHour = 22
     const stepMinutes = 15
     const startMinutes = mode === 'end' && startTime ? parseTimeToMinutes(startTime) : 0
+    const minMinutes = minTime ? parseTimeToMinutes(minTime) : 0
 
-    for (let minutes = baseHour * 60; minutes <= endHour * 60; minutes += stepMinutes) {
+    for (
+      let minutes = Math.max(baseHour * 60, minMinutes);
+      minutes <= endHour * 60;
+      minutes += stepMinutes
+    ) {
       if (mode === 'end' && minutes <= startMinutes) continue
 
       const timeStr = formatTime(minutes)
@@ -70,7 +77,7 @@ export const TimeSelect = ({
     }
 
     return options
-  }, [mode, startTime])
+  }, [mode, startTime, minTime])
 
   const handleSelect = (item: SelectItem) => {
     onChange(item.value.toString())
@@ -80,6 +87,7 @@ export const TimeSelect = ({
   const clearValue = () => onChange('')
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, '')
+
     if (raw.length === 4) {
       const h = parseInt(raw.slice(0, 2), 10)
       const m = parseInt(raw.slice(2, 4), 10)
@@ -96,17 +104,24 @@ export const TimeSelect = ({
         finalM = 0
       }
 
-      onChange(`${pad(finalH)}:${pad(finalM)}`)
+      const newTime = `${pad(finalH)}:${pad(finalM)}`
+
+      if (newTime < minTime) {
+        onChange('')
+      } else {
+        onChange(newTime)
+      }
     } else {
       onChange(raw)
     }
   }
+
   const onInputBlur = () => {
     if (!value) return
 
     const raw = value.replace(/\D/g, '')
-
     let formatted = ''
+
     if (raw.length === 1) {
       formatted = `0${raw}:00`
     } else if (raw.length === 2) {
@@ -131,14 +146,19 @@ export const TimeSelect = ({
       return
     }
 
-    if (mode === 'start' && h === 22) {
-      onChange('21:45')
-    } else if (mode === 'end' && h === 22 && m > 0) {
-      onChange('22:00')
+    if (formatted < minTime) {
+      onChange('')
     } else {
-      onChange(`${pad(h)}:${pad(m)}`)
+      if (mode === 'start' && h === 22) {
+        onChange('21:45')
+      } else if (mode === 'end' && h === 22 && m > 0) {
+        onChange('22:00')
+      } else {
+        onChange(`${pad(h)}:${pad(m)}`)
+      }
     }
   }
+
   return (
     <div className={styles.container}>
       <Input

@@ -9,6 +9,7 @@ import { EyeClosed } from '@/shared/assets/svg/EyeClosed'
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: FieldError | string
+  showErrorMessage?: boolean
   className?: string
   wrapperClassName?: string
   required?: boolean
@@ -21,6 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     {
       label,
       error,
+      showErrorMessage = false,
       className,
       wrapperClassName,
       required,
@@ -78,7 +80,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {error && (
+        {error && showErrorMessage && (
           <Text className={styles.errorMessage} theme={TextTheme.ERROR}>
             {typeof error === 'string' ? error : error.message}
           </Text>

@@ -38,7 +38,7 @@ export const CreateSchedule: React.FC<Props> = ({
   isEditing = false
 }) => {
   const [duration, setDuration] = useState<number>(0)
-
+  const [minTime, setMinTime] = useState<string>('')
   const {
     register,
     handleSubmit,
@@ -117,11 +117,17 @@ export const CreateSchedule: React.FC<Props> = ({
     setValue('end', end)
   }
   const handleDaySelect = (day: Date | null) => {
-    setValue('day', day ? day.toISOString().slice(0, 10) : '')
+    if (day) {
+      const localDate = new Date(day.getTime() - day.getTimezoneOffset() * 60000)
+      setValue('day', localDate.toISOString().slice(0, 10))
+    } else {
+      setValue('day', '')
+    }
   }
 
   const startTime = watch('start')
   const endTime = watch('end')
+  const day = watch('day')
 
   useEffect(() => {
     if (startTime && endTime) {
@@ -132,6 +138,19 @@ export const CreateSchedule: React.FC<Props> = ({
       setDuration(0)
     }
   }, [startTime, endTime])
+  useEffect(() => {
+    console.log('day', day)
+    const today = new Date().toISOString().slice(0, 10)
+    if (day === today) {
+      const currentTime = new Date()
+      const minutes = currentTime.getMinutes()
+      const roundedMinutes = Math.ceil(minutes / 15) * 15
+      currentTime.setMinutes(roundedMinutes, 0, 0)
+      setMinTime(currentTime.toTimeString().slice(0, 5))
+    } else {
+      setMinTime('06:00')
+    }
+  }, [day])
   return (
     <Modal
       title="Новое расписание"
@@ -153,9 +172,11 @@ export const CreateSchedule: React.FC<Props> = ({
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={styles.gridContainer}>
           <SelectLesson
+            {...register('lesson_id', { required: 'Выберите занятие' })}
             onSelect={handleLessonSelect}
             selectedLessonId={watch('lesson_id')}
             disabled={isEditing}
+            error={errors.lesson_id}
           />
           {/* теги */}
           <>Теги</>
@@ -180,11 +201,13 @@ export const CreateSchedule: React.FC<Props> = ({
               label="Дата занятия"
               value={watch('day')}
               onChange={handleDaySelect}
+              minDate={new Date(new Date().setHours(0, 0, 0, 0))}
             />
             {/* Начало*/}
             <TimeSelect
               label="Начало"
               required
+              minTime={minTime}
               value={watch('start')}
               mode="start"
               onChange={handleStartSelect}
@@ -195,6 +218,7 @@ export const CreateSchedule: React.FC<Props> = ({
               label="Конец"
               required
               value={watch('end')}
+              minTime={minTime}
               startTime={watch('start')}
               mode="end"
               onChange={handleEndSelect}

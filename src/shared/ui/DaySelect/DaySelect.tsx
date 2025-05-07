@@ -12,9 +12,10 @@ interface DaySelectProps {
   onChange: (date: Date | null) => void
   label?: string
   required?: boolean
+  minDate?: Date
 }
 
-export const DaySelect = ({ value, onChange, label, required }: DaySelectProps) => {
+export const DaySelect = ({ value, onChange, label, required, minDate }: DaySelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleDaySelect = (date: Date | null) => {
@@ -50,6 +51,7 @@ export const DaySelect = ({ value, onChange, label, required }: DaySelectProps) 
             onChange={handleDaySelect}
             inline
             dateFormat="yyyy-MM-dd"
+            minDate={minDate}
           />
         </div>
       )}

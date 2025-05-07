@@ -7,17 +7,20 @@ import { selectCurrentCenter } from '@/entities/center'
 import styles from './SelectLesson.module.scss'
 import { ChevronDown } from '@/shared/assets/svg/ChevronDown'
 import { useSelectManager } from '@/shared/ui/PopoverSelect/useSelectManager'
+import { FieldError } from 'react-hook-form'
 
 interface SelectLessonProps {
   onSelect: (lessonId: number) => void
   selectedLessonId?: number | string | null
   disabled?: boolean
+  error?: FieldError | undefined
 }
 
 export const SelectLesson: React.FC<SelectLessonProps> = ({
   onSelect,
   selectedLessonId = null,
-  disabled = false
+  disabled = false,
+  error
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isLoading, isError } = useLessons(id)
@@ -46,8 +49,9 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   return (
     <div className={styles.container}>
       <Input
+        error={error ? error : undefined}
         disabled={disabled}
-        required
+        required={!selectedLessonId}
         placeholder="Не выбрано"
         label="Занятие"
         value={selectedLesson?.name ?? ''}
