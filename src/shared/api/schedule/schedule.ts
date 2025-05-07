@@ -1,4 +1,5 @@
 import {
+  CancelScheduleDto,
   CreateScheduleDto,
   EditScheduleDto,
   ScheduleEvent,
@@ -33,5 +34,12 @@ export const $updateSchedule = async (
     },
     {}
   )
+  return response
+}
+
+export const $cancelSchedule = async (data: CancelScheduleDto): Promise<AxiosResponse<void>> => {
+  const response = await apiWithTokenAndCenter.post(`/partners/schedules/${data.id}/cancel/`, {
+    cancel_reason: data.cancel_reason
+  })
   return response
 }

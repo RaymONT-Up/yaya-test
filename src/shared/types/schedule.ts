@@ -28,3 +28,8 @@ export interface EditScheduleDto {
   places: number
   trainer_id: number
 }
+
+export interface CancelScheduleDto {
+  id: number
+  cancel_reason: string
+}

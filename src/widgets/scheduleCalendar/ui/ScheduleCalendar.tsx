@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -14,6 +14,14 @@ import { CalendarToolbar } from './CalendarToolbar'
 import { EventApi } from '@fullcalendar/core'
 import { useAppSelector } from '@/app/config/store'
 import { selectCurrentCenter } from '@/entities/center'
+import { EditSchedule } from '@/features/schedule/EditSchedule'
+import { useNotifications } from '@/shared/ui/Notification'
+import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
+import { NotificationVariant } from '@/shared/ui/Notification/ui/Notification/Notification'
+import styles from './ScheduleCalendar.module.scss'
+import { Check } from '@/shared/assets/svg/Check'
+import { $cancelSchedule } from '@/shared/api/schedule/schedule'
+
 const renderDayHeader = ({ date }: { date: Date }) => {
   const dayNumber = date.toLocaleDateString('ru-RU', { day: '2-digit' })
   const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' })
@@ -29,25 +37,69 @@ const renderDayHeader = ({ date }: { date: Date }) => {
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [duplicateModalOpen, setDuplicateModalOpen] = useState(false)
-  // const [editModalOpen, setEditModalOpen] = useState(false)
+  const [editModalOpen, setEditModalOpen] = useState(false)
   const [range, setRange] = useState<{ start: string; end: string } | null>(null)
   const today = new Date()
   const [dateRange, setDateRange] = useState({
     startDate: new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10),
     endDate: new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().slice(0, 10)
   })
-  const [selectedEvent, setSelectedEvent] = useState<EventApi | null>(null)
-  //
+  const [selectedEvent, setSelectedEvent] = useState<EventApi | null>()
+  const [hiddenEvents, setHiddenEvents] = useState<string[]>([])
+  const pendingCancelRef = useRef<{ id: string; reason: string } | null>(null)
+
   const { id } = useAppSelector(selectCurrentCenter)
 
-  const { data, isError } = useSchedule({
+  const { data } = useSchedule({
     startDate: dateRange.startDate,
     endDate: dateRange.endDate,
     centerId: id
   })
+  const { addNotification, removeNotification } = useNotifications()
 
   const parsedEvents = data ? parseScheduleEvents(data.events) : []
+  const visibleEvents = useMemo(() => {
+    return parsedEvents?.filter((event) => !hiddenEvents.includes(event.id))
+  }, [parsedEvents, hiddenEvents])
 
+  const handleCancelScheduleRequest = (id: string, reason: string) => {
+    setHiddenEvents((prev) => [...prev, id])
+    const cancelData = { id, reason }
+    pendingCancelRef.current = cancelData
+
+    // показываем уведомление
+    const notificationId = addNotification({
+      title: 'Занятие удалено',
+      variant: NotificationVariant.Success,
+      primaryButton: (
+        <Button
+          variant={ButtonVariant.Subtle}
+          size={ButtonSize.Small}
+          onClick={() => {
+            setHiddenEvents((prev) => prev.filter((eId) => eId !== id))
+            pendingCancelRef.current = null
+            removeNotification(notificationId)
+          }}
+        >
+          Восстановить
+        </Button>
+      ),
+      icon: <Check />,
+      className: styles.cancelNotification
+    })
+
+    // через 5 секунд — если не восстановлено, отправляем запрос
+    setTimeout(() => {
+      const current = pendingCancelRef.current
+      if (current?.id === id) {
+        cancelSchedule(id, reason)
+        pendingCancelRef.current = null
+      }
+    }, 5000)
+  }
+  const cancelSchedule = (id: string, reason: string) => {
+    $cancelSchedule({ id: Number(id), cancel_reason: reason })
+  }
   const handleSelect = (arg: DateSelectArg) => {
     const now = new Date()
     const selectionStart = new Date(arg.start)
@@ -72,8 +124,7 @@ export const ScheduleCalendar: React.FC = () => {
   }
   const handleEventClick = (info: EventClickArg) => {
     setSelectedEvent(info.event)
-    console.log(selectedEvent)
-    // setEditModalOpen(true)
+    setEditModalOpen(true)
   }
   const calendarRef = useRef<FullCalendar | null>(null)
   const handleOnClose = () => {
@@ -82,7 +133,7 @@ export const ScheduleCalendar: React.FC = () => {
     setRange({ start: '', end: '' })
   }
   // if (isLoading) return <p>Загрузка...</p>
-  if (isError) return <p>Ошибка загрузки расписания</p>
+  // if (isError) return <p>Ошибка загрузки расписания</p>
   return (
     <>
       <CalendarToolbar
@@ -99,7 +150,7 @@ export const ScheduleCalendar: React.FC = () => {
         selectable={true}
         select={handleSelect}
         headerToolbar={false}
-        events={parsedEvents}
+        events={visibleEvents}
         allDaySlot={false}
         datesSet={handleDatesSet}
         nowIndicator={true}
@@ -114,22 +165,20 @@ export const ScheduleCalendar: React.FC = () => {
         }}
         selectMirror={true}
       />
-
       <CreateSchedule
         isOpen={modalOpen}
         start={range?.start}
         end={range?.end}
         onClose={handleOnClose}
       />
-      {/* <Modal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)}>
-        {selectedEvent && (
-          <CreateSchedule
-            isEditing={true}
-            selectedEvent={selectedEvent}
-            onClose={() => setEditModalOpen(false)}
-          />
-        )}
-      </Modal> */}
+      {selectedEvent && (
+        <EditSchedule
+          selectedEvent={selectedEvent}
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          handleCancelScheduleRequest={handleCancelScheduleRequest}
+        />
+      )}
       <Modal isOpen={duplicateModalOpen} onClose={() => setDuplicateModalOpen(false)}>
         <DuplicateSchedule onSubmit={() => setDuplicateModalOpen(false)} />
       </Modal>

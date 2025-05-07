@@ -10,6 +10,7 @@ interface ModalProps {
   isOpen: boolean
   onClose: () => void
   title?: string
+  headline?: string
   message?: string
   placeholderText?: string
   showMessage?: boolean
@@ -28,8 +29,10 @@ export const Modal = ({
   isOpen,
   onClose,
   title,
+  headline,
   message,
   showMessage = false,
+  showHeadline = false,
   showTitle = true,
   showActions = true,
   dismissable = true,
@@ -63,26 +66,34 @@ export const Modal = ({
     <Portal>
       <div className={styles.overlay} onClick={handleClose}>
         <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ width }}>
-          {showTitle && title && (
-            <div className={styles.modalHeader}>
-              <Text variant={TextVariant.HEADING} headingLevel="h6" className={styles.title}>
-                {title}
-              </Text>
-              <Button
-                variant={ButtonVariant.Subtle}
-                size={ButtonSize.Small}
-                isIconButton
-                iconStart={<CloseX />}
-                onClick={handleClose}
-              >
-                ×
-              </Button>
+          <div className={styles.modalHeader}>
+            <div className={styles.modalHeaderText}>
+              {showHeadline && headline && (
+                <Text variant={TextVariant.HEADING} headingLevel="h8" className={styles.headline}>
+                  {headline}
+                </Text>
+              )}
+              {showTitle && title && (
+                <Text variant={TextVariant.HEADING} headingLevel="h6" className={styles.title}>
+                  {title}
+                </Text>
+              )}
             </div>
-          )}
+
+            <Button
+              variant={ButtonVariant.Subtle}
+              size={ButtonSize.Small}
+              isIconButton
+              iconStart={<CloseX />}
+              onClick={handleClose}
+            >
+              ×
+            </Button>
+          </div>
           <div className={styles.modalContent}>{children}</div>
           {showActions && actions && (
             <div className={styles.actions}>
-              {showMessage && (
+              {showMessage ? (
                 <div className={styles.message}>
                   <Info />{' '}
                   <Text bodySize="medium" className={styles.infoMessage}>
@@ -90,6 +101,8 @@ export const Modal = ({
                     {message}{' '}
                   </Text>
                 </div>
+              ) : (
+                <div />
               )}
               <div className={styles.buttonGroup}>{actions}</div>
             </div>

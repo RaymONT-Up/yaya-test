@@ -1,0 +1,44 @@
+.form{
+    width: 552px;
+}
+.readonlyFields{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+}
+.readonlyField{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.label{
+    max-width: 172px;
+    width: 100%;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.duration{
+    color: var(--text-secondary);
+}
+
+.icon{
+    path{
+        stroke: #6B6B6F;
+    }
+}
+.editableField{
+    margin: 32px 0;
+}
+.placeInput{
+    max-width: 200px;
+}
+.alert{
+    max-width: 100%;
+    width: 100%;
+}
+.cancelReason{
+    height: 100px;
+}

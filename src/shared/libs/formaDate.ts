@@ -29,3 +29,35 @@ export const formatDate = (date: Date): string => {
 
   return `${year}-${month}-${day}`
 }
+
+export function formatScheduleTime(
+  startIso: string | Date,
+  endIso: string | Date
+): {
+  dateTime: string
+  duration: string
+} {
+  const start = new Date(startIso)
+  const end = new Date(endIso)
+
+  const formatterDate = new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'short'
+  })
+
+  const formatterTime = new Intl.DateTimeFormat('ru-RU', {
+    hour: 'numeric',
+    minute: '2-digit'
+  })
+
+  const date = formatterDate.format(start)
+  const startTime = formatterTime.format(start)
+  const endTime = formatterTime.format(end)
+
+  const durationMinutes = Math.round((end.getTime() - start.getTime()) / (1000 * 60))
+
+  return {
+    dateTime: `${date}, ${startTime}–${endTime}`,
+    duration: `${durationMinutes}мин`
+  }
+}

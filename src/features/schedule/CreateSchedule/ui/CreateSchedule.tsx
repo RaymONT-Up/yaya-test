@@ -2,14 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import styles from './CreateSchedule.module.scss'
 import { Input } from '@/shared/ui/Input/Input'
-import { EventApi } from '@fullcalendar/core'
 import { SelectLesson } from '@/features/lesson/selectLesson'
-import { useCreateSchedule, useUpdateSchedule } from '@/entities/schedule'
+import { useCreateSchedule } from '@/entities/schedule'
 import { CreateScheduleDto } from '@/shared/types/schedule'
 import { SelectTrainer } from '@/features/trainer'
-import { useTrainers } from '@/features/trainer/model/useTrainers'
-import { useAppSelector } from '@/app/config/store'
-import { selectCurrentCenter } from '@/entities/center'
 import { Modal } from '@/shared/ui/Modal/Modal'
 import { Button, ButtonVariant } from '@/shared/ui/Button'
 import { Users } from '@/shared/assets/svg/Users'
@@ -23,7 +19,6 @@ interface Props {
   isOpen: boolean
   onClose: () => void
   isEditing?: boolean
-  selectedEvent?: EventApi | null
 }
 
 interface FormValues {
@@ -40,13 +35,10 @@ export const CreateSchedule: React.FC<Props> = ({
   start,
   end,
   onClose,
-  isEditing = false,
-  selectedEvent
+  isEditing = false
 }) => {
   const [duration, setDuration] = useState<number>(0)
-  const { id } = useAppSelector(selectCurrentCenter)
 
-  const { data: trainers } = useTrainers(id)
   const {
     register,
     handleSubmit,
@@ -64,21 +56,26 @@ export const CreateSchedule: React.FC<Props> = ({
       trainer_id: undefined
     }
   })
-  useEffect(() => {
-    if (isEditing && selectedEvent && trainers) {
-      const foundTrainer = trainers.find(
-        (t) => `${t.full_name} | ${t.job}` === selectedEvent.extendedProps.trainer
-      )
-
+  const { isPending, mutate } = useCreateSchedule({
+    onSuccess: (data) => {
+      console.log('Расписание успешно добавлено:', data)
       reset({
-        day: new Date(selectedEvent.start ?? '').toISOString().slice(0, 10),
-        lesson_id: selectedEvent.extendedProps.lesson_id ?? null,
-        start: selectedEvent.start?.toISOString().slice(0, 16) ?? '',
-        end: selectedEvent.end?.toISOString().slice(0, 16) ?? '',
-        places: selectedEvent.extendedProps.places ?? null,
-        trainer_id: foundTrainer?.id ?? undefined
+        day: new Date().toISOString().slice(0, 10),
+        lesson_id: null,
+        start: '',
+        end: '',
+        places: null,
+        trainer_id: undefined
       })
+      setDuration(0)
+      onClose()
+    },
+    onError: (err) => {
+      console.error('Ошибка при добавлении расписания:', err)
     }
+  })
+
+  useEffect(() => {
     if (start && end) {
       const startDate = new Date(start)
       const endDate = new Date(end)
@@ -91,7 +88,8 @@ export const CreateSchedule: React.FC<Props> = ({
       setValue('start', '')
       setValue('end', '')
     }
-  }, [isEditing, selectedEvent, trainers, reset, setValue, start, end])
+  }, [start, end, setValue])
+
   const onSubmit = (data: FormValues) => {
     if (data.lesson_id !== null) {
       const scheduleData: CreateScheduleDto = {
@@ -102,17 +100,7 @@ export const CreateSchedule: React.FC<Props> = ({
         places: data.places ? data.places : 1,
         trainer_id: data.trainer_id
       }
-
-      if (isEditing && selectedEvent) {
-        const editData = {
-          id: selectedEvent.id,
-          trainer_id: data.trainer_id,
-          places: data.places ? data.places : 1
-        }
-        updateMutation.mutate(editData)
-      } else {
-        createMutation.mutate(scheduleData)
-      }
+      mutate(scheduleData)
     }
   }
 
@@ -131,27 +119,6 @@ export const CreateSchedule: React.FC<Props> = ({
   const handleDaySelect = (day: Date | null) => {
     setValue('day', day ? day.toISOString().slice(0, 10) : '')
   }
-  const createMutation = useCreateSchedule({
-    onSuccess: (data) => {
-      console.log('Расписание успешно добавлено:', data)
-      onClose()
-    },
-    onError: (err) => {
-      console.error('Ошибка при добавлении расписания:', err)
-    }
-  })
-
-  const updateMutation = useUpdateSchedule({
-    onSuccess: (data) => {
-      console.log('Расписание успешно обновлено:', data)
-      reset()
-      onClose()
-    },
-    onError: (err) => {
-      console.error('Ошибка при обновлении расписания:', err)
-    }
-  })
-  const isPending = isEditing ? updateMutation.isPending : createMutation.isPending
 
   const startTime = watch('start')
   const endTime = watch('end')
@@ -160,16 +127,11 @@ export const CreateSchedule: React.FC<Props> = ({
     if (startTime && endTime) {
       const startMin = parseTimeToMinutes(startTime)
       const endMin = parseTimeToMinutes(endTime)
-
-      if (endMin > startMin) {
-        setDuration(endMin - startMin)
-      } else {
-        setDuration(0)
-      }
+      setDuration(endMin > startMin ? endMin - startMin : 0)
     } else {
       setDuration(0)
     }
-  }, [startTime, endTime, setDuration])
+  }, [startTime, endTime])
   return (
     <Modal
       title="Новое расписание"
@@ -183,7 +145,7 @@ export const CreateSchedule: React.FC<Props> = ({
             Отмена
           </Button>
           <Button onClick={handleSubmit(onSubmit)} type="submit" loading={isPending}>
-            {isEditing ? 'Сохранить' : 'Создать расписание'}
+            Создать расписание
           </Button>
         </>
       }
@@ -239,14 +201,7 @@ export const CreateSchedule: React.FC<Props> = ({
             />
             {/* Длит. (мин) */}
 
-            <Input
-              label="Длит. (мин)"
-              placeholder="00"
-              type="number"
-              value={duration}
-              readOnly
-              // error={errors.duration}
-            />
+            <Input label="Длит. (мин)" placeholder="00" type="number" value={duration} readOnly />
           </div>
         </div>
       </form>

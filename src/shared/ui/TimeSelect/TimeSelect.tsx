@@ -8,7 +8,7 @@ import { parseTimeToMinutes } from '@/shared/libs/formaDate'
 
 interface TimeSelectProps {
   mode: 'start' | 'end'
-  value: string | null | number
+  value: string | null
   startTime?: string
   onChange: (value: string) => void
   label?: string
@@ -72,26 +72,85 @@ export const TimeSelect = ({
     return options
   }, [mode, startTime])
 
-  const selected = timeOptions.find((opt) => opt.value === value)
-
   const handleSelect = (item: SelectItem) => {
     onChange(item.value.toString())
     setIsOpen(false)
   }
 
   const clearValue = () => onChange('')
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, '')
+    if (raw.length === 4) {
+      const h = parseInt(raw.slice(0, 2), 10)
+      const m = parseInt(raw.slice(2, 4), 10)
+      const clampedH = Math.min(h, 22)
+      const clampedM = Math.min(m, 59)
 
+      let finalH = clampedH
+      let finalM = clampedM
+
+      if (mode === 'start' && finalH === 22) {
+        finalH = 21
+        finalM = 45
+      } else if (mode === 'end' && finalH === 22) {
+        finalM = 0
+      }
+
+      onChange(`${pad(finalH)}:${pad(finalM)}`)
+    } else {
+      onChange(raw)
+    }
+  }
+  const onInputBlur = () => {
+    if (!value) return
+
+    const raw = value.replace(/\D/g, '')
+
+    let formatted = ''
+    if (raw.length === 1) {
+      formatted = `0${raw}:00`
+    } else if (raw.length === 2) {
+      formatted = `${pad(Number(raw))}:00`
+    } else if (raw.length === 3) {
+      const h = parseInt(raw[0], 10)
+      const m = parseInt(raw.slice(1), 10)
+      formatted = `${pad(h)}:${pad(m)}`
+    } else if (raw.length === 4) {
+      const h = parseInt(raw.slice(0, 2), 10)
+      const m = parseInt(raw.slice(2), 10)
+      formatted = `${pad(h)}:${pad(m)}`
+    } else {
+      onChange('')
+      return
+    }
+
+    const [h, m] = formatted.split(':').map(Number)
+
+    if (h > 22 || m > 59) {
+      onChange('')
+      return
+    }
+
+    if (mode === 'start' && h === 22) {
+      onChange('21:45')
+    } else if (mode === 'end' && h === 22 && m > 0) {
+      onChange('22:00')
+    } else {
+      onChange(`${pad(h)}:${pad(m)}`)
+    }
+  }
   return (
     <div className={styles.container}>
       <Input
         required={!value && required}
         label={label}
         placeholder="00:00"
-        value={selected?.value ?? ''}
-        readOnly
+        value={value ?? ''}
         onClick={() => setIsOpen((prev) => !prev)}
         leftIcon={<Clock width={16} height={16} color="#6B6B6F" />}
         rightIcon={value ? <CloseX onClick={clearValue} className={styles.clearIcon} /> : undefined}
+        onChange={onInputChange}
+        onBlur={onInputBlur}
       />
       <PopoverSelect
         isOpen={isOpen}
