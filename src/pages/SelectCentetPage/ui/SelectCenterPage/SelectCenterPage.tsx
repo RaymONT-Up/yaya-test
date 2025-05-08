@@ -3,12 +3,12 @@ import { WelcomeLayout } from '@/widgets/layout'
 import { SelectCenterForm } from '@/features/center/selectCenter'
 import { useAppDispatch, useAppSelector } from '@/app/config/store'
 import { fetchCenters, selectCenterLoading, selectCenters, setCenterId } from '@/entities/center'
-import { ContactUs } from './ContactUs'
+import { ContactUs } from '../ContactUs/ContactUs'
 import { Loader } from '@/shared/ui/Loader/Loader'
 import { RoutePath } from '@/shared/consts/routerPaths'
 import { useNavigate } from 'react-router-dom'
 
-export const SelectCenterPage: FC = () => {
+const SelectCenterPage: FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const centers = useAppSelector(selectCenters)
@@ -34,3 +34,5 @@ export const SelectCenterPage: FC = () => {
     <WelcomeLayout>{centers.length === 0 ? <ContactUs /> : <SelectCenterForm />}</WelcomeLayout>
   )
 }
+
+export default SelectCenterPage

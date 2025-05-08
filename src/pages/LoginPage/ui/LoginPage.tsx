@@ -6,7 +6,8 @@ import { InfoBlock } from '@/shared/ui/InfoBlock/InfoBlock'
 import { useSearchParams } from 'react-router-dom'
 import { Clock } from '@/shared/assets/svg/Clock'
 import s from './LoginPage.module.scss'
-export const LoginPage: FC = () => {
+
+const LoginPage: FC = () => {
   const [searchParams] = useSearchParams()
   const sessionExpired = searchParams.get('session_expired') === 'true'
 
@@ -23,3 +24,4 @@ export const LoginPage: FC = () => {
     </WelcomeLayout>
   )
 }
+export default LoginPage

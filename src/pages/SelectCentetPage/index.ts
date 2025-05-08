@@ -1,1 +1,1 @@
-export { SelectCenterPage } from './ui/SelectCenterPage'
+export { SelectCenterPageLazy as SelectCenterPage } from './ui/SelectCenterPage/SelectCenterPage.lazy'

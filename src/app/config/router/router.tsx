@@ -2,16 +2,22 @@ import { getToken } from '@/entities/currentSession'
 import { LoginPage } from '@/pages/LoginPage'
 import { MainPage } from '@/pages/MainPage'
 import { SelectCenterPage } from '@/pages/SelectCentetPage'
-import { VisiPage } from '@/pages/VisitPage'
+import { VisitPage } from '@/pages/VisitPage'
 import { RoutePath } from '@/shared/consts/routerPaths'
 import { MainLayout } from '@/widgets/layout'
-import { JSX } from 'react'
+import { JSX, Suspense } from 'react'
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
 type AuthGuardProps = {
   mustBe: 'authorized' | 'unauthorized'
   children: JSX.Element
 }
+const withSuspense = (Component: React.LazyExoticComponent<React.FC>) => (
+  // !TODO loader для страниц уточнить у дизайнера
+  <Suspense fallback={<div>Загрузка...</div>}>
+    <Component />
+  </Suspense>
+)
 
 export const AuthGuard = ({ mustBe, children }: AuthGuardProps) => {
   const token = getToken()
@@ -35,7 +41,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <MainPage />
+        element: withSuspense(MainPage)
       }
     ]
   },
@@ -49,7 +55,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <VisiPage />
+        element: withSuspense(VisitPage)
       }
     ]
   },
@@ -63,7 +69,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <SelectCenterPage />
+        element: withSuspense(SelectCenterPage)
       }
     ]
   },
@@ -77,7 +83,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <LoginPage />
+        element: withSuspense(LoginPage)
       }
     ]
   }
