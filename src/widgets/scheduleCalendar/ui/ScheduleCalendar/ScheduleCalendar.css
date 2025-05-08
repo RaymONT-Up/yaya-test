@@ -43,6 +43,7 @@
 .fc .fc-timegrid-slot {
     height: 3.5rem;
 }
+
 .fc-day{
     height: 70px;
 }
@@ -89,3 +90,5 @@ z-index: 5;
   padding-top: 2px;
   color: var(--event-text-color) !important;
 }
+
+/* Cursor not allowed to select time */

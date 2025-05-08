@@ -10,7 +10,7 @@ import { useSchedule } from '@/entities/schedule'
 import { parseScheduleEvents } from '@/shared/libs/parseScheduleEvents'
 import { DuplicateSchedule } from '@/features/schedule/DuplicateSchedule'
 import './ScheduleCalendar.css'
-import { CalendarToolbar } from './CalendarToolbar'
+import { CalendarToolbar } from '../CalendarToolbar/CalendarToolbar'
 import { EventApi } from '@fullcalendar/core'
 import { useAppSelector } from '@/app/config/store'
 import { selectCurrentCenter } from '@/entities/center'
@@ -21,18 +21,8 @@ import { NotificationVariant } from '@/shared/ui/Notification/ui/Notification/No
 import styles from './ScheduleCalendar.module.scss'
 import { Check } from '@/shared/assets/svg/Check'
 import { $cancelSchedule } from '@/shared/api/schedule/schedule'
-
-const renderDayHeader = ({ date }: { date: Date }) => {
-  const dayNumber = date.toLocaleDateString('ru-RU', { day: '2-digit' })
-  const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' })
-
-  return (
-    <div className="fc-custom-header">
-      <div className="fc-custom-day">{dayNumber}</div>
-      <div className="fc-custom-weekday">{weekday.charAt(0).toUpperCase() + weekday.slice(1)}</div>
-    </div>
-  )
-}
+import { EventContent } from '../EventContent/EventContent'
+import { DayHeader } from '../DayHeader/DayHeader'
 
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -149,12 +139,18 @@ export const ScheduleCalendar: React.FC = () => {
         initialView="timeGridWeek"
         selectable={true}
         select={handleSelect}
+        selectAllow={(selectInfo) => {
+          const now = new Date()
+          const start = new Date(selectInfo.start)
+          return start >= now
+        }}
         headerToolbar={false}
         events={visibleEvents}
+        eventContent={EventContent}
         allDaySlot={false}
         datesSet={handleDatesSet}
         nowIndicator={true}
-        dayHeaderContent={renderDayHeader}
+        dayHeaderContent={DayHeader}
         eventClick={handleEventClick}
         slotMinTime="06:00:00"
         slotMaxTime="22:00:00"
@@ -163,6 +159,7 @@ export const ScheduleCalendar: React.FC = () => {
           minute: '2-digit',
           hour12: false
         }}
+        slotDuration="01:00:00"
         selectMirror={true}
       />
       <CreateSchedule
