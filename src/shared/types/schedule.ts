@@ -33,3 +33,21 @@ export interface CancelScheduleDto {
   id: number
   cancel_reason: string
 }
+
+export enum DuplicateScheduleType {
+  DAY = 'day',
+  WEEK = 'week'
+}
+export interface DuplicateScheduleDto {
+  duplicate_type: DuplicateScheduleType
+  source_date: string
+  target_dates: string[]
+  lesson_ids: number[]
+}
+
+export interface CancelScheduleSDto {
+  reason: string
+  start_date: string
+  end_date: string
+  lessons: number[]
+}
