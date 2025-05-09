@@ -5,6 +5,7 @@ import { Clock } from '@/shared/assets/svg/Clock'
 import styles from './TimeSelect.module.scss'
 import { CloseX } from '@/shared/assets/svg/Close'
 import { parseTimeToMinutes } from '@/shared/libs/formaDate'
+import { FieldError } from 'react-hook-form'
 
 interface TimeSelectProps {
   mode: 'start' | 'end'
@@ -15,6 +16,7 @@ interface TimeSelectProps {
   label?: string
   required?: boolean
   defaultDuration?: number // в минутах
+  error?: FieldError | undefined
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')
@@ -32,7 +34,8 @@ export const TimeSelect = ({
   onChange,
   label,
   required = false,
-  defaultDuration
+  defaultDuration,
+  error
 }: TimeSelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [wasTouched, setWasTouched] = useState(false)
@@ -178,6 +181,7 @@ export const TimeSelect = ({
   return (
     <div className={styles.container}>
       <Input
+        error={error ? error : undefined}
         required={!value && required}
         label={label}
         placeholder="00:00"

@@ -212,7 +212,9 @@ export const CreateSchedule: React.FC<Props> = ({
               minTime={minTime}
               value={watch('start')}
               mode="start"
+              {...register('start', { required: 'Выберите начало занятия' })}
               onChange={handleStartSelect}
+              error={errors.start}
             />
 
             {/* Конец */}
@@ -224,7 +226,9 @@ export const CreateSchedule: React.FC<Props> = ({
               startTime={watch('start')}
               defaultDuration={duration}
               mode="end"
+              {...register('end', { required: 'Выберите конец занятия' })}
               onChange={handleEndSelect}
+              error={errors.end}
             />
             {/* Длит. (мин) */}
 
