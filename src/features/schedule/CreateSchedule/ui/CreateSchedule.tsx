@@ -12,6 +12,7 @@ import { Users } from '@/shared/assets/svg/Users'
 import { TimeSelect } from '@/shared/ui/TimeSelect/TimeSelect'
 import { parseTimeToMinutes } from '@/shared/libs/formaDate'
 import { DaySelect } from '@/shared/ui/DaySelect/DaySelect'
+import { Lesson } from '@/shared/types/lesson'
 
 interface Props {
   start?: string
@@ -104,8 +105,9 @@ export const CreateSchedule: React.FC<Props> = ({
     }
   }
 
-  const handleLessonSelect = (selectedLesson: number) => {
-    setValue('lesson_id', selectedLesson ?? null)
+  const handleLessonSelect = (selectedLesson: Lesson) => {
+    setDuration(selectedLesson.duration ?? 0)
+    setValue('lesson_id', selectedLesson.id ?? null)
   }
   const handleTrainerSelect = (selectedTrainer: number) => {
     setValue('trainer_id', selectedTrainer)
@@ -220,6 +222,7 @@ export const CreateSchedule: React.FC<Props> = ({
               value={watch('end')}
               minTime={minTime}
               startTime={watch('start')}
+              defaultDuration={duration}
               mode="end"
               onChange={handleEndSelect}
             />

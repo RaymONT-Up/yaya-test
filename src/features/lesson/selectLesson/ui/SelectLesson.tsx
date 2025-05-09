@@ -8,9 +8,10 @@ import styles from './SelectLesson.module.scss'
 import { ChevronDown } from '@/shared/assets/svg/ChevronDown'
 import { useSelectManager } from '@/shared/ui/PopoverSelect/useSelectManager'
 import { FieldError } from 'react-hook-form'
+import { Lesson } from '@/shared/types/lesson'
 
 interface SelectLessonProps {
-  onSelect: (lessonId: number) => void
+  onSelect: (lesson: Lesson) => void
   selectedLessonId?: number | string | null
   disabled?: boolean
   error?: FieldError | undefined
@@ -39,8 +40,11 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   const selectedLesson = lessons.find((l) => l.id === Number(selectedLessonId))
 
   const handleSelect = (item: SelectItem) => {
-    onSelect(Number(item.value))
-    close()
+    const lesson = lessons.find((l) => l.id === Number(item.value))
+    if (lesson) {
+      onSelect(lesson)
+      close()
+    }
   }
 
   if (isLoading) return <p>Загрузка...</p>

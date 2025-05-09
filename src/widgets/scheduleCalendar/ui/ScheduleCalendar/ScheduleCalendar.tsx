@@ -69,6 +69,12 @@ export const ScheduleCalendar: React.FC = () => {
             setHiddenEvents((prev) => prev.filter((eId) => eId !== id))
             pendingCancelRef.current = null
             removeNotification(notificationId)
+            addNotification({
+              title: 'Занятие восстановлено',
+              variant: NotificationVariant.Success,
+              icon: <Check />,
+              className: styles.cancelNotification
+            })
           }}
         >
           Восстановить

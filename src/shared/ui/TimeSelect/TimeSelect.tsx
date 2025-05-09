@@ -14,6 +14,7 @@ interface TimeSelectProps {
   onChange: (value: string) => void
   label?: string
   required?: boolean
+  defaultDuration?: number // в минутах
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')
@@ -30,19 +31,12 @@ export const TimeSelect = ({
   minTime,
   onChange,
   label,
-  required = false
+  required = false,
+  defaultDuration
 }: TimeSelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
-
-  useEffect(() => {
-    if (mode === 'end' && startTime && value) {
-      const valueMin = parseTimeToMinutes(value.toString())
-      const startMin = parseTimeToMinutes(startTime)
-      if (valueMin <= startMin) {
-        onChange('')
-      }
-    }
-  }, [startTime, mode, value, onChange])
+  const [wasTouched, setWasTouched] = useState(false)
+  const [autoFillKey, setAutoFillKey] = useState('')
 
   const timeOptions: SelectItem[] = useMemo(() => {
     const options: SelectItem[] = []
@@ -80,12 +74,18 @@ export const TimeSelect = ({
   }, [mode, startTime, minTime])
 
   const handleSelect = (item: SelectItem) => {
+    setWasTouched(true)
     onChange(item.value.toString())
     setIsOpen(false)
   }
 
-  const clearValue = () => onChange('')
+  const clearValue = () => {
+    setWasTouched(true)
+    onChange('')
+    setAutoFillKey('')
+  }
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWasTouched(true)
     const raw = e.target.value.replace(/\D/g, '')
 
     if (raw.length === 4) {
@@ -159,6 +159,22 @@ export const TimeSelect = ({
     }
   }
 
+  useEffect(() => {
+    if (mode === 'end' && !wasTouched && defaultDuration && startTime) {
+      const key = `${startTime}-${defaultDuration}`
+      if (autoFillKey !== key) {
+        const start = parseTimeToMinutes(startTime)
+        const end = start + defaultDuration
+        const endStr = formatTime(end)
+        onChange(endStr)
+        setAutoFillKey(key)
+      }
+    }
+  }, [mode, wasTouched, defaultDuration, startTime, onChange, autoFillKey])
+
+  useEffect(() => {
+    setWasTouched(false)
+  }, [startTime, defaultDuration])
   return (
     <div className={styles.container}>
       <Input
