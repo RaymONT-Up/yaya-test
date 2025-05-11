@@ -1,4 +1,4 @@
-import { SVGProps } from 'react'
+import { SVGProps } from "react"
 
 export const ChevronLeft = (props: SVGProps<SVGSVGElement>) => {
   return (
@@ -12,10 +12,10 @@ export const ChevronLeft = (props: SVGProps<SVGSVGElement>) => {
     >
       <path
         d="M10 12L6 8L10 4"
-        stroke={props.color ? props.color : '#262527'}
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={props.color ? props.color : "#262527"}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   )
