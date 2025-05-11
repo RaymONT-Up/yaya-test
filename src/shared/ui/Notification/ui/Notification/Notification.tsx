@@ -1,0 +1,84 @@
+import { ReactNode } from 'react'
+import styles from './Notification.module.scss'
+import clsx from 'clsx'
+import { Text, TextVariant } from '@/shared/ui/Text/Text'
+import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
+import { CloseX } from '@/shared/assets/svg/Close'
+import { useNotifications } from '../../model/useNotifications'
+
+export enum NotificationVariant {
+  Info = 'Info',
+  Danger = 'Danger',
+  Success = 'Success',
+  Warning = 'Warning'
+}
+
+export interface NotificationProps {
+  variant?: NotificationVariant
+  icon?: ReactNode
+  title?: string
+  text?: string
+  primaryButton?: ReactNode
+  secondaryButton?: ReactNode
+  className?: string
+  id?: string
+}
+
+const variantClassMap: Record<NotificationVariant, string> = {
+  [NotificationVariant.Info]: styles.info,
+  [NotificationVariant.Danger]: styles.danger,
+  [NotificationVariant.Success]: styles.success,
+  [NotificationVariant.Warning]: styles.warning
+}
+
+export const Notification = ({
+  variant = NotificationVariant.Info,
+  icon,
+  title,
+  text,
+  primaryButton,
+  secondaryButton,
+  className,
+  id
+}: NotificationProps) => {
+  const { removeNotification } = useNotifications()
+
+  const handleClose = () => {
+    if (id) {
+      removeNotification(id)
+    }
+  }
+
+  return (
+    <div className={clsx(styles.notification, variantClassMap[variant], className)}>
+      {icon && <div className={styles.icon}>{icon}</div>}
+      <div className={styles.content}>
+        {title && (
+          <Text variant={TextVariant.HEADING} headingLevel="h8" className={styles.title}>
+            {title}
+          </Text>
+        )}
+        {text && (
+          <Text bodySize="medium" className={styles.text}>
+            {text}
+          </Text>
+        )}
+        {(primaryButton || secondaryButton) && (
+          <div className={styles.actions}>
+            {secondaryButton}
+            {primaryButton}
+          </div>
+        )}
+      </div>
+      <div className={styles.close}>
+        <Button
+          variant={ButtonVariant.Text}
+          size={ButtonSize.Small}
+          isIconButton
+          iconStart={<CloseX width={16} height={16} />}
+          onClick={handleClose}
+        />
+      </div>
+    </div>
+  )
+}

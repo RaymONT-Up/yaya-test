@@ -1,1 +1,1 @@
-export { VisiPage } from './ui/VisitPage'
+export { VisitPageLazy as VisitPage } from './ui/VisitPage.lazy'

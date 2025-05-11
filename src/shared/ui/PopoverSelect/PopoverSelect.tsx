@@ -10,7 +10,7 @@ export type SelectItem = {
 interface PopoverSelectProps {
   isOpen: boolean
   options: SelectItem[]
-  selectedValue: number | null
+  selectedValue: number | null | string
   onSelect: (option: SelectItem) => void
   onClose: () => void
 }
@@ -36,7 +36,6 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
     } else {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -60,9 +59,11 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
               <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
                 {option.title}
               </Text>
-              <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
-                {option.text}
-              </Text>
+              {option.text && (
+                <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
+                  {option.text}
+                </Text>
+              )}
             </div>
           ))}
         </div>

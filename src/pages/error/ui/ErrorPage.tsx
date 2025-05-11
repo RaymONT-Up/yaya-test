@@ -8,7 +8,7 @@ interface ErrorPageProps {
   errorCode: ErrorCodes
 }
 
-export const ErrorPage: FC<ErrorPageProps> = ({ errorCode }) => {
+const ErrorPage: FC<ErrorPageProps> = ({ errorCode }) => {
   const { title, text, icon: Icon } = errorConfig[errorCode] || errorConfig[ErrorCodes.UNKNOWN]
 
   return (
@@ -22,3 +22,5 @@ export const ErrorPage: FC<ErrorPageProps> = ({ errorCode }) => {
     </div>
   )
 }
+
+export default ErrorPage

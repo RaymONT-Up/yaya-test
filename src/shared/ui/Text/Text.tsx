@@ -29,7 +29,7 @@ export interface TextProps {
   headingLevel?: HeadingLevel
   labelSize?: LabelSize
   bodySize?: BodySize
-  fontWeight?: 400 | 600
+  fontWeight?: 400 | 600 | 500
 }
 
 export const Text: React.FC<TextProps> = ({

@@ -1,13 +1,17 @@
-import React from 'react'
-import { Text, TextVariant } from '@/shared/ui/Text/Text'
-import styles from './SelectTrainer.module.scss'
+import React, { useMemo } from 'react'
+import { Input } from '@/shared/ui/Input/Input'
+import { PopoverSelect, SelectItem } from '@/shared/ui/PopoverSelect/PopoverSelect'
 import { useTrainers } from '../model/useTrainers'
 import { useAppSelector } from '@/app/config/store'
 import { selectCurrentCenter } from '@/entities/center'
+import styles from './SelectTrainer.module.scss'
+import { User } from '@/shared/assets/svg/User'
+import { ChevronDown } from '@/shared/assets/svg/ChevronDown'
+import { useSelectManager } from '@/shared/ui/PopoverSelect/useSelectManager'
 
 interface SelectTrainerProps {
   onSelect: (trainerId: number) => void
-  selectedTrainerId?: string | number | null
+  selectedTrainerId?: number | string | null
 }
 
 export const SelectTrainer: React.FC<SelectTrainerProps> = ({
@@ -15,11 +19,24 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
   selectedTrainerId = null
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
+  const { data: trainers = [], isLoading, isError } = useTrainers(id)
+  const { isOpen, toggle, close } = useSelectManager('trainer')
 
-  const { data: trainers, isLoading, isError } = useTrainers(id)
+  const options: SelectItem[] = useMemo(
+    () =>
+      trainers.map((trainer) => ({
+        title: trainer.full_name,
+        text: '',
+        value: trainer.id
+      })),
+    [trainers]
+  )
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onSelect(Number(event.target.value))
+  const selectedTrainer = trainers.find((t) => t.id === Number(selectedTrainerId))
+
+  const handleSelect = (item: SelectItem) => {
+    onSelect(Number(item.value))
+    close()
   }
 
   if (isLoading) return <p>Загрузка...</p>
@@ -27,19 +44,22 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
 
   return (
     <div className={styles.container}>
-      <Text variant={TextVariant.HEADING} headingLevel="h7">
-        Выберите тренера
-      </Text>
-      <div className={styles.trainerList}>
-        <select onChange={handleChange} className={styles.select} value={selectedTrainerId ?? ''}>
-          <option value="">-- Выберите тренера --</option>
-          {trainers?.map((trainer) => (
-            <option key={trainer.id} value={trainer.id}>
-              {trainer.full_name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Input
+        placeholder="Не выбран"
+        label="Тренер"
+        value={selectedTrainer?.full_name ?? ''}
+        readOnly
+        onClick={toggle}
+        leftIcon={<User />}
+        rightIcon={<ChevronDown className={styles.chevron + ` ${isOpen ? styles.isOpen : ''}`} />}
+      />
+      <PopoverSelect
+        isOpen={isOpen}
+        options={options}
+        selectedValue={Number(selectedTrainerId) || null}
+        onSelect={handleSelect}
+        onClose={() => {}}
+      />
     </div>
   )
 }

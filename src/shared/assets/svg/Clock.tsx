@@ -12,7 +12,7 @@ export const Clock = (props: SVGProps<SVGSVGElement>) => {
     >
       <path
         d="M20 10.4999V20.4999L26.6667 23.8333M36.6667 20.4999C36.6667 29.7047 29.2048 37.1666 20 37.1666C10.7953 37.1666 3.33334 29.7047 3.33334 20.4999C3.33334 11.2952 10.7953 3.83325 20 3.83325C29.2048 3.83325 36.6667 11.2952 36.6667 20.4999Z"
-        stroke="#3F68FF"
+        stroke={props.color ? props.color : '#3F68FF'}
         stroke-width="3.5"
         stroke-linecap="round"
         stroke-linejoin="round"

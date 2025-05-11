@@ -1,26 +1,50 @@
-import React from 'react'
-import { Text, TextVariant } from '@/shared/ui/Text/Text'
-import styles from './SelectLesson.module.scss'
+import React, { useMemo } from 'react'
+import { Input } from '@/shared/ui/Input/Input'
+import { PopoverSelect, SelectItem } from '@/shared/ui/PopoverSelect/PopoverSelect'
 import { useLessons } from '../model/useLessons'
-import { selectCurrentCenter } from '@/entities/center'
 import { useAppSelector } from '@/app/config/store'
+import { selectCurrentCenter } from '@/entities/center'
+import styles from './SelectLesson.module.scss'
+import { ChevronDown } from '@/shared/assets/svg/ChevronDown'
+import { useSelectManager } from '@/shared/ui/PopoverSelect/useSelectManager'
+import { FieldError } from 'react-hook-form'
+import { Lesson } from '@/shared/types/lesson'
 
 interface SelectLessonProps {
-  onSelect: (lessonId: number) => void
-  selectedLessonId?: number | null
+  onSelect: (lesson: Lesson) => void
+  selectedLessonId?: number | string | null
   disabled?: boolean
+  error?: FieldError | undefined
 }
 
 export const SelectLesson: React.FC<SelectLessonProps> = ({
   onSelect,
   selectedLessonId = null,
-  disabled = false
+  disabled = false,
+  error
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
-  const { data: lessons, isLoading, isError } = useLessons(id)
+  const { data: lessons = [], isLoading, isError } = useLessons(id)
+  const { isOpen, toggle, close } = useSelectManager('lesson')
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onSelect(Number(event.target.value))
+  const options: SelectItem[] = useMemo(
+    () =>
+      lessons.map((lesson) => ({
+        title: lesson.name,
+        text: '',
+        value: lesson.id
+      })),
+    [lessons]
+  )
+
+  const selectedLesson = lessons.find((l) => l.id === Number(selectedLessonId))
+
+  const handleSelect = (item: SelectItem) => {
+    const lesson = lessons.find((l) => l.id === Number(item.value))
+    if (lesson) {
+      onSelect(lesson)
+      close()
+    }
   }
 
   if (isLoading) return <p>Загрузка...</p>
@@ -28,24 +52,24 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
 
   return (
     <div className={styles.container}>
-      <Text variant={TextVariant.HEADING} headingLevel="h7">
-        Выберите занятие
-      </Text>
-      <div className={styles.lessonList}>
-        <select
-          onChange={handleChange}
-          className={styles.select}
-          value={selectedLessonId ?? ''}
-          disabled={disabled}
-        >
-          <option value="">-- Выберите занятие --</option>
-          {lessons?.map((lesson) => (
-            <option key={lesson.id} value={lesson.id}>
-              {lesson.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Input
+        error={error ? error : undefined}
+        disabled={disabled}
+        required={!selectedLessonId}
+        placeholder="Не выбрано"
+        label="Занятие"
+        value={selectedLesson?.name ?? ''}
+        readOnly
+        onClick={toggle}
+        rightIcon={<ChevronDown className={`${styles.chevron} ${isOpen ? styles.isOpen : ''}`} />}
+      />
+      <PopoverSelect
+        isOpen={isOpen}
+        options={options}
+        selectedValue={Number(selectedLessonId) || null}
+        onSelect={handleSelect}
+        onClose={() => {}}
+      />
     </div>
   )
 }
