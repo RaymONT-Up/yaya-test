@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import styles from './CreateSchedule.module.scss'
-import { Input } from '@/shared/ui/Input/Input'
-import { SelectLesson } from '@/features/lesson/selectLesson'
-import { useCreateSchedule } from '@/entities/schedule'
-import { CreateScheduleDto } from '@/shared/types/schedule'
-import { SelectTrainer } from '@/features/trainer'
-import { Modal } from '@/shared/ui/Modal/Modal'
-import { Button, ButtonVariant } from '@/shared/ui/Button'
-import { Users } from '@/shared/assets/svg/Users'
-import { TimeSelect } from '@/shared/ui/TimeSelect/TimeSelect'
-import { parseTimeToMinutes } from '@/shared/libs/formaDate'
-import { DaySelect } from '@/shared/ui/DaySelect/DaySelect'
-import { Lesson } from '@/shared/types/lesson'
+import React, { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import styles from "./CreateSchedule.module.scss"
+import { Input } from "@/shared/ui/Input/Input"
+import { SelectLesson } from "@/features/lesson/selectLesson"
+import { useCreateSchedule } from "@/entities/schedule"
+import { CreateScheduleDto } from "@/shared/types/schedule"
+import { SelectTrainer } from "@/features/trainer"
+import { Modal } from "@/shared/ui/Modal/Modal"
+import { Button, ButtonVariant } from "@/shared/ui/Button"
+import { Users } from "@/shared/assets/svg/Users"
+import { TimeSelect } from "@/shared/ui/TimeSelect/TimeSelect"
+import { parseTimeToMinutes } from "@/shared/libs/formaDate"
+import { DaySelect } from "@/shared/ui/DaySelect/DaySelect"
+import { Lesson } from "@/shared/types/lesson"
 
 interface Props {
   start?: string
@@ -39,7 +39,7 @@ export const CreateSchedule: React.FC<Props> = ({
   isEditing = false
 }) => {
   const [duration, setDuration] = useState<number>(0)
-  const [minTime, setMinTime] = useState<string>('')
+  const [minTime, setMinTime] = useState<string>("")
   const {
     register,
     handleSubmit,
@@ -51,20 +51,20 @@ export const CreateSchedule: React.FC<Props> = ({
     defaultValues: {
       day: new Date().toISOString().slice(0, 10),
       lesson_id: null,
-      start: start ?? '',
-      end: end ?? '',
+      start: start ?? "",
+      end: end ?? "",
       places: null,
       trainer_id: undefined
     }
   })
   const { isPending, mutate } = useCreateSchedule({
     onSuccess: (data) => {
-      console.log('Расписание успешно добавлено:', data)
+      console.log("Расписание успешно добавлено:", data)
       reset({
         day: new Date().toISOString().slice(0, 10),
         lesson_id: null,
-        start: '',
-        end: '',
+        start: "",
+        end: "",
         places: null,
         trainer_id: undefined
       })
@@ -72,7 +72,7 @@ export const CreateSchedule: React.FC<Props> = ({
       onClose()
     },
     onError: (err) => {
-      console.error('Ошибка при добавлении расписания:', err)
+      console.error("Ошибка при добавлении расписания:", err)
     }
   })
 
@@ -81,13 +81,13 @@ export const CreateSchedule: React.FC<Props> = ({
       const startDate = new Date(start)
       const endDate = new Date(end)
 
-      setValue('day', startDate.toISOString().slice(0, 10))
-      setValue('start', startDate.toTimeString().slice(0, 5))
-      setValue('end', endDate.toTimeString().slice(0, 5))
+      setValue("day", startDate.toISOString().slice(0, 10))
+      setValue("start", startDate.toTimeString().slice(0, 5))
+      setValue("end", endDate.toTimeString().slice(0, 5))
     } else {
-      setValue('day', '')
-      setValue('start', '')
-      setValue('end', '')
+      setValue("day", "")
+      setValue("start", "")
+      setValue("end", "")
     }
   }, [start, end, setValue])
 
@@ -107,29 +107,29 @@ export const CreateSchedule: React.FC<Props> = ({
 
   const handleLessonSelect = (selectedLesson: Lesson) => {
     setDuration(selectedLesson.duration ?? 0)
-    setValue('lesson_id', selectedLesson.id ?? null)
+    setValue("lesson_id", selectedLesson.id ?? null)
   }
   const handleTrainerSelect = (selectedTrainer: number) => {
-    setValue('trainer_id', selectedTrainer)
+    setValue("trainer_id", selectedTrainer)
   }
   const handleStartSelect = (start: string) => {
-    setValue('start', start)
+    setValue("start", start)
   }
   const handleEndSelect = (end: string) => {
-    setValue('end', end)
+    setValue("end", end)
   }
   const handleDaySelect = (day: Date | null) => {
     if (day) {
       const localDate = new Date(day.getTime() - day.getTimezoneOffset() * 60000)
-      setValue('day', localDate.toISOString().slice(0, 10))
+      setValue("day", localDate.toISOString().slice(0, 10))
     } else {
-      setValue('day', '')
+      setValue("day", "")
     }
   }
 
-  const startTime = watch('start')
-  const endTime = watch('end')
-  const day = watch('day')
+  const startTime = watch("start")
+  const endTime = watch("end")
+  const day = watch("day")
 
   useEffect(() => {
     if (startTime && endTime) {
@@ -141,7 +141,6 @@ export const CreateSchedule: React.FC<Props> = ({
     }
   }, [startTime, endTime])
   useEffect(() => {
-    console.log('day', day)
     const today = new Date().toISOString().slice(0, 10)
     if (day === today) {
       const currentTime = new Date()
@@ -150,7 +149,7 @@ export const CreateSchedule: React.FC<Props> = ({
       currentTime.setMinutes(roundedMinutes, 0, 0)
       setMinTime(currentTime.toTimeString().slice(0, 5))
     } else {
-      setMinTime('06:00')
+      setMinTime("06:00")
     }
   }, [day])
   return (
@@ -174,9 +173,9 @@ export const CreateSchedule: React.FC<Props> = ({
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={styles.gridContainer}>
           <SelectLesson
-            {...register('lesson_id', { required: 'Выберите занятие' })}
+            {...register("lesson_id", { required: "Выберите занятие" })}
             onSelect={handleLessonSelect}
-            selectedLessonId={watch('lesson_id')}
+            selectedLessonId={watch("lesson_id")}
             disabled={isEditing}
             error={errors.lesson_id}
           />
@@ -184,16 +183,16 @@ export const CreateSchedule: React.FC<Props> = ({
           <>Теги</>
 
           {/* Тренер */}
-          <SelectTrainer onSelect={handleTrainerSelect} selectedTrainerId={watch('trainer_id')} />
+          <SelectTrainer onSelect={handleTrainerSelect} selectedTrainerId={watch("trainer_id")} />
           {/* Количество мест */}
 
           <Input
             leftIcon={<Users />}
             placeholder="Не указано"
             label="Количество мест"
-            required={!watch('places')}
+            required={!watch("places")}
             type="number"
-            {...register('places', { required: true, min: 1 })}
+            {...register("places", { required: true, min: 1 })}
             error={errors.places}
           />
           <div className={styles.gridRow}>
@@ -212,9 +211,9 @@ export const CreateSchedule: React.FC<Props> = ({
               label="Начало"
               required
               minTime={minTime}
-              value={watch('start')}
+              value={watch("start")}
               mode="start"
-              {...register('start', { required: 'Выберите начало занятия' })}
+              {...register("start", { required: "Выберите начало занятия" })}
               onChange={handleStartSelect}
               error={errors.start}
             />
@@ -223,12 +222,12 @@ export const CreateSchedule: React.FC<Props> = ({
             <TimeSelect
               label="Конец"
               required
-              value={watch('end')}
+              value={watch("end")}
               minTime={minTime}
-              startTime={watch('start')}
+              startTime={watch("start")}
               defaultDuration={duration}
               mode="end"
-              {...register('end', { required: 'Выберите конец занятия' })}
+              {...register("end", { required: "Выберите конец занятия" })}
               onChange={handleEndSelect}
               error={errors.end}
             />
