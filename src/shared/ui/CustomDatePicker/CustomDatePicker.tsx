@@ -1,0 +1,60 @@
+import { format } from 'date-fns'
+import DatePicker from 'react-datepicker'
+import { ChevronLeft } from '@/shared/assets/svg/ChevronLeft'
+import { ChevronRight } from '@/shared/assets/svg/ChevronRight'
+import clsx from 'clsx'
+import styles from './CustomDatePicker.module.scss'
+import './datePicker.scss'
+
+import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
+
+interface Props {
+  value: Date | null
+  onChange: (value: Date | null) => void
+  minDate?: Date
+  maxDate?: Date
+  inline?: boolean
+  className?: string
+}
+
+export const CustomDatePicker = ({
+  value,
+  onChange,
+  minDate,
+  maxDate,
+  inline = true,
+  className
+}: Props) => {
+  return (
+    <DatePicker
+      selected={value}
+      onChange={onChange}
+      inline={inline}
+      minDate={minDate}
+      maxDate={maxDate}
+      dateFormat="yyyy-MM-dd"
+      calendarClassName={clsx(styles.calendar, className)}
+      renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
+        <div className={styles.header}>
+          <span className={styles.month}>{format(date, 'MMMM yyyy')}</span>
+          <div className={styles.changeDate}>
+            <Button
+              isIconButton
+              size={ButtonSize.Small}
+              variant={ButtonVariant.Subtle}
+              onClick={decreaseMonth}
+              iconEnd={<ChevronLeft color="#262527" width={16} height={16} />}
+            />
+            <Button
+              isIconButton
+              size={ButtonSize.Small}
+              variant={ButtonVariant.Subtle}
+              onClick={increaseMonth}
+              iconEnd={<ChevronRight color="#262527" width={16} height={16} />}
+            />
+          </div>
+        </div>
+      )}
+    />
+  )
+}
