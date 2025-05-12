@@ -200,9 +200,11 @@ export const CreateSchedule: React.FC<Props> = ({
             <DaySelect
               required
               label="Дата занятия"
-              value={watch("day")}
+              value={watch('day')}
+              {...register('day', { required: 'Выберите день занятия' })}
               onChange={handleDaySelect}
               minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              error={errors.day}
             />
             {/* Начало*/}
             <TimeSelect

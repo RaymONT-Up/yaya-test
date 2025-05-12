@@ -4,18 +4,18 @@ import { Calendar } from '@/shared/assets/svg/Calendar'
 import { CloseX } from '@/shared/assets/svg/Close'
 import { format } from 'date-fns'
 import styles from './DaySelect.module.scss'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-
+import { FieldError } from 'react-hook-form'
+import { CustomDatePicker } from '@/shared/ui/CustomDatePicker/CustomDatePicker'
 interface DaySelectProps {
   value: Date | null | string
   onChange: (date: Date | null) => void
   label?: string
   required?: boolean
   minDate?: Date
+  error?: FieldError | undefined
 }
 
-export const DaySelect = ({ value, onChange, label, required, minDate }: DaySelectProps) => {
+export const DaySelect = ({ value, onChange, label, required, minDate, error }: DaySelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleDaySelect = (date: Date | null) => {
@@ -35,6 +35,7 @@ export const DaySelect = ({ value, onChange, label, required, minDate }: DaySele
   return (
     <div className={styles.container}>
       <Input
+        error={error ? error : undefined}
         label={label}
         required={!value && required}
         readOnly
@@ -46,11 +47,9 @@ export const DaySelect = ({ value, onChange, label, required, minDate }: DaySele
       />
       {isOpen && (
         <div className={styles.pickerWrapper}>
-          <DatePicker
-            selected={value ? new Date(value) : null}
+          <CustomDatePicker
+            value={value ? new Date(value) : null}
             onChange={handleDaySelect}
-            inline
-            dateFormat="yyyy-MM-dd"
             minDate={minDate}
           />
         </div>
