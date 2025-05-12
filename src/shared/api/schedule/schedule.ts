@@ -6,16 +6,16 @@ import {
   EditScheduleDto,
   ScheduleEvent,
   ScheduleResponse
-} from '../../types/schedule'
-import { apiWithTokenAndCenter } from '../api'
-import { AxiosResponse } from 'axios'
+} from "../../types/schedule"
+import { apiWithTokenAndCenter } from "../api"
+import { AxiosResponse } from "axios"
 
 export const $getSchedules = async (
   start_date: string,
   end_date: string,
   lesson_ids?: number[]
 ): Promise<AxiosResponse<ScheduleResponse>> => {
-  const response = await apiWithTokenAndCenter.get<ScheduleResponse>(`/partners/schedules/`, {
+  const response = await apiWithTokenAndCenter.get<ScheduleResponse>("/partners/schedules/", {
     params: {
       start_date,
       end_date,
@@ -47,14 +47,14 @@ export const $getScheduleById = async (id: number): Promise<AxiosResponse<Schedu
 export const $createSchedule = async (
   data: CreateScheduleDto
 ): Promise<AxiosResponse<ScheduleEvent>> => {
-  const response = await apiWithTokenAndCenter.post<ScheduleEvent>('/partners/schedules/', data)
+  const response = await apiWithTokenAndCenter.post<ScheduleEvent>("/partners/schedules/", data)
   return response
 }
 export const $duplicateSchedule = async (
   data: DuplicateScheduleDto
 ): Promise<AxiosResponse<ScheduleEvent>> => {
   const response = await apiWithTokenAndCenter.post<ScheduleEvent>(
-    '/partners/schedules/duplicate/',
+    "/partners/schedules/duplicate/",
     data
   )
   return response
@@ -84,6 +84,6 @@ export const $cancelSchedule = async (
 }
 // Отмена нескольких расписаний
 export const $cancelSchedules = async (data: CancelScheduleSDto): Promise<AxiosResponse<void>> => {
-  const response = await apiWithTokenAndCenter.post(`/partners/schedules/cancel-schedules/`, data)
+  const response = await apiWithTokenAndCenter.post("/partners/schedules/cancel-schedules/", data)
   return response
 }
