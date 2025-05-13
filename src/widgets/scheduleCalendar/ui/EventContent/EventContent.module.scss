@@ -1,4 +1,7 @@
 .customEvent{
+    position: relative;
+    min-height: 20px;
+    overflow: hidden;
 }
 .eventTitle{
     color: var(--text-brand);

@@ -178,9 +178,8 @@ export const CreateSchedule: React.FC<Props> = ({
             selectedLessonId={watch("lesson_id")}
             disabled={isEditing}
             error={errors.lesson_id}
+            className={styles.selectLesson}
           />
-          {/* теги */}
-          <>Теги</>
 
           {/* Тренер */}
           <SelectTrainer onSelect={handleTrainerSelect} selectedTrainerId={watch("trainer_id")} />
@@ -200,8 +199,8 @@ export const CreateSchedule: React.FC<Props> = ({
             <DaySelect
               required
               label="Дата занятия"
-              value={watch('day')}
-              {...register('day', { required: 'Выберите день занятия' })}
+              value={watch("day")}
+              {...register("day", { required: "Выберите день занятия" })}
               onChange={handleDaySelect}
               minDate={new Date(new Date().setHours(0, 0, 0, 0))}
               error={errors.day}

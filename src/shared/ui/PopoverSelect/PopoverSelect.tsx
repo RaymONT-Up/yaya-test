@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react'
-import { Text, TextVariant } from '@/shared/ui/Text/Text'
-import styles from './PopoverSelect.module.scss'
+import React, { useEffect, useRef } from "react"
+import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import styles from "./PopoverSelect.module.scss"
 
 export type SelectItem = {
   title: string
-  text: string
+  text: React.ReactNode | string
   value: string | number
 }
 interface PopoverSelectProps {
@@ -13,6 +13,7 @@ interface PopoverSelectProps {
   selectedValue: number | null | string
   onSelect: (option: SelectItem) => void
   onClose: () => void
+  width?: string | number
 }
 
 export const PopoverSelect: React.FC<PopoverSelectProps> = ({
@@ -20,7 +21,8 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   options,
   selectedValue,
   onSelect,
-  onClose
+  onClose,
+  width = "360px"
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
 
@@ -32,12 +34,12 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
     }
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside)
     } else {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener("mousedown", handleClickOutside)
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [isOpen, onClose])
 
@@ -49,11 +51,11 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   return (
     <div className={styles.popoverContainer}>
       {isOpen && (
-        <div className={styles.popoverContent} ref={popoverRef}>
+        <div className={styles.popoverContent} ref={popoverRef} style={{ width }}>
           {options.map((option) => (
             <div
               key={option.value}
-              className={`${styles.option} ${option.value === selectedValue ? styles.selected : ''}`}
+              className={`${styles.option} ${option.value === selectedValue ? styles.selected : ""}`}
               onClick={() => handleSelectOption(option)}
             >
               <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
