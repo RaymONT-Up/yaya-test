@@ -1,0 +1,29 @@
+.tabContainer {
+  display: flex;
+  background-color: var(--gray-100);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.tab {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background-color: transparent;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.active {
+  background-color: white;
+}
+
+.separator {
+  width: 1px;
+  height: 16px;
+  margin: auto;
+  background-color: var(--gray-300);
+}

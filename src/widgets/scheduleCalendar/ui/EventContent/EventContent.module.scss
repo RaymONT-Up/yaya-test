@@ -37,3 +37,9 @@
     border-radius: 50%;
     background-color: #5163AE;
   }
+  .eventShortTitle{
+    color: var(--text-brand);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }

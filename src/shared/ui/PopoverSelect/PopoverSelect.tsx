@@ -1,12 +1,15 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState, useMemo } from "react"
 import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import { Input } from "@/shared/ui/Input/Input"
 import styles from "./PopoverSelect.module.scss"
+import { Search } from "@/shared/assets/svg/Search"
 
 export type SelectItem = {
   title: string
   text: React.ReactNode | string
   value: string | number
 }
+
 interface PopoverSelectProps {
   isOpen: boolean
   options: SelectItem[]
@@ -14,6 +17,7 @@ interface PopoverSelectProps {
   onSelect: (option: SelectItem) => void
   onClose: () => void
   width?: string | number
+  showSearch?: boolean
 }
 
 export const PopoverSelect: React.FC<PopoverSelectProps> = ({
@@ -22,9 +26,11 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   selectedValue,
   onSelect,
   onClose,
-  width = "360px"
+  width = "360px",
+  showSearch = false
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
+  const [searchValue, setSearchValue] = useState("")
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,6 +44,7 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
     } else {
       document.removeEventListener("mousedown", handleClickOutside)
     }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
@@ -48,26 +55,50 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
     onClose()
   }
 
+  const filteredOptions = useMemo(() => {
+    const normalized = searchValue.trim().toLowerCase()
+    if (!normalized) return options
+    return options.filter((option) => option.title.toLowerCase().includes(normalized))
+  }, [searchValue, options])
+
   return (
     <div className={styles.popoverContainer}>
       {isOpen && (
         <div className={styles.popoverContent} ref={popoverRef} style={{ width }}>
-          {options.map((option) => (
-            <div
-              key={option.value}
-              className={`${styles.option} ${option.value === selectedValue ? styles.selected : ""}`}
-              onClick={() => handleSelectOption(option)}
-            >
-              <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
-                {option.title}
-              </Text>
-              {option.text && (
-                <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
-                  {option.text}
-                </Text>
-              )}
+          {showSearch && (
+            <div className={styles.search}>
+              <Input
+                leftIcon={<Search />}
+                placeholder="Поиск по названию"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
             </div>
-          ))}
+          )}
+          <div className={styles.optionsWrapper}>
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <div
+                  key={option.value}
+                  className={`${styles.option} ${option.value === selectedValue ? styles.selected : ""}`}
+                  onClick={() => handleSelectOption(option)}
+                >
+                  <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
+                    {option.title}
+                  </Text>
+                  {option.text && (
+                    <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
+                      {option.text}
+                    </Text>
+                  )}
+                </div>
+              ))
+            ) : (
+              <Text variant={TextVariant.BODY} bodySize="small" className={styles.empty}>
+                Опции не найдены
+              </Text>
+            )}
+          </div>
         </div>
       )}
     </div>

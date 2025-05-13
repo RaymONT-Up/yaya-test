@@ -10,21 +10,27 @@ import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 import { FieldError } from "react-hook-form"
 import { Lesson } from "@/shared/types/lesson"
 import clsx from "clsx"
+import { Menu } from "@/shared/ui/Menu/Menu"
+import { Clipboard } from "@/shared/assets/svg/Clipboard"
 
 interface SelectLessonProps {
-  onSelect: (lesson: Lesson) => void
-  selectedLessonId?: number | string | null
+  onSelect: (lesson: Lesson | (string | number)[]) => void
+  selectedLessonId?: number | string | null | (number | string)[]
   disabled?: boolean
   error?: FieldError | undefined
   className?: string
+  isMultiply?: boolean
+  labelText?: string
 }
 
 export const SelectLesson: React.FC<SelectLessonProps> = ({
   onSelect,
+  labelText = "Занятие",
   selectedLessonId = null,
   disabled = false,
   error,
-  className
+  className,
+  isMultiply = false
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isLoading, isError } = useLessons(id)
@@ -47,7 +53,6 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
                 <span>{lesson.language}</span>
               </>
             )}
-
             {lesson.level && (
               <>
                 <span className={styles.dot}></span>
@@ -61,24 +66,34 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
     [lessons]
   )
 
-  const selectedLesson = lessons.find((l) => l.id === Number(selectedLessonId))
+  const selectedIdsArray = useMemo(() => {
+    if (Array.isArray(selectedLessonId)) return selectedLessonId
+    return selectedLessonId !== null ? [selectedLessonId] : []
+  }, [selectedLessonId])
+
+  const selectedLessons = lessons.filter((l) => selectedIdsArray.includes(l.id))
+
   const valueParts = useMemo(() => {
-    if (!selectedLesson) return ""
-    const parts = [
-      selectedLesson.name,
-      `${selectedLesson.min_age_str} - ${selectedLesson.max_age_str}`,
-      `${selectedLesson.duration} м`,
-      selectedLesson.language,
-      selectedLesson.level
-    ].filter(Boolean)
-    return parts.join(" ∙ ")
-  }, [selectedLesson])
-  const handleSelect = (item: SelectItem) => {
+    if (isMultiply) {
+      return selectedLessons.length ? `Выбрано секций: ${selectedLessons.length}` : ""
+    }
+
+    const lesson = selectedLessons[0]
+    if (!lesson) return ""
+
+    return `${lesson.name} (${lesson.min_age_str}-${lesson.max_age_str}, ${lesson.duration}м)`
+  }, [isMultiply, selectedLessons])
+
+  const handleSelectSingle = (item: SelectItem) => {
     const lesson = lessons.find((l) => l.id === Number(item.value))
     if (lesson) {
       onSelect(lesson)
       close()
     }
+  }
+
+  const handleSelectMultiple = (values: (string | number)[]) => {
+    onSelect(values)
   }
 
   if (isLoading) return <p>Загрузка...</p>
@@ -87,24 +102,39 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   return (
     <div className={clsx(styles.container, className)}>
       <Input
-        error={error ? error : undefined}
+        leftIcon={<Clipboard />}
+        error={error}
         disabled={disabled}
-        required={!selectedLessonId}
+        required={!selectedIdsArray.length}
         placeholder="Не выбрано"
-        label="Занятие"
+        label={labelText}
         value={valueParts}
         readOnly
         onClick={toggle}
-        rightIcon={<ChevronDown className={`${styles.chevron} ${isOpen ? styles.isOpen : ""}`} />}
+        rightIcon={<ChevronDown className={clsx(styles.chevron, isOpen && styles.isOpen)} />}
       />
-      <PopoverSelect
-        isOpen={isOpen}
-        options={options}
-        selectedValue={Number(selectedLessonId) || null}
-        onSelect={handleSelect}
-        onClose={() => {}}
-        width={"100%"}
-      />
+
+      {isMultiply ? (
+        <Menu
+          showSearch
+          isOpen={isOpen}
+          selectedValues={selectedIdsArray}
+          options={options}
+          onClose={close}
+          onChange={handleSelectMultiple}
+          width="100%"
+        />
+      ) : (
+        <PopoverSelect
+          showSearch
+          isOpen={isOpen}
+          selectedValue={selectedIdsArray[0] || null}
+          options={options}
+          onClose={close}
+          onSelect={handleSelectSingle}
+          width="100%"
+        />
+      )}
     </div>
   )
 }

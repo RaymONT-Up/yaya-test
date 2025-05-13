@@ -1,25 +1,25 @@
-import React from 'react'
-import clsx from 'clsx'
-import styles from './Text.module.scss'
+import React from "react"
+import clsx from "clsx"
+import styles from "./Text.module.scss"
 
 export enum TextTheme {
-  DEFAULT = 'default',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-  ERROR = 'error'
+  DEFAULT = "default",
+  SUCCESS = "success",
+  WARNING = "warning",
+  ERROR = "error"
 }
 
 export enum TextVariant {
-  HEADING = 'heading',
-  LABEL = 'label',
-  BODY = 'body'
+  HEADING = "heading",
+  LABEL = "label",
+  BODY = "body"
 }
 
-export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'h7' | 'h8'
+export type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7" | "h8"
 
-export type LabelSize = 'large' | 'medium' | 'small'
+export type LabelSize = "large" | "medium" | "small"
 
-export type BodySize = 'large' | 'medium' | 'small' | 'tiny'
+export type BodySize = "large" | "medium" | "small" | "tiny"
 
 export interface TextProps {
   children: React.ReactNode
@@ -30,6 +30,7 @@ export interface TextProps {
   labelSize?: LabelSize
   bodySize?: BodySize
   fontWeight?: 400 | 600 | 500
+  onClick?: () => void
 }
 
 export const Text: React.FC<TextProps> = ({
@@ -37,10 +38,11 @@ export const Text: React.FC<TextProps> = ({
   theme = TextTheme.DEFAULT,
   className,
   variant = TextVariant.BODY,
-  headingLevel = 'h1',
-  labelSize = 'medium',
-  bodySize = 'medium',
-  fontWeight = 400
+  headingLevel = "h1",
+  labelSize = "medium",
+  bodySize = "medium",
+  fontWeight = 400,
+  onClick
 }) => {
   const mods = [
     styles[theme],
@@ -51,5 +53,9 @@ export const Text: React.FC<TextProps> = ({
     variant === TextVariant.BODY && styles[`weight-${fontWeight}`]
   ]
 
-  return <span className={clsx(styles.text, mods, className)}>{children}</span>
+  return (
+    <span onClick={onClick} className={clsx(styles.text, mods, className)}>
+      {children}
+    </span>
+  )
 }

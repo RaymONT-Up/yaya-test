@@ -89,6 +89,12 @@ z-index: 5;
   border-left: 4px solid var(--blue-700);
   padding-top: 2px;
   color: var(--event-text-color) !important;
+  min-height: 20px;
+}
+.fc-v-event{
+  margin-top: 2px;
+  border: none;
+  background: none;
 }
 
 /* Cursor not allowed to select time */

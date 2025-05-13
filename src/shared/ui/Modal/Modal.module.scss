@@ -35,7 +35,7 @@
   padding: 12px 24px 24px;
   border-top: 1px solid var(--border-gray-light);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr auto;
   gap: 24px;
 }
 

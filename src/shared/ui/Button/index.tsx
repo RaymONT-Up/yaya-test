@@ -1,7 +1,7 @@
-import { FC, ButtonHTMLAttributes, ReactNode } from 'react'
-import clsx from 'clsx'
-import styles from './Button.module.scss'
-import { Loader } from '@/shared/ui/Loader/Loader'
+import { FC, ButtonHTMLAttributes, ReactNode } from "react"
+import clsx from "clsx"
+import styles from "./Button.module.scss"
+import { Loader } from "@/shared/ui/Loader/Loader"
 
 interface BaseProps {
   variant?: ButtonVariant
@@ -13,19 +13,20 @@ interface BaseProps {
 }
 
 type ButtonProps = BaseProps &
-  Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'> & {
-    type?: 'button' | 'submit' | 'reset'
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> & {
+    type?: "button" | "submit" | "reset"
   }
 export enum ButtonVariant {
-  Primary = 'primary',
-  Neutral = 'neutral',
-  Subtle = 'subtle',
-  Text = 'text'
+  RED = "red",
+  Primary = "primary",
+  Neutral = "neutral",
+  Subtle = "subtle",
+  Text = "text"
 }
 
 export enum ButtonSize {
-  Medium = 'medium',
-  Small = 'small'
+  Medium = "medium",
+  Small = "small"
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -34,7 +35,7 @@ export const Button: FC<ButtonProps> = ({
   loading = false,
   disabled,
   children,
-  type = 'button',
+  type = "button",
   className,
   iconStart,
   iconEnd,

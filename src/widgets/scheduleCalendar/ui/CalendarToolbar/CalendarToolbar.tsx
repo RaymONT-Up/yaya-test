@@ -1,14 +1,17 @@
-import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
-import styles from './CalendarToolbar.module.scss'
-import { ChevronLeft } from '@/shared/assets/svg/ChevronLeft'
-import { ChevronRight } from '@/shared/assets/svg/ChevronRight'
-import { Calendar } from '@/shared/assets/svg/Calendar'
-import { Filter } from '@/shared/assets/svg/Filter'
-import FullCalendar from '@fullcalendar/react'
-import { formatDateRange } from '@/shared/libs/formaDate'
-import { Settings } from '@/shared/assets/svg/Settings'
-import { ChevronDown } from '@/shared/assets/svg/ChevronDown'
-import { Plus } from '@/shared/assets/svg/Plus'
+import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
+import styles from "./CalendarToolbar.module.scss"
+import { ChevronLeft } from "@/shared/assets/svg/ChevronLeft"
+import { ChevronRight } from "@/shared/assets/svg/ChevronRight"
+import { Calendar } from "@/shared/assets/svg/Calendar"
+import { Filter } from "@/shared/assets/svg/Filter"
+import FullCalendar from "@fullcalendar/react"
+import { formatDateRange } from "@/shared/libs/formaDate"
+import { Settings } from "@/shared/assets/svg/Settings"
+import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
+import { Plus } from "@/shared/assets/svg/Plus"
+import { useRef, useState } from "react"
+import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import { XSquare } from "@/shared/assets/svg/XSquare"
 
 type DateRange = {
   startDate: string
@@ -20,13 +23,27 @@ type Props = {
   dateRange: DateRange
   setModalOpen: (open: boolean) => void
   setDuplicateModalOpen: (open: boolean) => void
+  setCancelModalOpen: (open: boolean) => void
 }
 export const CalendarToolbar: React.FC<Props> = ({
   calendarRef,
   dateRange,
-  // setDuplicateModalOpen,
+  setDuplicateModalOpen,
+  setCancelModalOpen,
   setModalOpen
 }) => {
+  const [showPopover, setShowPopover] = useState(false)
+  const popoverRef = useRef<HTMLDivElement | null>(null)
+
+  const togglePopover = () => setShowPopover((prev) => !prev)
+  const handleOptionClick = (action: "duplicate" | "cancel") => {
+    if (action === "duplicate") {
+      setDuplicateModalOpen(true)
+    } else {
+      setCancelModalOpen(true)
+    }
+    setShowPopover(false)
+  }
   return (
     <div className={styles.calendarToolbar}>
       <div className={styles.left}>
@@ -69,15 +86,36 @@ export const CalendarToolbar: React.FC<Props> = ({
       </div>
       <div className={styles.center}></div>
       <div className={styles.right}>
-        <Button
-          iconStart={<Settings />}
-          iconEnd={<ChevronDown />}
-          size={ButtonSize.Small}
-          variant={ButtonVariant.Neutral}
-          // onClick={() => setDuplicateModalOpen(true)}
-        >
-          Редактировать
-        </Button>
+        <div className={styles.popoverContainer} ref={popoverRef}>
+          <Button
+            iconStart={<Settings />}
+            iconEnd={<ChevronDown />}
+            size={ButtonSize.Small}
+            variant={ButtonVariant.Neutral}
+            onClick={togglePopover}
+          >
+            Редактировать
+          </Button>
+
+          {showPopover && (
+            <div className={styles.popoverContent}>
+              <div className={styles.option} onClick={() => handleOptionClick("duplicate")}>
+                <Calendar width={20} height={20} />
+                <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
+                  Дублирование расписания
+                </Text>
+                <span className={styles.title}></span>
+              </div>
+              <div className={styles.option} onClick={() => handleOptionClick("cancel")}>
+                <XSquare width={20} height={20} />
+
+                <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
+                  Отмена расписания
+                </Text>
+              </div>
+            </div>
+          )}
+        </div>
         <Button
           iconStart={<Plus />}
           size={ButtonSize.Small}

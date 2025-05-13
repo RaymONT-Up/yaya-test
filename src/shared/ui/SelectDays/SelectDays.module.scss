@@ -1,0 +1,16 @@
+.container {
+    position: relative;
+    width: 100%;
+}
+
+.pickerWrapper {
+    position: absolute;
+    background: transparent;
+    bottom: 100%;
+    left: 0;
+    z-index: 10;
+    border-radius: 24px;
+}
+
+
+

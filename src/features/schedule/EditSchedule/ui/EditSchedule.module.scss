@@ -1,5 +1,5 @@
 .form{
-    width: 552px;
+    max-width: 552px;
 }
 .readonlyFields{
     display: flex;
@@ -35,10 +35,27 @@
 .placeInput{
     max-width: 200px;
 }
+.alertBlock{
+    margin-top: 32px;
+}
 .alert{
     max-width: 100%;
     width: 100%;
 }
 .cancelReason{
     height: 100px;
+}
+.errorBlock{
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    svg{
+        path{
+            stroke: var(--red-700);
+        }
+    }
+}
+.errorText{
+    color: var(--red-700);
 }

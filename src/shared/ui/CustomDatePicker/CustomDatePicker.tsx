@@ -1,42 +1,24 @@
-import { format } from 'date-fns'
-import DatePicker from 'react-datepicker'
-import { ChevronLeft } from '@/shared/assets/svg/ChevronLeft'
-import { ChevronRight } from '@/shared/assets/svg/ChevronRight'
-import clsx from 'clsx'
-import styles from './CustomDatePicker.module.scss'
-import './datePicker.scss'
+import { format } from "date-fns"
+import DatePicker from "react-datepicker"
+import { ChevronLeft } from "@/shared/assets/svg/ChevronLeft"
+import { ChevronRight } from "@/shared/assets/svg/ChevronRight"
+import clsx from "clsx"
+import styles from "./CustomDatePicker.module.scss"
+import "./datePicker.scss"
 
-import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
+import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 
-interface Props {
-  value: Date | null
-  onChange: (value: Date | null) => void
-  minDate?: Date
-  maxDate?: Date
-  inline?: boolean
+type Props = React.ComponentProps<typeof DatePicker> & {
   className?: string
 }
 
-export const CustomDatePicker = ({
-  value,
-  onChange,
-  minDate,
-  maxDate,
-  inline = true,
-  className
-}: Props) => {
+export const CustomDatePicker = ({ className, ...props }: Props) => {
   return (
     <DatePicker
-      selected={value}
-      onChange={onChange}
-      inline={inline}
-      minDate={minDate}
-      maxDate={maxDate}
-      dateFormat="yyyy-MM-dd"
-      calendarClassName={clsx(styles.calendar, className)}
+      {...props}
       renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
         <div className={styles.header}>
-          <span className={styles.month}>{format(date, 'MMMM yyyy')}</span>
+          <span className={styles.month}>{format(date, "MMMM yyyy")}</span>
           <div className={styles.changeDate}>
             <Button
               isIconButton
@@ -55,6 +37,8 @@ export const CustomDatePicker = ({
           </div>
         </div>
       )}
+      inline
+      calendarClassName={clsx(styles.calendar, className)}
     />
   )
 }

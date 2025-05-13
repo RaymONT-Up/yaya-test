@@ -105,7 +105,9 @@ export const CreateSchedule: React.FC<Props> = ({
     }
   }
 
-  const handleLessonSelect = (selectedLesson: Lesson) => {
+  const handleLessonSelect = (selectedLesson: Lesson | (string | number)[]) => {
+    if (Array.isArray(selectedLesson)) return
+
     setDuration(selectedLesson.duration ?? 0)
     setValue("lesson_id", selectedLesson.id ?? null)
   }

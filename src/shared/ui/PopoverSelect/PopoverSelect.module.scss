@@ -19,17 +19,13 @@
     width: 360px;
     max-height: 320px;
     padding: 4px;
-    overflow-y: scroll;
+    overflow-y: auto;
     border: 1px solid var(--border-gray-light);
     border-radius: 12px;
     background-color: white;
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: var(--border-gray-light);
-      border-radius: 4px;
-    }
+    display: flex;
+    flex-direction: column;
+
   }
   
   .option {
@@ -52,4 +48,26 @@
 }
 .text{
   color: var(--text-secondary);
+}
+
+.search{
+  margin: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-default);
+}
+.empty{
+  padding: 12px;
+}
+
+
+.optionsWrapper {
+  max-height: 300px;
+  overflow-y: auto;
+      &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-gray-light);
+      border-radius: 4px;
+    }
 }
