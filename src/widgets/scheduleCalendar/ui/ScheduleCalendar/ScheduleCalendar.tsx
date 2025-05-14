@@ -22,6 +22,7 @@ import { Check } from "@/shared/assets/svg/Check"
 import { $cancelSchedule } from "@/shared/api/schedule/schedule"
 import { EventContent } from "../EventContent/EventContent"
 import { DayHeader } from "../DayHeader/DayHeader"
+import { CancelSchedule } from "@/features/schedule/CancelSchedule"
 
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -189,7 +190,7 @@ export const ScheduleCalendar: React.FC = () => {
         />
       )}
       <DuplicateSchedule onClose={() => setDuplicateModalOpen(false)} isOpen={duplicateModalOpen} />
-      <DuplicateSchedule onClose={() => setCancelModalOpen(false)} isOpen={cancelModalOpen} />
+      <CancelSchedule onClose={() => setCancelModalOpen(false)} isOpen={cancelModalOpen} />
     </>
   )
 }

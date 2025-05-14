@@ -3,23 +3,23 @@
 
   max-width: 736px;
 }
-.modeSelect {
-  display: flex;
+.tabs{
+  width: 732px;
+}
+.gridContainer{
+  margin-top: 32px;
+}
+.gridRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-.activeMode {
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--primary-color);
-}
-
-.inactiveMode {
-  cursor: pointer;
-  color: var(--text-secondary);
-}
-
-.tabs{
-  width: 732px;
+.arrow {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
 }

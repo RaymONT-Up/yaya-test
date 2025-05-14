@@ -96,5 +96,10 @@ z-index: 5;
   border: none;
   background: none;
 }
+.fc-v-event{
+  overflow-x: hidden;
+  overflow-y: clip;
+  min-height: 20px;
+}
 
 /* Cursor not allowed to select time */

@@ -4,10 +4,17 @@ import styles from "./DuplicateSchedule.module.scss"
 import { Button, ButtonVariant } from "@/shared/ui/Button"
 import { DaySelect } from "@/shared/ui/DaySelect/DaySelect"
 import { SelectLesson } from "@/features/lesson/selectLesson"
-import { Lesson } from "@/shared/types/lesson"
 import { Dialog } from "@/shared/ui/Dialog/Dialog"
 import { Tabs } from "@/shared/ui/Tab/Tab"
 import { SelectDays } from "@/shared/ui/SelectDays/SelectDays"
+import { ArrowRight } from "@/shared/assets/svg/ArrowRight"
+import { useDuplicateSchedule } from "@/entities/schedule"
+import { DuplicateScheduleType } from "@/shared/types/schedule"
+import { toDateString } from "@/shared/libs/formaDate"
+import { WeekSelect } from "@/shared/ui/WeekSelect/WeekSelect"
+import { useNotifications } from "@/shared/ui/Notification"
+import { NotificationVariant } from "@/shared/ui/Notification/ui/Notification/Notification"
+import { Check } from "@/shared/assets/svg/Check"
 
 interface Props {
   isOpen: boolean
@@ -21,9 +28,32 @@ interface FormValues {
 }
 
 export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) => {
-  const [mode, setMode] = useState<"day" | "week">("day")
+  const { addNotification } = useNotifications()
 
-  const { register, handleSubmit, setValue, watch, control } = useForm<FormValues>({
+  const [mode, setMode] = useState(DuplicateScheduleType.DAY)
+  const { mutate: duplicateSchedule, isPending } = useDuplicateSchedule({
+    onSuccess: () => {
+      addNotification({
+        title: "Занятия дублированы",
+        variant: NotificationVariant.Success,
+        icon: <Check />,
+        className: styles.cancelNotification
+      })
+      onClose()
+      reset()
+    },
+    onError: (error) => {
+      console.error("Ошибка при дублировании:", error)
+      onClose()
+      reset()
+    }
+  })
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors }
+  } = useForm<FormValues>({
     defaultValues: {
       lesson_ids: [],
       source_date: undefined,
@@ -31,16 +61,18 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
     }
   })
 
-  const onSubmit = () => {
-    console.log("Режим:", mode)
-  }
-
-  const handleLessonSelect = (selectedLessons: Lesson | (string | number)[]) => {
-    if (Array.isArray(selectedLessons)) {
-      setValue("lesson_ids", selectedLessons.map(Number))
+  const onSubmit = (data: FormValues) => {
+    const payload = {
+      duplicate_type: mode,
+      lesson_ids: data.lesson_ids,
+      source_date: toDateString(data.source_date),
+      target_dates: Array.isArray(data.target_dates)
+        ? data.target_dates.map(toDateString)
+        : [toDateString(data.target_dates)]
     }
-  }
 
+    duplicateSchedule(payload)
+  }
   return (
     <Dialog
       title="Дублирование расписания"
@@ -48,10 +80,15 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
       onClose={onClose}
       actions={
         <>
-          <Button variant={ButtonVariant.Neutral} type="button" onClick={onClose}>
+          <Button
+            variant={ButtonVariant.Neutral}
+            type="button"
+            onClick={onClose}
+            loading={isPending}
+          >
             Закрыть
           </Button>
-          <Button onClick={handleSubmit(onSubmit)} type="submit" loading={false}>
+          <Button onClick={handleSubmit(onSubmit)} type="submit" loading={isPending}>
             Дублировать расписание
           </Button>
         </>
@@ -61,53 +98,122 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
         <div className={styles.modeSelect}>
           <Tabs
             items={[
-              { title: "День", isActive: mode === "day", onClick: () => setMode("day") },
-              { title: "Неделя", isActive: mode === "week", onClick: () => setMode("week") }
+              {
+                title: "День",
+                isActive: mode === "day",
+                onClick: () => setMode(DuplicateScheduleType.DAY)
+              },
+              {
+                title: "Неделя",
+                isActive: mode === "week",
+                onClick: () => setMode(DuplicateScheduleType.WEEK)
+              }
             ]}
             className={styles.tabs}
           />
         </div>
-
         <div className={styles.gridContainer}>
-          <SelectLesson
-            {...register("lesson_ids", { required: "Выберите занятие" })}
-            selectedLessonId={watch("lesson_ids")}
-            onSelect={handleLessonSelect}
-            isMultiply
-            className={styles.selectLesson}
-            labelText="Секция"
-          />
           <div className={styles.gridRow}>
-            <Controller
-              control={control}
-              name="source_date"
-              rules={{ required: "Выберите дату источника" }}
-              render={({ field }) => (
-                <DaySelect
-                  required
-                  label="Дублировать этот день"
-                  value={field.value}
-                  onChange={field.onChange}
-                  minDate={new Date(new Date().setHours(0, 0, 0, 0))}
-                />
-              )}
-            />
+            <div className={styles.col}>
+              <Controller
+                control={control}
+                name="source_date"
+                rules={{
+                  required:
+                    mode === DuplicateScheduleType.DAY
+                      ? "Дата не может быть пустой"
+                      : "Неделя не может быть пустой"
+                }}
+                render={({ field }) =>
+                  mode === DuplicateScheduleType.DAY ? (
+                    <DaySelect
+                      error={errors.source_date}
+                      required
+                      position="bottom"
+                      label="Дублировать этот день"
+                      value={field.value}
+                      onChange={field.onChange}
+                      minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+                    />
+                  ) : (
+                    <WeekSelect
+                      error={errors.source_date}
+                      required
+                      position="bottom"
+                      label="Дублировать эту неделю"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )
+                }
+              />
+            </div>
 
-            <Controller
-              control={control}
-              name="target_dates"
-              rules={{ required: "Выберите целевые даты" }}
-              render={({ field }) => (
-                <SelectDays
-                  required
-                  label="На день/дни"
-                  value={field.value}
-                  onChange={field.onChange}
-                  minDate={new Date(new Date().setHours(0, 0, 0, 0))}
-                />
-              )}
-            />
+            <div className={styles.arrow}>
+              <ArrowRight />
+            </div>
+
+            <div className={styles.col}>
+              <Controller
+                control={control}
+                name="target_dates"
+                rules={{
+                  required:
+                    mode === DuplicateScheduleType.DAY
+                      ? "Дата не может быть пустой"
+                      : "Недели не могут быть пустыми"
+                }}
+                render={({ field }) =>
+                  mode === DuplicateScheduleType.DAY ? (
+                    <SelectDays
+                      error={
+                        Array.isArray(errors.target_dates)
+                          ? errors.target_dates[0]
+                          : errors.target_dates
+                      }
+                      required
+                      position="bottom"
+                      label="На день/дни"
+                      value={field.value}
+                      onChange={field.onChange}
+                      minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+                    />
+                  ) : (
+                    <WeekSelect
+                      error={
+                        Array.isArray(errors.target_dates)
+                          ? errors.target_dates[0]
+                          : errors.target_dates
+                      }
+                      required
+                      position="bottom"
+                      label="На эту неделю/недели"
+                      value={Array.isArray(field.value) ? field.value[0] : field.value}
+                      onChange={field.onChange}
+                      popoverName="week_multiple"
+                      minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+                    />
+                  )
+                }
+              />
+            </div>
           </div>
+          <Controller
+            control={control}
+            name="lesson_ids"
+            rules={{ required: "Секция не может быть пустой" }}
+            render={({ field }) => (
+              <SelectLesson
+                showErrorMessage
+                selectedLessonId={field.value}
+                onSelect={field.onChange}
+                isMultiply
+                className={styles.selectLesson}
+                labelText="Секция"
+                error={Array.isArray(errors.lesson_ids) ? errors.lesson_ids[0] : errors.lesson_ids}
+              />
+            )}
+          />
         </div>
       </form>
     </Dialog>

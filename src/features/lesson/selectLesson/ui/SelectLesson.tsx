@@ -21,6 +21,7 @@ interface SelectLessonProps {
   className?: string
   isMultiply?: boolean
   labelText?: string
+  showErrorMessage?: boolean
 }
 
 export const SelectLesson: React.FC<SelectLessonProps> = ({
@@ -30,10 +31,11 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   disabled = false,
   error,
   className,
-  isMultiply = false
+  isMultiply = false,
+  showErrorMessage = false
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
-  const { data: lessons = [], isLoading, isError } = useLessons(id)
+  const { data: lessons = [], isError } = useLessons(id)
   const { isOpen, toggle, close } = useSelectManager("lesson")
 
   const options: SelectItem[] = useMemo(
@@ -96,12 +98,13 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
     onSelect(values)
   }
 
-  if (isLoading) return <p>Загрузка...</p>
+  // if (isLoading) return <p>Загрузка...</p>
   if (isError) return <p>Ошибка загрузки занятий</p>
 
   return (
     <div className={clsx(styles.container, className)}>
       <Input
+        showErrorMessage={showErrorMessage}
         leftIcon={<Clipboard />}
         error={error}
         disabled={disabled}
