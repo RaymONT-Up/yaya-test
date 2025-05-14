@@ -19,10 +19,12 @@ import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 import { NotificationVariant } from "@/shared/ui/Notification/ui/Notification/Notification"
 import styles from "./ScheduleCalendar.module.scss"
 import { Check } from "@/shared/assets/svg/Check"
-import { $cancelSchedule } from "@/shared/api/schedule/schedule"
+import { $cancelSchedule, $cancelSchedules } from "@/shared/api/schedule/schedule"
 import { EventContent } from "../EventContent/EventContent"
 import { DayHeader } from "../DayHeader/DayHeader"
 import { CancelSchedule } from "@/features/schedule/CancelSchedule"
+import { CancelScheduleSDto } from "@/shared/types/schedule"
+import { formatDateShort } from "@/shared/libs/formaDate"
 
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -38,6 +40,7 @@ export const ScheduleCalendar: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<EventApi | null>()
   const [hiddenEvents, setHiddenEvents] = useState<string[]>([])
   const pendingCancelRef = useRef<{ id: string; reason: string } | null>(null)
+  const pendingMassCancelRef = useRef<CancelScheduleSDto | null>(null)
 
   const { id } = useAppSelector(selectCurrentCenter)
 
@@ -96,6 +99,60 @@ export const ScheduleCalendar: React.FC = () => {
   }
   const cancelSchedule = (id: string, reason: string) => {
     $cancelSchedule({ id: Number(id), cancel_reason: reason })
+  }
+
+  const handleMassCancelSchedules = (dto: CancelScheduleSDto) => {
+    const matchingEvents = parsedEvents.filter((event) => {
+      const eventDate = new Date(event.start)
+      const start = new Date(dto.start_date)
+      const end = new Date(dto.end_date)
+      end.setHours(23, 59, 59, 999)
+
+      return (
+        eventDate >= start &&
+        eventDate <= end &&
+        dto.lessons.includes(Number(event.extendedProps.lesson?.id))
+      )
+    })
+
+    const idsToHide = matchingEvents.map((e) => e.id)
+    setHiddenEvents((prev) => [...prev, ...idsToHide])
+    pendingMassCancelRef.current = dto
+    const startFormatted = formatDateShort(dto.start_date)
+    const endFormatted = formatDateShort(dto.end_date)
+    const notificationId = addNotification({
+      title: `Занятия с ${startFormatted} – ${endFormatted} отменены!`,
+      variant: NotificationVariant.Success,
+      primaryButton: (
+        <Button
+          variant={ButtonVariant.Subtle}
+          size={ButtonSize.Small}
+          onClick={() => {
+            setHiddenEvents((prev) => prev.filter((id) => !idsToHide.includes(id)))
+            pendingMassCancelRef.current = null
+            removeNotification(notificationId)
+            addNotification({
+              title: "Занятия восстановлены",
+              variant: NotificationVariant.Success,
+              icon: <Check />,
+              className: styles.cancelNotification
+            })
+          }}
+        >
+          Восстановить
+        </Button>
+      ),
+      icon: <Check />,
+      className: styles.cancelNotification
+    })
+
+    setTimeout(() => {
+      const current = pendingMassCancelRef.current
+      if (current) {
+        $cancelSchedules(current)
+        pendingMassCancelRef.current = null
+      }
+    }, 5000)
   }
   const handleSelect = (arg: DateSelectArg) => {
     const now = new Date()
@@ -190,7 +247,11 @@ export const ScheduleCalendar: React.FC = () => {
         />
       )}
       <DuplicateSchedule onClose={() => setDuplicateModalOpen(false)} isOpen={duplicateModalOpen} />
-      <CancelSchedule onClose={() => setCancelModalOpen(false)} isOpen={cancelModalOpen} />
+      <CancelSchedule
+        onClose={() => setCancelModalOpen(false)}
+        isOpen={cancelModalOpen}
+        handleCancelSchedules={handleMassCancelSchedules}
+      />
     </>
   )
 }

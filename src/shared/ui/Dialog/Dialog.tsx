@@ -1,10 +1,10 @@
-import { ReactNode } from 'react'
-import styles from './Dialog.module.scss'
-import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
-import { CloseX } from '@/shared/assets/svg/Close'
-import { Portal } from '../Portal/Portal'
-import { Text, TextVariant } from '@/shared/ui/Text/Text'
-import { Image } from '@/shared/ui/Image/Image'
+import { ReactNode, useEffect } from "react"
+import styles from "./Dialog.module.scss"
+import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
+import { CloseX } from "@/shared/assets/svg/Close"
+import { Portal } from "../Portal/Portal"
+import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import { Image } from "@/shared/ui/Image/Image"
 
 interface DialogProps {
   isOpen: boolean
@@ -12,7 +12,7 @@ interface DialogProps {
   title?: string
   headline?: string
   bodyText?: string
-  type?: 'default' | 'image'
+  type?: "default" | "image"
   image?: string
   width?: string
   actions?: ReactNode
@@ -25,15 +25,29 @@ export const Dialog = ({
   title,
   headline,
   bodyText,
-  type = 'default',
+  type = "default",
   image,
-  width = 'auto',
+  width = "auto",
   actions,
   children
 }: DialogProps) => {
-  if (!isOpen) return null
-
   const handleClose = () => onClose()
+  useEffect(() => {
+    if (isOpen) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+      document.body.style.overflow = "hidden"
+      document.body.style.paddingRight = `${scrollbarWidth}px`
+    } else {
+      document.body.style.overflow = ""
+      document.body.style.paddingRight = ""
+    }
+
+    return () => {
+      document.body.style.overflow = ""
+      document.body.style.paddingRight = ""
+    }
+  }, [isOpen])
+  if (!isOpen) return null
 
   return (
     <Portal>
@@ -43,7 +57,7 @@ export const Dialog = ({
           style={{ width }}
           onClick={(e) => e.stopPropagation()}
         >
-          {type === 'image' && image && (
+          {type === "image" && image && (
             <>
               <div className={styles.imageContainer}>
                 <Image

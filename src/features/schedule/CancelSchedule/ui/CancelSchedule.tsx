@@ -1,37 +1,58 @@
 import React from "react"
-import { Controller, useForm } from "react-hook-form"
+import { Controller, FieldError, useForm } from "react-hook-form"
 import styles from "./CancelSchedule.module.scss"
 import { Button, ButtonVariant } from "@/shared/ui/Button"
 import { SelectLesson } from "@/features/lesson/selectLesson"
 import { Dialog } from "@/shared/ui/Dialog/Dialog"
 import { Textarea } from "@/shared/ui/Textarea/Textarea"
+import { DateRangeSelect } from "@/shared/ui/DateRangeSelect/DateRangeSelect"
+import { CancelScheduleSDto } from "@/shared/types/schedule"
+import { toDateString } from "@/shared/libs/formaDate"
 
 interface Props {
   isOpen: boolean
   onClose: () => void
+  handleCancelSchedules: (data: CancelScheduleSDto) => void
 }
 
 interface FormValues {
   lesson_ids: number[]
   reason: string
-  start_date: string
-  end_date: string
+  date_range: [Date | null, Date | null]
 }
 
-export const CancelSchedule: React.FC<Props> = ({ isOpen = false, onClose }) => {
+export const CancelSchedule: React.FC<Props> = ({
+  isOpen = false,
+  onClose,
+  handleCancelSchedules
+}) => {
   const {
     handleSubmit,
     control,
     register,
+    reset,
     formState: { errors }
   } = useForm<FormValues>({
     defaultValues: {
-      lesson_ids: []
+      lesson_ids: [],
+      reason: "",
+      date_range: [null, null]
     }
   })
 
   const onSubmit = (data: FormValues) => {
-    console.log(data)
+    const [startDate, endDate] = data.date_range
+    if (!startDate || !endDate) return
+    const payload = {
+      lessons: data.lesson_ids,
+      reason: data.reason,
+      start_date: toDateString(startDate),
+      end_date: toDateString(endDate)
+    }
+    console.log(payload)
+    handleCancelSchedules(payload)
+    reset()
+    onClose()
   }
   return (
     <Dialog
@@ -51,6 +72,23 @@ export const CancelSchedule: React.FC<Props> = ({ isOpen = false, onClose }) => 
     >
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={styles.gridContainer}>
+          <Controller
+            name="date_range"
+            control={control}
+            rules={{
+              validate: ([start, end]) => (!!start && !!end) || "Период не может быть пустым"
+            }}
+            render={({ field }) => (
+              <DateRangeSelect
+                value={field.value}
+                onChange={field.onChange}
+                label="Период"
+                required
+                error={errors.date_range as FieldError}
+                minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              />
+            )}
+          />
           <Controller
             control={control}
             name="lesson_ids"

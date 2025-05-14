@@ -1,3 +1,5 @@
+import { format } from "date-fns"
+
 export const formatDateRange = (startISO: string, endISO: string) => {
   const start = new Date(startISO)
   const end = new Date(endISO)
@@ -62,3 +64,5 @@ export const toDateString = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, "0")
   return `${year}-${month}-${day}`
 }
+// dd.MM.yyyy
+export const formatDateShort = (dateStr: string) => format(new Date(dateStr), "dd.MM.yyyy")
