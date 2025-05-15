@@ -39,6 +39,8 @@ export const ScheduleCalendar: React.FC = () => {
   })
   const [selectedEvent, setSelectedEvent] = useState<EventApi | null>()
   const [hiddenEvents, setHiddenEvents] = useState<string[]>([])
+  const [selectedLessonIds, setLessonIds] = useState<number[]>([])
+
   const pendingCancelRef = useRef<{ id: string; reason: string } | null>(null)
   const pendingMassCancelRef = useRef<CancelScheduleSDto | null>(null)
 
@@ -53,8 +55,13 @@ export const ScheduleCalendar: React.FC = () => {
 
   const parsedEvents = data ? parseScheduleEvents(data.events) : []
   const visibleEvents = useMemo(() => {
-    return parsedEvents?.filter((event) => !hiddenEvents.includes(event.id))
-  }, [parsedEvents, hiddenEvents])
+    return parsedEvents?.filter(
+      (event) =>
+        !hiddenEvents.includes(event.id) &&
+        (!selectedLessonIds.length ||
+          selectedLessonIds.includes(Number(event.extendedProps.lesson?.id)))
+    )
+  }, [parsedEvents, hiddenEvents, selectedLessonIds])
 
   const handleCancelScheduleRequest = (id: string, reason: string) => {
     setHiddenEvents((prev) => [...prev, id])
@@ -201,8 +208,10 @@ export const ScheduleCalendar: React.FC = () => {
         setDuplicateModalOpen={setDuplicateModalOpen}
         setCancelModalOpen={setCancelModalOpen}
         setModalOpen={setModalOpen}
+        onLessonIdsChange={setLessonIds}
       />
       <FullCalendar
+        firstDay={1}
         timeZone="Asia/Aqtobe"
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

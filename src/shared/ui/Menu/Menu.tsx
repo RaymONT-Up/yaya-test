@@ -4,6 +4,7 @@ import { Input } from "@/shared/ui/Input/Input"
 import styles from "./Menu.module.scss"
 import { Search } from "@/shared/assets/svg/Search"
 import { Checkbox } from "@/shared/ui/Checkbox/Checkbox"
+import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 
 export type SelectItem = {
   title: string
@@ -20,6 +21,7 @@ interface MenuProps {
   width?: string | number
   showSearch?: boolean
   selectAllText?: string
+  showResetBtn?: boolean
 }
 
 export const Menu: React.FC<MenuProps> = ({
@@ -30,7 +32,8 @@ export const Menu: React.FC<MenuProps> = ({
   onClose,
   width = "360px",
   showSearch = false,
-  selectAllText = "Выбрать все"
+  selectAllText = "Выбрать все",
+  showResetBtn = false
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
@@ -99,6 +102,16 @@ export const Menu: React.FC<MenuProps> = ({
                     {selectAllText}
                   </Text>
                 </Checkbox>
+                {showResetBtn && (
+                  <Button
+                    size={ButtonSize.Small}
+                    variant={ButtonVariant.Subtle}
+                    onClick={() => onChange([])}
+                    className={styles.resetButton}
+                  >
+                    Сбросить все
+                  </Button>
+                )}
               </div>
             )}
 
@@ -113,14 +126,20 @@ export const Menu: React.FC<MenuProps> = ({
                       onChange={() => handleToggleValue(option.value)}
                       value={option.value}
                     >
-                      <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
-                        {option.title}
-                      </Text>
-                      {option.text && (
-                        <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
-                          {option.text}
+                      <div>
+                        <Text
+                          variant={TextVariant.LABEL}
+                          labelSize="medium"
+                          className={styles.title}
+                        >
+                          {option.title}
                         </Text>
-                      )}
+                        {option.text && (
+                          <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
+                            {option.text}
+                          </Text>
+                        )}
+                      </div>
                     </Checkbox>
                   </div>
                 )

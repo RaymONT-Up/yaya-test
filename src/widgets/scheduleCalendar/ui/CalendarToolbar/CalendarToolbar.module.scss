@@ -72,3 +72,32 @@
 .text{
   color: var(--text-secondary);
 }
+
+.dateWrapper{
+  position: relative;
+}
+.lessonWrapper{
+  position: relative;
+}
+.counterWrapper{
+  position: absolute;
+  right: -8px;
+  top: -10px;
+}
+.pickerWrapper {
+    position: absolute;
+    background: transparent;
+    left: 0;
+    z-index: 10;
+    border-radius: 24px;
+    &.top{
+        bottom: 100%;
+    }
+    &.bottom{
+        top: 100%;
+    }
+}
+
+.selectLesson{
+  width: 460px;
+}

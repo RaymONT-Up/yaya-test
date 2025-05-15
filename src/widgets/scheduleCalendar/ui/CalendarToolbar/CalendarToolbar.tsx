@@ -12,6 +12,11 @@ import { Plus } from "@/shared/assets/svg/Plus"
 import { useRef, useState } from "react"
 import { Text, TextVariant } from "@/shared/ui/Text/Text"
 import { XSquare } from "@/shared/assets/svg/XSquare"
+import { startOfWeek } from "date-fns"
+import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
+import { SelectLesson } from "@/features/lesson/selectLesson"
+import { Counter } from "@/shared/ui/Counter/Counter"
+import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 
 type DateRange = {
   startDate: string
@@ -24,25 +29,36 @@ type Props = {
   setModalOpen: (open: boolean) => void
   setDuplicateModalOpen: (open: boolean) => void
   setCancelModalOpen: (open: boolean) => void
+  onLessonIdsChange: (lessonIds: number[]) => void
 }
 export const CalendarToolbar: React.FC<Props> = ({
   calendarRef,
   dateRange,
   setDuplicateModalOpen,
   setCancelModalOpen,
-  setModalOpen
+  setModalOpen,
+  onLessonIdsChange
 }) => {
-  const [showPopover, setShowPopover] = useState(false)
+  const [start, setStart] = useState<Date | null>(null)
+  const [selectedLessonIds, setSelectedLessonIds] = useState<(number | string)[]>([])
+  const { isOpen: showLessonFilter, toggle: toggleLesonFilter } = useSelectManager("lesson")
+  const { isOpen: showDatePicker, toggle: toggleDatePicker } = useSelectManager("date")
+  const { isOpen: showPopover, toggle: togglePopover, close } = useSelectManager("edit")
+
   const popoverRef = useRef<HTMLDivElement | null>(null)
 
-  const togglePopover = () => setShowPopover((prev) => !prev)
   const handleOptionClick = (action: "duplicate" | "cancel") => {
     if (action === "duplicate") {
       setDuplicateModalOpen(true)
     } else {
       setCancelModalOpen(true)
     }
-    setShowPopover(false)
+    close()
+  }
+  const handleWeekChange = (date: Date) => {
+    const start = startOfWeek(date, { weekStartsOn: 2 })
+    calendarRef.current?.getApi().gotoDate(start)
+    setStart(start)
   }
   return (
     <div className={styles.calendarToolbar}>
@@ -70,19 +86,56 @@ export const CalendarToolbar: React.FC<Props> = ({
             iconEnd={<ChevronRight color="#262527" width={16} height={16} />}
           />
         </div>
-        <Button
-          size={ButtonSize.Small}
-          iconStart={<Calendar width={16} height={16} />}
-          variant={ButtonVariant.Subtle}
-        >
-          {formatDateRange(dateRange.startDate, dateRange.endDate)}
-        </Button>
-        <Button
-          size={ButtonSize.Small}
-          variant={ButtonVariant.Subtle}
-          isIconButton
-          iconStart={<Filter width={16} height={16} />}
-        />
+        <div className={styles.dateWrapper}>
+          <Button
+            size={ButtonSize.Small}
+            iconStart={<Calendar width={16} height={16} />}
+            variant={ButtonVariant.Subtle}
+            onClick={toggleDatePicker}
+          >
+            {formatDateRange(dateRange.startDate, dateRange.endDate)}
+          </Button>
+          {showDatePicker && (
+            <div className={styles.pickerWrapper}>
+              <CustomDatePicker
+                showWeekPicker
+                selected={start}
+                onChange={(date) => date && handleWeekChange(date as Date)}
+                dateFormat="dd.MM.yyyy"
+              />
+            </div>
+          )}
+        </div>
+        <div className={styles.lessonWrapper}>
+          <Button
+            size={ButtonSize.Small}
+            variant={ButtonVariant.Subtle}
+            isIconButton
+            iconStart={<Filter width={16} height={16} />}
+            onClick={toggleLesonFilter}
+          />
+          {selectedLessonIds.length > 0 && (
+            <div className={styles.counterWrapper}>
+              <Counter count={selectedLessonIds.length} />
+            </div>
+          )}
+          {showLessonFilter && (
+            <div className={styles.pickerWrapper}>
+              <SelectLesson
+                selectName="lesson_filter"
+                showResetBtn
+                isMultiply
+                onSelect={(values) => {
+                  setSelectedLessonIds(values as (number | string)[])
+                  onLessonIdsChange(values as number[])
+                }}
+                selectedLessonId={selectedLessonIds}
+                className={styles.selectLesson}
+                showInput={false}
+              />
+            </div>
+          )}
+        </div>
       </div>
       <div className={styles.center}></div>
       <div className={styles.right}>

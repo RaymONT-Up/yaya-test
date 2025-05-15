@@ -12,12 +12,15 @@ export enum TextTheme {
 export enum TextVariant {
   HEADING = "heading",
   LABEL = "label",
-  BODY = "body"
+  BODY = "body",
+  BUTTON = "button"
 }
 
 export type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7" | "h8"
 
 export type LabelSize = "large" | "medium" | "small"
+
+export type ButtonSize = "medium" | "small"
 
 export type BodySize = "large" | "medium" | "small" | "tiny"
 
@@ -29,6 +32,7 @@ export interface TextProps {
   headingLevel?: HeadingLevel
   labelSize?: LabelSize
   bodySize?: BodySize
+  buttonSize?: ButtonSize
   fontWeight?: 400 | 600 | 500
   onClick?: () => void
 }
@@ -41,6 +45,7 @@ export const Text: React.FC<TextProps> = ({
   headingLevel = "h1",
   labelSize = "medium",
   bodySize = "medium",
+  buttonSize = "medium",
   fontWeight = 400,
   onClick
 }) => {
@@ -50,7 +55,8 @@ export const Text: React.FC<TextProps> = ({
     variant === TextVariant.HEADING && styles[headingLevel],
     variant === TextVariant.LABEL && styles[`label-${labelSize}`],
     variant === TextVariant.BODY && styles[`body-${bodySize}`],
-    variant === TextVariant.BODY && styles[`weight-${fontWeight}`]
+    variant === TextVariant.BODY && styles[`weight-${fontWeight}`],
+    variant === TextVariant.BUTTON && styles[`button-${buttonSize}`]
   ]
 
   return (

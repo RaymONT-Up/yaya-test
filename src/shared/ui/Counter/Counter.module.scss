@@ -1,0 +1,26 @@
+.counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+  color: white;
+
+}
+
+.default {
+  background-color: var(--red-500);
+}
+
+.neutral {
+  background-color: var(--gray-600);
+}
+
+.text {
+  font-size: 12px;
+  line-height: 12px;
+  line-height: 1;
+  color: white;
+
+}

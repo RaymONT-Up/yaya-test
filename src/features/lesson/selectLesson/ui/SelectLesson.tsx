@@ -22,6 +22,9 @@ interface SelectLessonProps {
   isMultiply?: boolean
   labelText?: string
   showErrorMessage?: boolean
+  showInput?: boolean //если инпут не показыватся то Popover или Menu показыаются всегда и видимостью управлять в компоненте который использует SelectLesson
+  showResetBtn?: boolean
+  selectName: string
 }
 
 export const SelectLesson: React.FC<SelectLessonProps> = ({
@@ -32,11 +35,14 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   error,
   className,
   isMultiply = false,
-  showErrorMessage = false
+  showErrorMessage = false,
+  showInput = true,
+  showResetBtn = false,
+  selectName = "lesson"
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isError } = useLessons(id)
-  const { isOpen, toggle, close } = useSelectManager("lesson")
+  const { isOpen, toggle, close } = useSelectManager(selectName)
 
   const options: SelectItem[] = useMemo(
     () =>
@@ -103,34 +109,38 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
 
   return (
     <div className={clsx(styles.container, className)}>
-      <Input
-        showErrorMessage={showErrorMessage}
-        leftIcon={<Clipboard />}
-        error={error}
-        disabled={disabled}
-        required={!selectedIdsArray.length}
-        placeholder="Не выбрано"
-        label={labelText}
-        value={valueParts}
-        readOnly
-        onClick={toggle}
-        rightIcon={<ChevronDown className={clsx(styles.chevron, isOpen && styles.isOpen)} />}
-      />
+      {showInput && (
+        <Input
+          showErrorMessage={showErrorMessage}
+          leftIcon={<Clipboard />}
+          error={error}
+          disabled={disabled}
+          required={!selectedIdsArray.length}
+          placeholder="Не выбрано"
+          label={labelText}
+          value={valueParts}
+          readOnly
+          onClick={toggle}
+          rightIcon={<ChevronDown className={clsx(styles.chevron, isOpen && styles.isOpen)} />}
+        />
+      )}
 
       {isMultiply ? (
         <Menu
+          showResetBtn={showResetBtn}
           showSearch
-          isOpen={isOpen}
+          isOpen={showInput ? isOpen : true}
           selectedValues={selectedIdsArray}
           options={options}
           onClose={close}
+          selectAllText="Все секции"
           onChange={handleSelectMultiple}
           width="100%"
         />
       ) : (
         <PopoverSelect
           showSearch
-          isOpen={isOpen}
+          isOpen={showInput ? isOpen : true}
           selectedValue={selectedIdsArray[0] || null}
           options={options}
           onClose={close}

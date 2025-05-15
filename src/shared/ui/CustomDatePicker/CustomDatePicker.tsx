@@ -5,6 +5,7 @@ import { ChevronRight } from "@/shared/assets/svg/ChevronRight"
 import clsx from "clsx"
 import styles from "./CustomDatePicker.module.scss"
 import "./datePicker.scss"
+import { ru } from "date-fns/locale"
 
 import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 
@@ -39,6 +40,7 @@ export const CustomDatePicker = ({ className, ...props }: Props) => {
       )}
       inline
       calendarClassName={clsx(styles.calendar, className)}
+      locale={ru}
     />
   )
 }

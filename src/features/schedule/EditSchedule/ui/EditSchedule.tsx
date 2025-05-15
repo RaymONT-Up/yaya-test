@@ -37,7 +37,6 @@ export const EditSchedule: React.FC<Props> = ({
   handleCancelScheduleRequest
 }) => {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
-
   const handleCancelClick = () => {
     setShowCancelDialog(true)
   }

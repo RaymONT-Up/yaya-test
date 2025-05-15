@@ -15,6 +15,7 @@ import { WeekSelect } from "@/shared/ui/WeekSelect/WeekSelect"
 import { useNotifications } from "@/shared/ui/Notification"
 import { NotificationVariant } from "@/shared/ui/Notification/ui/Notification/Notification"
 import { Check } from "@/shared/assets/svg/Check"
+import { MultiWeekSelect } from "@/shared/ui/MultiWeekSelect/MultiWeekSelect"
 
 interface Props {
   isOpen: boolean
@@ -179,7 +180,7 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
                       minDate={new Date(new Date().setHours(0, 0, 0, 0))}
                     />
                   ) : (
-                    <WeekSelect
+                    <MultiWeekSelect
                       error={
                         Array.isArray(errors.target_dates)
                           ? errors.target_dates[0]
@@ -188,9 +189,8 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
                       required
                       position="bottom"
                       label="На эту неделю/недели"
-                      value={Array.isArray(field.value) ? field.value[0] : field.value}
+                      value={field.value}
                       onChange={field.onChange}
-                      popoverName="week_multiple"
                       minDate={new Date(new Date().setHours(0, 0, 0, 0))}
                     />
                   )
@@ -204,6 +204,7 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
             rules={{ required: "Секция не может быть пустой" }}
             render={({ field }) => (
               <SelectLesson
+                selectName="lesson_duplicate"
                 showErrorMessage
                 selectedLessonId={field.value}
                 onSelect={field.onChange}

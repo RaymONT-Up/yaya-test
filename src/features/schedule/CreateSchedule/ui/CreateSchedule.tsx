@@ -31,6 +31,13 @@ interface FormValues {
   trainer_id: number
 }
 
+const pad = (n: number) => String(n).padStart(2, "0")
+const formatTime = (totalMinutes: number) => {
+  const h = Math.floor(totalMinutes / 60)
+  const m = totalMinutes % 60
+  return `${pad(h)}:${pad(m)}`
+}
+
 export const CreateSchedule: React.FC<Props> = ({
   isOpen = false,
   start,
@@ -39,6 +46,7 @@ export const CreateSchedule: React.FC<Props> = ({
   isEditing = false
 }) => {
   const [duration, setDuration] = useState<number>(0)
+  const [durationUi, setDurationUi] = useState<number>(0)
   const [minTime, setMinTime] = useState<string>("")
   const {
     register,
@@ -69,6 +77,7 @@ export const CreateSchedule: React.FC<Props> = ({
         trainer_id: undefined
       })
       setDuration(0)
+      setDurationUi(0)
       onClose()
     },
     onError: (err) => {
@@ -137,11 +146,12 @@ export const CreateSchedule: React.FC<Props> = ({
     if (startTime && endTime) {
       const startMin = parseTimeToMinutes(startTime)
       const endMin = parseTimeToMinutes(endTime)
-      setDuration(endMin > startMin ? endMin - startMin : 0)
+      setDurationUi(endMin > startMin ? endMin - startMin : 0)
     } else {
-      setDuration(0)
+      setDurationUi(0)
     }
   }, [startTime, endTime])
+
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10)
     if (day === today) {
@@ -154,6 +164,21 @@ export const CreateSchedule: React.FC<Props> = ({
       setMinTime("06:00")
     }
   }, [day])
+  useEffect(() => {
+    const currentEnd = watch("end")
+
+    if (startTime && duration > 0) {
+      const hasManualEnd = Boolean(currentEnd)
+
+      if (!hasManualEnd) {
+        const startMin = parseTimeToMinutes(startTime)
+        const newEndMin = startMin + duration
+        const newEndStr = formatTime(newEndMin)
+
+        setValue("end", newEndStr)
+      }
+    }
+  }, [startTime, duration, setValue, watch])
   return (
     <Modal
       title="Новое расписание"
@@ -175,6 +200,7 @@ export const CreateSchedule: React.FC<Props> = ({
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={styles.gridContainer}>
           <SelectLesson
+            selectName="lesson_create"
             {...register("lesson_id", { required: "Выберите занятие" })}
             onSelect={handleLessonSelect}
             selectedLessonId={watch("lesson_id")}
@@ -226,7 +252,6 @@ export const CreateSchedule: React.FC<Props> = ({
               value={watch("end")}
               minTime={minTime}
               startTime={watch("start")}
-              defaultDuration={duration}
               mode="end"
               {...register("end", { required: "Выберите конец занятия" })}
               onChange={handleEndSelect}
@@ -234,7 +259,7 @@ export const CreateSchedule: React.FC<Props> = ({
             />
             {/* Длит. (мин) */}
 
-            <Input label="Длит. (мин)" placeholder="00" type="number" value={duration} readOnly />
+            <Input label="Длит. (мин)" placeholder="00" type="number" value={durationUi} readOnly />
           </div>
         </div>
       </form>

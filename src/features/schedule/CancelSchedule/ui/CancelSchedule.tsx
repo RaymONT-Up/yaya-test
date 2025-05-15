@@ -95,6 +95,7 @@ export const CancelSchedule: React.FC<Props> = ({
             rules={{ required: "Секция не может быть пустой" }}
             render={({ field }) => (
               <SelectLesson
+                selectName="lesson_cancel"
                 showErrorMessage
                 selectedLessonId={field.value}
                 onSelect={field.onChange}
