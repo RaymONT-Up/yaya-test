@@ -1,4 +1,6 @@
 import { getToken } from "@/entities/currentSession"
+// import { RoleGuard } from "@/features/auth/RoleGuard"
+import { ErrorPage } from "@/pages/error"
 import { LoginPage } from "@/pages/LoginPage"
 import { MainPage } from "@/pages/MainPage"
 import { SelectCenterPage } from "@/pages/SelectCentetPage"
@@ -35,7 +37,9 @@ export const router = createBrowserRouter([
     path: RoutePath.MAIN,
     element: (
       <AuthGuard mustBe="authorized">
+        {/* <RoleGuard permission="SCHEDULE_VIEW"> */}
         <MainLayout />
+        {/* </RoleGuard> */}
       </AuthGuard>
     ),
     children: [
@@ -84,6 +88,16 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: withSuspense(LoginPage)
+      }
+    ]
+  },
+  {
+    path: RoutePath.ERROR,
+    element: <Outlet />,
+    children: [
+      {
+        index: true,
+        element: withSuspense(ErrorPage)
       }
     ]
   }
