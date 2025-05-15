@@ -3,14 +3,14 @@ import { LogoutButton } from "@/features/auth/logout"
 import { Logo } from "@/shared/assets/svg/Logo"
 import { Text, TextVariant } from "@/shared/ui/Text/Text"
 import { CenterSelector } from "@/widgets/centerSelector"
-import { useState } from "react"
 import centerImg from "@/shared/assets/png/centerImage.png"
 import { useAppSelector } from "@/app/config/store"
 import { selectCurrentCenter } from "@/entities/center"
 import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
+import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 
 export const Header = () => {
-  const [isSelectCenterOpen, setIsSelectCenterOpen] = useState(false)
+  const { isOpen: isSelectCenterOpen, toggle, close } = useSelectManager("center")
   const currentCenter = useAppSelector(selectCurrentCenter)
 
   return (
@@ -19,10 +19,7 @@ export const Header = () => {
         <Logo width={80} height={34} />
         <div className={styles.actions}>
           <div className={styles.selectCenter}>
-            <div
-              className={styles.centerSelector}
-              onClick={() => setIsSelectCenterOpen((prev) => !prev)}
-            >
+            <div className={styles.centerSelector} onClick={toggle}>
               <img src={centerImg} alt="Центр" className={styles.image} />
               <div className={styles.centerInfo}>
                 <Text variant={TextVariant.HEADING} headingLevel="h8" className={styles.centerName}>
@@ -40,10 +37,7 @@ export const Header = () => {
               />
             </div>
             <div className={styles.centerSelectorComponent}>
-              <CenterSelector
-                isOpen={isSelectCenterOpen}
-                onSelect={() => setIsSelectCenterOpen(false)}
-              />
+              <CenterSelector isOpen={isSelectCenterOpen} onSelect={close} />
             </div>
           </div>
           <LogoutButton />

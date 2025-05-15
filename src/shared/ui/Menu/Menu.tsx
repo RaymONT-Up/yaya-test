@@ -5,6 +5,7 @@ import styles from "./Menu.module.scss"
 import { Search } from "@/shared/assets/svg/Search"
 import { Checkbox } from "@/shared/ui/Checkbox/Checkbox"
 import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
+import { ComponentLoader } from "@/shared/ui/ComponentLoader/ComponentLoader"
 
 export type SelectItem = {
   title: string
@@ -22,6 +23,7 @@ interface MenuProps {
   showSearch?: boolean
   selectAllText?: string
   showResetBtn?: boolean
+  isLoading?: boolean
 }
 
 export const Menu: React.FC<MenuProps> = ({
@@ -33,7 +35,8 @@ export const Menu: React.FC<MenuProps> = ({
   width = "360px",
   showSearch = false,
   selectAllText = "Выбрать все",
-  showResetBtn = false
+  showResetBtn = false,
+  isLoading = false
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
@@ -95,59 +98,70 @@ export const Menu: React.FC<MenuProps> = ({
             </div>
           )}
           <div className={styles.optionsWrapper}>
-            {filteredOptions.length > 0 && (
-              <div className={styles.option}>
-                <Checkbox checked={allSelected} onChange={handleToggleAll}>
-                  <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
-                    {selectAllText}
-                  </Text>
-                </Checkbox>
-                {showResetBtn && (
-                  <Button
-                    size={ButtonSize.Small}
-                    variant={ButtonVariant.Subtle}
-                    onClick={() => onChange([])}
-                    className={styles.resetButton}
-                  >
-                    Сбросить все
-                  </Button>
-                )}
+            {isLoading ? (
+              <div className={styles.loaderWrapper}>
+                <ComponentLoader size={40} />
               </div>
-            )}
-
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => {
-                const isChecked = selectedValues.includes(option.value)
-
-                return (
-                  <div className={styles.option} key={option.value}>
-                    <Checkbox
-                      checked={isChecked}
-                      onChange={() => handleToggleValue(option.value)}
-                      value={option.value}
-                    >
-                      <div>
-                        <Text
-                          variant={TextVariant.LABEL}
-                          labelSize="medium"
-                          className={styles.title}
-                        >
-                          {option.title}
-                        </Text>
-                        {option.text && (
-                          <Text variant={TextVariant.BODY} bodySize="small" className={styles.text}>
-                            {option.text}
-                          </Text>
-                        )}
-                      </div>
-                    </Checkbox>
-                  </div>
-                )
-              })
             ) : (
-              <Text variant={TextVariant.BODY} bodySize="small" className={styles.empty}>
-                Опции не найдены
-              </Text>
+              <>
+                {filteredOptions.length > 0 && (
+                  <div className={styles.option}>
+                    <Checkbox checked={allSelected} onChange={handleToggleAll}>
+                      <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
+                        {selectAllText}
+                      </Text>
+                    </Checkbox>
+                    {showResetBtn && (
+                      <Button
+                        size={ButtonSize.Small}
+                        variant={ButtonVariant.Subtle}
+                        onClick={() => onChange([])}
+                        className={styles.resetButton}
+                      >
+                        Сбросить все
+                      </Button>
+                    )}
+                  </div>
+                )}
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => {
+                    const isChecked = selectedValues.includes(option.value)
+
+                    return (
+                      <div className={styles.option} key={option.value}>
+                        <Checkbox
+                          checked={isChecked}
+                          onChange={() => handleToggleValue(option.value)}
+                          value={option.value}
+                        >
+                          <div>
+                            <Text
+                              variant={TextVariant.LABEL}
+                              labelSize="medium"
+                              className={styles.title}
+                            >
+                              {option.title}
+                            </Text>
+                            {option.text && (
+                              <Text
+                                variant={TextVariant.BODY}
+                                bodySize="small"
+                                className={styles.text}
+                              >
+                                {option.text}
+                              </Text>
+                            )}
+                          </div>
+                        </Checkbox>
+                      </div>
+                    )
+                  })
+                ) : (
+                  <Text variant={TextVariant.BODY} bodySize="small" className={styles.empty}>
+                    Опции не найдены
+                  </Text>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -1,45 +1,76 @@
-.customEvent{
-    position: relative;
-    min-height: 20px;
-    overflow: hidden;
+.customEvent {
+  position: relative;
+  min-height: 40px;
+  padding: 2px 4px;
+  height: 100%;
+  overflow: hidden;
 }
-.eventTitle{
-    color: var(--text-brand);
-    
-}
-.eventTime{
-    color: #5163AE;
-    
-}
-.eventAge{
-    color: #5163AE;
 
+.eventTitle {
+  color: var(--text-brand);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.eventPlaces{
-    color: #5163AE;
 
+.eventTime {
+  color: #5163AE;
 }
-.eventTag{
-    color: #5163AE;
+
+.eventAge,
+.eventPlaces,
+.eventTag {
+  color: #5163AE;
 }
 
 .eventInfo {
-    display: flex;
-    align-items: center;
-    color: #5163AE;
-    font-size: 12px;
-    gap: 6px;
+  display: flex;
+  align-items: center;
+  color: #5163AE;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.dotSeparator {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: #5163AE;
+}
+
+.eventShortTitle {
+  color: var(--text-brand);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 70px) {
+  .customEvent {
+    padding: 2px;
   }
-  
+
+  .eventInfo,
+  .eventShortTitle,
+  .eventPlaceCount {
+    display: block;
+    text-align: left;
+  }
+
+  .eventTitle,
+  .eventShortTitle {
+    font-size: 11px;
+  }
+
+  .eventPlaceCount {
+    position: static;
+    margin-top: 4px;
+  }
+
   .dotSeparator {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background-color: #5163AE;
+    display: none;
   }
-  .eventShortTitle{
-    color: var(--text-brand);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+}

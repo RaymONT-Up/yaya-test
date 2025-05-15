@@ -5,7 +5,8 @@ import {
   getCenterId,
   setCenterId,
   selectCenterError,
-  centerActions
+  centerActions,
+  selectCenterLoading
 } from "@/entities/center/"
 import { PopoverSelect, SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import styles from "./CenterSelector.module.scss"
@@ -21,7 +22,7 @@ export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect
   const dispatch = useAppDispatch()
   const centers = useAppSelector(selectCenters)
   const error = useAppSelector(selectCenterError)
-  // const isLoading = useAppSelector(selectCenterLoading)
+  const isLoading = useAppSelector(selectCenterLoading)
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
   useEffect(() => {
@@ -56,13 +57,13 @@ export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect
     }
     onSelect()
   }
-  // if (isLoading) return <Text theme={TextTheme.SUCCESS}>Загрузка...</Text>
   if (error) return <Text theme={TextTheme.ERROR}>{error}</Text>
 
   return (
     <div className={styles.wrapper}>
       {isOpen && (
         <PopoverSelect
+          isLoading={isLoading}
           width={320}
           isOpen={isOpen}
           options={selectOptions}

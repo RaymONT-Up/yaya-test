@@ -25,6 +25,7 @@ import { DayHeader } from "../DayHeader/DayHeader"
 import { CancelSchedule } from "@/features/schedule/CancelSchedule"
 import { CancelScheduleSDto } from "@/shared/types/schedule"
 import { formatDateShort } from "@/shared/libs/formaDate"
+import { ComponentLoader } from "@/shared/ui/ComponentLoader/ComponentLoader"
 
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -46,14 +47,16 @@ export const ScheduleCalendar: React.FC = () => {
 
   const { id } = useAppSelector(selectCurrentCenter)
 
-  const { data } = useSchedule({
+  const { data, isLoading } = useSchedule({
     startDate: dateRange.startDate,
     endDate: dateRange.endDate,
     centerId: id
   })
   const { addNotification, removeNotification } = useNotifications()
 
-  const parsedEvents = data ? parseScheduleEvents(data.events) : []
+  const parsedEvents = useMemo(() => {
+    return data ? parseScheduleEvents(data.events) : []
+  }, [data])
   const visibleEvents = useMemo(() => {
     return parsedEvents?.filter(
       (event) =>
@@ -198,8 +201,6 @@ export const ScheduleCalendar: React.FC = () => {
     setRange(null)
     setRange({ start: "", end: "" })
   }
-  // if (isLoading) return <p>Загрузка...</p>
-  // if (isError) return <p>Ошибка загрузки расписания</p>
   return (
     <>
       <CalendarToolbar
@@ -210,37 +211,55 @@ export const ScheduleCalendar: React.FC = () => {
         setModalOpen={setModalOpen}
         onLessonIdsChange={setLessonIds}
       />
-      <FullCalendar
-        firstDay={1}
-        timeZone="Asia/Aqtobe"
-        ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        selectable={true}
-        select={handleSelect}
-        selectAllow={(selectInfo) => {
-          const now = new Date()
-          const start = new Date(selectInfo.start)
-          return start >= now
-        }}
-        headerToolbar={false}
-        events={visibleEvents}
-        eventContent={EventContent}
-        allDaySlot={false}
-        datesSet={handleDatesSet}
-        nowIndicator={true}
-        dayHeaderContent={DayHeader}
-        eventClick={handleEventClick}
-        slotMinTime="06:00:00"
-        slotMaxTime="22:00:00"
-        slotLabelFormat={{
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false
-        }}
-        slotDuration="01:00:00"
-        selectMirror={true}
-      />
+      {isLoading ? (
+        <div className={styles.calendarLoader}>
+          <ComponentLoader size={56} />
+        </div>
+      ) : (
+        <FullCalendar
+          firstDay={1}
+          timeZone="Asia/Aqtobe"
+          ref={calendarRef}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="timeGridWeek"
+          selectable={true}
+          select={handleSelect}
+          selectAllow={(selectInfo) => {
+            const now = new Date()
+            const start = new Date(selectInfo.start)
+            return start >= now
+          }}
+          headerToolbar={false}
+          events={visibleEvents}
+          eventContent={EventContent}
+          allDaySlot={false}
+          datesSet={handleDatesSet}
+          nowIndicator={true}
+          dayHeaderContent={DayHeader}
+          eventClick={handleEventClick}
+          slotMinTime="06:00:00"
+          slotMaxTime="22:00:00"
+          slotLabelFormat={{
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+          }}
+          slotDuration="01:00:00"
+          selectMirror={true}
+          eventOverlap={true}
+          eventMaxStack={1}
+          eventDidMount={(info) => {
+            const eventEl = info.el
+            const eventEnd = info.event.end || info.event.start
+            const now = new Date()
+
+            if (eventEnd && eventEnd < now) {
+              eventEl.classList.add("fc-event-past")
+            }
+          }}
+        />
+      )}
+
       <CreateSchedule
         isOpen={modalOpen}
         start={range?.start}

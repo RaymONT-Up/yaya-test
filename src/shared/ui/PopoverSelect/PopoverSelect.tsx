@@ -3,6 +3,7 @@ import { Text, TextVariant } from "@/shared/ui/Text/Text"
 import { Input } from "@/shared/ui/Input/Input"
 import styles from "./PopoverSelect.module.scss"
 import { Search } from "@/shared/assets/svg/Search"
+import { ComponentLoader } from "@/shared/ui/ComponentLoader/ComponentLoader"
 
 export type SelectItem = {
   title: string
@@ -18,6 +19,7 @@ interface PopoverSelectProps {
   onClose: () => void
   width?: string | number
   showSearch?: boolean
+  isLoading?: boolean
 }
 
 export const PopoverSelect: React.FC<PopoverSelectProps> = ({
@@ -27,7 +29,8 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   onSelect,
   onClose,
   width = "360px",
-  showSearch = false
+  showSearch = false,
+  isLoading = false
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
@@ -76,7 +79,11 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
             </div>
           )}
           <div className={styles.optionsWrapper}>
-            {filteredOptions.length > 0 ? (
+            {isLoading ? (
+              <div className={styles.loaderWrapper}>
+                <ComponentLoader size={40} />
+              </div>
+            ) : filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <div
                   key={option.value}

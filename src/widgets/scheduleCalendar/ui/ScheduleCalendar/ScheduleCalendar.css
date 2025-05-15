@@ -89,17 +89,25 @@ z-index: 5;
   border-left: 4px solid var(--blue-700);
   padding-top: 2px;
   color: var(--event-text-color) !important;
-  min-height: 20px;
+  min-height: fit-content;
+
+}
+.fc-event-past .fc-event-main {
+  background-color: var(--blue-50) !important;
+  border: none !important;
+  opacity: 0.8;
 }
 .fc-v-event{
   margin-top: 2px;
+  padding: 1px;
   border: none;
-  background: none;
+  background: white;
 }
 .fc-v-event{
   overflow-x: hidden;
   overflow-y: clip;
-  min-height: 20px;
+  min-height: fit-content;
+
 }
 
 /* Cursor not allowed to select time */

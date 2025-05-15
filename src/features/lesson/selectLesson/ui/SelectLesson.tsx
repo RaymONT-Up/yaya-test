@@ -41,7 +41,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   selectName = "lesson"
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
-  const { data: lessons = [], isError } = useLessons(id)
+  const { data: lessons = [], isError, isLoading } = useLessons(id)
   const { isOpen, toggle, close } = useSelectManager(selectName)
 
   const options: SelectItem[] = useMemo(
@@ -127,6 +127,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
 
       {isMultiply ? (
         <Menu
+          isLoading={isLoading}
           showResetBtn={showResetBtn}
           showSearch
           isOpen={showInput ? isOpen : true}
@@ -140,6 +141,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
       ) : (
         <PopoverSelect
           showSearch
+          isLoading={isLoading}
           isOpen={showInput ? isOpen : true}
           selectedValue={selectedIdsArray[0] || null}
           options={options}

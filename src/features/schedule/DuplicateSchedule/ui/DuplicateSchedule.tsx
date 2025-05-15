@@ -128,6 +128,7 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
                 render={({ field }) =>
                   mode === DuplicateScheduleType.DAY ? (
                     <DaySelect
+                      showErrorMessage
                       error={errors.source_date}
                       required
                       position="bottom"

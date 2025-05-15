@@ -15,6 +15,7 @@ interface DaySelectProps {
   minDate?: Date
   error?: FieldError | undefined
   position?: "top" | "bottom"
+  showErrorMessage?: boolean
 }
 
 export const DaySelect = ({
@@ -24,7 +25,8 @@ export const DaySelect = ({
   required,
   minDate,
   error,
-  position = "top"
+  position = "top",
+  showErrorMessage = false
 }: DaySelectProps) => {
   const { isOpen, toggle, close } = useSelectManager("date")
 
@@ -45,7 +47,7 @@ export const DaySelect = ({
   return (
     <div className={styles.container}>
       <Input
-        showErrorMessage
+        showErrorMessage={showErrorMessage}
         error={error ? error : undefined}
         label={label}
         required={!value && required}
