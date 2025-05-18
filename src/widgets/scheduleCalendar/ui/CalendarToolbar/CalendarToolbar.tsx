@@ -42,7 +42,7 @@ export const CalendarToolbar: React.FC<Props> = ({
   const [start, setStart] = useState<Date | null>(null)
   const [selectedLessonIds, setSelectedLessonIds] = useState<(number | string)[]>([])
   const { isOpen: showLessonFilter, toggle: toggleLesonFilter } = useSelectManager("lesson")
-  const { isOpen: showDatePicker, toggle: toggleDatePicker } = useSelectManager("date")
+  const { isOpen: showDatePicker, toggle: toggleDatePicker } = useSelectManager("date_pick")
   const { isOpen: showPopover, toggle: togglePopover, close } = useSelectManager("edit")
 
   const popoverRef = useRef<HTMLDivElement | null>(null)

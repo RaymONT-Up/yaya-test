@@ -135,7 +135,6 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
                       label="Дублировать этот день"
                       value={field.value}
                       onChange={field.onChange}
-                      minDate={new Date(new Date().setHours(0, 0, 0, 0))}
                     />
                   ) : (
                     <WeekSelect

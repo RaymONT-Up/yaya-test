@@ -47,15 +47,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+  .eventPlaceCount {
+    display: flex;
+    align-items: end;
+    gap: 8px;
+  }
 @media (max-width: 70px) {
   .customEvent {
     padding: 2px;
   }
 
   .eventInfo,
-  .eventShortTitle,
-  .eventPlaceCount {
+  .eventShortTitle{
     display: block;
     text-align: left;
   }
@@ -65,10 +68,7 @@
     font-size: 11px;
   }
 
-  .eventPlaceCount {
-    position: static;
-    margin-top: 4px;
-  }
+
 
   .dotSeparator {
     display: none;

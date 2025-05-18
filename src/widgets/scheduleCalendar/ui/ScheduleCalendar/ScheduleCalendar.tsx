@@ -216,48 +216,55 @@ export const ScheduleCalendar: React.FC = () => {
           <ComponentLoader size={56} />
         </div>
       ) : (
-        <FullCalendar
-          firstDay={1}
-          timeZone="Asia/Aqtobe"
-          ref={calendarRef}
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="timeGridWeek"
-          selectable={true}
-          select={handleSelect}
-          selectAllow={(selectInfo) => {
-            const now = new Date()
-            const start = new Date(selectInfo.start)
-            return start >= now
-          }}
-          headerToolbar={false}
-          events={visibleEvents}
-          eventContent={EventContent}
-          allDaySlot={false}
-          datesSet={handleDatesSet}
-          nowIndicator={true}
-          dayHeaderContent={DayHeader}
-          eventClick={handleEventClick}
-          slotMinTime="06:00:00"
-          slotMaxTime="22:00:00"
-          slotLabelFormat={{
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false
-          }}
-          slotDuration="01:00:00"
-          selectMirror={true}
-          eventOverlap={true}
-          eventMaxStack={1}
-          eventDidMount={(info) => {
-            const eventEl = info.el
-            const eventEnd = info.event.end || info.event.start
-            const now = new Date()
+        <div className="calendar-scroll-container">
+          <FullCalendar
+            expandRows={false}
+            height="auto"
+            firstDay={1}
+            timeZone="Asia/Aqtobe"
+            ref={calendarRef}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek"
+            selectable={true}
+            select={handleSelect}
+            selectAllow={(selectInfo) => {
+              const now = new Date()
+              const start = new Date(selectInfo.start)
+              return start >= now
+            }}
+            headerToolbar={false}
+            events={visibleEvents}
+            eventContent={EventContent}
+            allDaySlot={false}
+            datesSet={handleDatesSet}
+            nowIndicator={true}
+            dayHeaderContent={DayHeader}
+            eventClick={handleEventClick}
+            slotMinTime="06:00:00"
+            slotMaxTime="22:00:00"
+            slotLabelFormat={{
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false
+            }}
+            slotDuration="00:30:00"
+            selectMirror={true}
+            eventDidMount={(info) => {
+              const eventEl = info.el
+              const eventEnd = info.event.end || info.event.start
+              const now = new Date()
 
-            if (eventEnd && eventEnd < now) {
-              eventEl.classList.add("fc-event-past")
-            }
-          }}
-        />
+              if (eventEnd && eventEnd < now) {
+                eventEl.classList.add("fc-event-past")
+              }
+            }}
+            eventTimeFormat={{
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false
+            }}
+          />
+        </div>
       )}
 
       <CreateSchedule

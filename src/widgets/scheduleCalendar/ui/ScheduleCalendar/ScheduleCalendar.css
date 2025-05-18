@@ -40,6 +40,16 @@
     border-bottom: 3px solid var(--action-brand);
   }
 /* Calendar body */
+.fc .fc-timegrid-slot-label{
+  text-align: center;
+  vertical-align: top;
+  font-size: 14px;
+  line-height: 150%;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+
+}
 .fc .fc-timegrid-slot {
     height: 3.5rem;
 }
@@ -48,7 +58,7 @@
     height: 70px;
 }
 .fc-scrollgrid{
-    border-radius: 16px;
+    border-radius: 0;
 }
 
 
@@ -106,8 +116,78 @@ z-index: 5;
 .fc-v-event{
   overflow-x: hidden;
   overflow-y: clip;
-  min-height: fit-content;
+  z-index: 10;
+  min-height: 40px;
+}
+/* borders */
+.fc .fc-timegrid-slot,
+.fc .fc-timegrid-slot-label,
+.fc .fc-timegrid-slot-lane {
+  border: none;
+}
+.fc .fc-col-header-cell {
+  border: none;
+}
+.fc .fc-daygrid-day,
+.fc .fc-timegrid-col {
+  border-left: none;
+  border-right: none;
+}
+.fc .fc-scrollgrid {
+  border: none;
+}
+
+.fc .fc-timegrid-slot {
+  border-bottom: 1px solid var(--border-gray-light);
+}
+
+/* Добавляем правую границу колонкам (внутри) */
+.fc .fc-timegrid-col:not(:last-child) {
+  border-right: 1px solid var(--border-gray-light);
+}
+
+/* Добавляем нижнюю границу заголовкам */
+.fc .fc-col-header-cell {
+  border-bottom: 1px solid var(--border-gray-light);
+}
+
+.fc .fc-daygrid-day-frame {
+  border-bottom: 1px solid var(--border-gray-light);
+  border-right: 1px solid var(--border-gray-light);
+}
+.fc .fc-col-header-cell {
+  border-right: 1px solid var(--border-gray-light);
+  border-bottom: 1px solid var(--border-gray-light);
+}
+
+/* Убираем правую границу у последнего заголовка */
+.fc .fc-col-header-cell:last-child {
+  border-right: none;
+}
+
+
+/* Calendar Scrooll */
+.calendar-scroll-container {
+  border:1px solid var(--border-gray-light);
+  border-radius: 16px;
+  height: calc(100vh - 214px); 
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) transparent;
+}
+
+.calendar-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
 
 }
 
-/* Cursor not allowed to select time */
+.calendar-scroll-container::-webkit-scrollbar-thumb {
+  background-color: var(--gray-300);
+  border-radius: 3px;
+}
+.calendar-scroll-container::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}

@@ -1,12 +1,12 @@
-import { FC, useEffect } from 'react'
-import { WelcomeLayout } from '@/widgets/layout'
-import { SelectCenterForm } from '@/features/center/selectCenter'
-import { useAppDispatch, useAppSelector } from '@/app/config/store'
-import { fetchCenters, selectCenterLoading, selectCenters, setCenterId } from '@/entities/center'
-import { ContactUs } from '../ContactUs/ContactUs'
-import { Loader } from '@/shared/ui/Loader/Loader'
-import { RoutePath } from '@/shared/consts/routerPaths'
-import { useNavigate } from 'react-router-dom'
+import { FC, useEffect } from "react"
+import { WelcomeLayout } from "@/widgets/layout"
+import { SelectCenterForm } from "@/features/center/selectCenter"
+import { useAppDispatch, useAppSelector } from "@/app/config/store"
+import { fetchCenters, selectCenterLoading, selectCenters, setCenterId } from "@/entities/center"
+import { ContactUs } from "../ContactUs/ContactUs"
+import { RoutePath } from "@/shared/consts/routerPaths"
+import { useNavigate } from "react-router-dom"
+import { PageLoader } from "@/shared/ui/PageLoader/PageLoader"
 
 const SelectCenterPage: FC = () => {
   const navigate = useNavigate()
@@ -28,7 +28,7 @@ const SelectCenterPage: FC = () => {
   }, [centers, navigate])
   if (isLoading) {
     // !TODO добавить pageLoader для всех страниц общий
-    return <Loader />
+    return <PageLoader />
   }
   return (
     <WelcomeLayout>{centers.length === 0 ? <ContactUs /> : <SelectCenterForm />}</WelcomeLayout>
