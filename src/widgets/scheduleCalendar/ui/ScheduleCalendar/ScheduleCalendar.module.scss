@@ -9,3 +9,13 @@
 .cancelNotification{
     width: 400px;
 }
+
+.calendarLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 100px); 
+  border: 1px solid var(--border-gray-light);
+  border-radius: 16px;
+  padding: 16px;
+}

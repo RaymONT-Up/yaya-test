@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from "react"
 import {
   fetchCenters,
   selectCenters,
-  selectCenterLoading,
   getCenterId,
   setCenterId,
   selectCenterError,
-  centerActions
-} from '@/entities/center/'
-import { PopoverSelect, SelectItem } from '@/shared/ui/PopoverSelect/PopoverSelect'
-import styles from './CenterSelector.module.scss'
-import { useAppDispatch, useAppSelector } from '@/app/config/store'
-import { Text, TextTheme } from '@/shared/ui/Text/Text'
+  centerActions,
+  selectCenterLoading
+} from "@/entities/center/"
+import { PopoverSelect, SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
+import styles from "./CenterSelector.module.scss"
+import { useAppDispatch, useAppSelector } from "@/app/config/store"
+import { Text, TextTheme } from "@/shared/ui/Text/Text"
 
 interface CenterSelectorProps {
   isOpen: boolean
@@ -57,13 +57,14 @@ export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect
     }
     onSelect()
   }
-  if (isLoading) return <Text theme={TextTheme.SUCCESS}>Загрузка...</Text>
   if (error) return <Text theme={TextTheme.ERROR}>{error}</Text>
 
   return (
     <div className={styles.wrapper}>
       {isOpen && (
         <PopoverSelect
+          isLoading={isLoading}
+          width={320}
           isOpen={isOpen}
           options={selectOptions}
           selectedValue={selectedId || null}

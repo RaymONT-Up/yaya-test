@@ -1,6 +1,4 @@
-.relative{
-  position: relative;
-}
+
 .sidebar {
     width: var(--sidebar-colapsed-width);
     height: 100vh;
@@ -23,50 +21,10 @@
         opacity: 1;
         visibility: visible;
       }
-      .imageWrapper{
-        display: none;
-      }
-      .centerInfo{
-        width: 100%;
-      }
-      .centerSelectorComponent{
-        display: block;
-      }
     }
   
   }
-  .centerSelectorComponent{
-    display: none;
-  }
-  .selectCenter{
-    position: relative;
-    z-index: 1000;
-  }
-  .image{
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    object-fit: cover;
-  }
-  .imageWrapper {
-    padding: 9px;
-    border: 1px solid var(--border-gray-light);
-    border-radius: 12px;
-    width: 60px;
-    height: 60px;
-  }
-  .centerSelector{
-    padding: 9px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    border: 1px solid var(--border-gray-light);
-    border-radius: 12px;
-    height: 60px;
-    width: 100%;
-    cursor: pointer;
 
-  }
 
   .nav {
     margin-top: 24px;
@@ -111,25 +69,4 @@
     align-items: center;
   }
 
-  .centerInfo{
-    width: 0;
-    max-width: 174px;
-  }
-.centerName,
-.centerAddress {
-  white-space: nowrap;
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-  display: block; 
-  width: 100%;
-}
-.centerAddress{
-  color: var(--text-secondary);
-}
-.chevron {
-  transition: transform 0.3s ease-in-out;
-}
-
-.chevron.open {
-  transform: rotate(180deg);
-}
+ 

@@ -8,10 +8,17 @@ height: 100vh;
 display: flex;
 flex: 1;
 margin-top: var(--header-height);
+overflow: hidden;
 }
 
 .content {
 flex: 1;
 padding: 24px;
 margin-left: var(--sidebar-colapsed-width);
+}
+
+@media (max-height: 500px) {
+  .main {
+    overflow-y: auto;
+  }
 }

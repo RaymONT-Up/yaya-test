@@ -1,15 +1,19 @@
-import { FC } from 'react'
-import styles from './ErrorPage.module.scss'
-import { InfoBlock } from '@/shared/ui/InfoBlock/InfoBlock'
-import { Logo } from '@/shared/assets/svg/Logo'
-import { ErrorCodes, errorConfig } from '@/shared/consts/errorConfig'
+import { FC } from "react"
+import styles from "./ErrorPage.module.scss"
+import { InfoBlock } from "@/shared/ui/InfoBlock/InfoBlock"
+import { Logo } from "@/shared/assets/svg/Logo"
+import { ErrorCodes, errorConfig } from "@/shared/consts/errorConfig"
 
 interface ErrorPageProps {
-  errorCode: ErrorCodes
+  errorCode?: ErrorCodes
 }
 
 const ErrorPage: FC<ErrorPageProps> = ({ errorCode }) => {
-  const { title, text, icon: Icon } = errorConfig[errorCode] || errorConfig[ErrorCodes.UNKNOWN]
+  const {
+    title,
+    text,
+    icon: Icon
+  } = (errorCode && errorConfig[errorCode]) || errorConfig[ErrorCodes.UNKNOWN]
 
   return (
     <div className={styles.wrapper}>

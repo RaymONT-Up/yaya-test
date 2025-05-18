@@ -1,18 +1,22 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { CurrentSessionState } from '../types/currentSession.types'
-import { loginThunk } from '../services/loginThunk'
-import { logoutThunk } from '../services/logoutThunk'
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { CurrentSessionState } from "../types/currentSession.types"
+import { loginThunk } from "../services/loginThunk"
+import { logoutThunk } from "../services/logoutThunk"
+import { getRoleThunk } from "../services/getRoleThunk"
 
 const initialState: CurrentSessionState = {
   user_id: null,
   token: null,
   username: null,
   loading: false,
-  error: null
+  error: null,
+  role: null,
+  permissions: null,
+  role_display: null
 }
 
 const currentSessionSlice = createSlice({
-  name: 'currentSession',
+  name: "currentSession",
   initialState,
   reducers: {
     setSession(state, action: PayloadAction<CurrentSessionState>) {
@@ -37,7 +41,7 @@ const currentSessionSlice = createSlice({
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false
-        state.error = (action.payload as string) || 'Ошибка входа'
+        state.error = (action.payload as string) || "Ошибка входа"
       })
       .addCase(logoutThunk.pending, (state) => {
         state.loading = true
@@ -48,7 +52,20 @@ const currentSessionSlice = createSlice({
       })
       .addCase(logoutThunk.rejected, (state, action) => {
         state.loading = false
-        state.error = (action.payload as string) || 'Ошибка входа'
+        state.error = (action.payload as string) || "Ошибка входа"
+      })
+      .addCase(getRoleThunk.fulfilled, (state, action) => {
+        state.role = action.payload.role
+        state.permissions = action.payload.permissions
+        state.role_display = action.payload.role_display
+        state.loading = false
+      })
+      .addCase(getRoleThunk.rejected, (state, action) => {
+        state.error = action.payload || "Ошибка получения роли"
+        state.loading = false
+      })
+      .addCase(getRoleThunk.pending, (state) => {
+        state.loading = true
       })
   }
 })

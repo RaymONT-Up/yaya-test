@@ -33,7 +33,7 @@ export default tseslint.config(
       "react/prop-types": "off",
       // Правила для форматирования кода
       indent: ["error", 2], // отступы 2 пробела
-      quotes: ["error", "single"], // одиночные кавычки
+      quotes: ["off", "single"], // одиночные кавычки
       semi: ["error", "never"], // без точки с запятой
       "max-len": ["off"], // максимальная длина строки выключил так как svg
       "comma-dangle": ["error", "never"], // без запятой в конце

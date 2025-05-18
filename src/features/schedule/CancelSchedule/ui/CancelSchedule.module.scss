@@ -1,0 +1,14 @@
+.form {
+  width: 100%;
+  max-width: 736px;
+}
+
+.gridContainer{
+  width: 736px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.reason{
+  grid-column: span 2;
+}

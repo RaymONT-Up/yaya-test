@@ -51,6 +51,24 @@
 
   }
 
+  &.red {
+    background-color: var(--action-danger);
+    color: white;
+
+    &:hover:not(:disabled):not(.loading) {
+      background-color: var(--red-600);
+    }
+
+    &:disabled {
+      background-color: var(--red-100);
+      color: var(--text-white);
+      cursor: not-allowed;
+    }
+
+    &.loading {
+      background-color: var(--red-100);
+    }
+  }
   &.primary {
     background-color: var(--action-brand);
     color: white;

@@ -52,8 +52,8 @@ export const $createSchedule = async (
 }
 export const $duplicateSchedule = async (
   data: DuplicateScheduleDto
-): Promise<AxiosResponse<ScheduleEvent>> => {
-  const response = await apiWithTokenAndCenter.post<ScheduleEvent>(
+): Promise<AxiosResponse<ScheduleEvent[]>> => {
+  const response = await apiWithTokenAndCenter.post<ScheduleEvent[]>(
     "/partners/schedules/duplicate/",
     data
   )

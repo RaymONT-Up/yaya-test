@@ -1,13 +1,13 @@
-import React, { useMemo } from 'react'
-import { Input } from '@/shared/ui/Input/Input'
-import { PopoverSelect, SelectItem } from '@/shared/ui/PopoverSelect/PopoverSelect'
-import { useTrainers } from '../model/useTrainers'
-import { useAppSelector } from '@/app/config/store'
-import { selectCurrentCenter } from '@/entities/center'
-import styles from './SelectTrainer.module.scss'
-import { User } from '@/shared/assets/svg/User'
-import { ChevronDown } from '@/shared/assets/svg/ChevronDown'
-import { useSelectManager } from '@/shared/ui/PopoverSelect/useSelectManager'
+import React, { useMemo } from "react"
+import { Input } from "@/shared/ui/Input/Input"
+import { PopoverSelect, SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
+import { useTrainers } from "../model/useTrainers"
+import { useAppSelector } from "@/app/config/store"
+import { selectCurrentCenter } from "@/entities/center"
+import styles from "./SelectTrainer.module.scss"
+import { User } from "@/shared/assets/svg/User"
+import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
+import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 
 interface SelectTrainerProps {
   onSelect: (trainerId: number) => void
@@ -20,13 +20,13 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: trainers = [], isLoading, isError } = useTrainers(id)
-  const { isOpen, toggle, close } = useSelectManager('trainer')
+  const { isOpen, toggle, close } = useSelectManager("trainer")
 
   const options: SelectItem[] = useMemo(
     () =>
       trainers.map((trainer) => ({
         title: trainer.full_name,
-        text: '',
+        text: "",
         value: trainer.id
       })),
     [trainers]
@@ -39,7 +39,6 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
     close()
   }
 
-  if (isLoading) return <p>Загрузка...</p>
   if (isError) return <p>Ошибка загрузки тренеров</p>
 
   return (
@@ -47,13 +46,14 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
       <Input
         placeholder="Не выбран"
         label="Тренер"
-        value={selectedTrainer?.full_name ?? ''}
+        value={selectedTrainer?.full_name ?? ""}
         readOnly
         onClick={toggle}
         leftIcon={<User />}
-        rightIcon={<ChevronDown className={styles.chevron + ` ${isOpen ? styles.isOpen : ''}`} />}
+        rightIcon={<ChevronDown className={styles.chevron + ` ${isOpen ? styles.isOpen : ""}`} />}
       />
       <PopoverSelect
+        isLoading={isLoading}
         isOpen={isOpen}
         options={options}
         selectedValue={Number(selectedTrainerId) || null}

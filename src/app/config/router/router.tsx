@@ -1,20 +1,22 @@
-import { getToken } from '@/entities/currentSession'
-import { LoginPage } from '@/pages/LoginPage'
-import { MainPage } from '@/pages/MainPage'
-import { SelectCenterPage } from '@/pages/SelectCentetPage'
-import { VisitPage } from '@/pages/VisitPage'
-import { RoutePath } from '@/shared/consts/routerPaths'
-import { MainLayout } from '@/widgets/layout'
-import { JSX, Suspense } from 'react'
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { getToken } from "@/entities/currentSession"
+// import { RoleGuard } from "@/features/auth/RoleGuard"
+import { ErrorPage } from "@/pages/error"
+import { LoginPage } from "@/pages/LoginPage"
+import { MainPage } from "@/pages/MainPage"
+import { SelectCenterPage } from "@/pages/SelectCentetPage"
+import { VisitPage } from "@/pages/VisitPage"
+import { RoutePath } from "@/shared/consts/routerPaths"
+import { PageLoader } from "@/shared/ui/PageLoader/PageLoader"
+import { MainLayout } from "@/widgets/layout"
+import { JSX, Suspense } from "react"
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom"
 
 type AuthGuardProps = {
-  mustBe: 'authorized' | 'unauthorized'
+  mustBe: "authorized" | "unauthorized"
   children: JSX.Element
 }
 const withSuspense = (Component: React.LazyExoticComponent<React.FC>) => (
-  // !TODO loader для страниц уточнить у дизайнера
-  <Suspense fallback={<div>Загрузка...</div>}>
+  <Suspense fallback={<PageLoader />}>
     <Component />
   </Suspense>
 )
@@ -23,7 +25,7 @@ export const AuthGuard = ({ mustBe, children }: AuthGuardProps) => {
   const token = getToken()
   const isAuthorized = Boolean(token)
 
-  if (mustBe === 'authorized') {
+  if (mustBe === "authorized") {
     return isAuthorized ? children : <Navigate to={RoutePath.LOGIN} />
   }
 
@@ -35,7 +37,9 @@ export const router = createBrowserRouter([
     path: RoutePath.MAIN,
     element: (
       <AuthGuard mustBe="authorized">
+        {/* <RoleGuard permission="SCHEDULE_VIEW"> */}
         <MainLayout />
+        {/* </RoleGuard> */}
       </AuthGuard>
     ),
     children: [
@@ -84,6 +88,16 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: withSuspense(LoginPage)
+      }
+    ]
+  },
+  {
+    path: RoutePath.ERROR,
+    element: <Outlet />,
+    children: [
+      {
+        index: true,
+        element: withSuspense(ErrorPage)
       }
     ]
   }
