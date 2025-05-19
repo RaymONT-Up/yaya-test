@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react"
-import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import { Text, TextTheme, TextVariant } from "@/shared/ui/Text/Text"
 import { Input } from "@/shared/ui/Input/Input"
 import styles from "./PopoverSelect.module.scss"
 import { Search } from "@/shared/assets/svg/Search"
@@ -20,6 +20,7 @@ interface PopoverSelectProps {
   width?: string | number
   showSearch?: boolean
   isLoading?: boolean
+  error?: string
 }
 
 export const PopoverSelect: React.FC<PopoverSelectProps> = ({
@@ -30,7 +31,8 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   onClose,
   width = "360px",
   showSearch = false,
-  isLoading = false
+  isLoading = false,
+  error
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
@@ -82,6 +84,17 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
             {isLoading ? (
               <div className={styles.loaderWrapper}>
                 <ComponentLoader size={40} />
+              </div>
+            ) : error ? (
+              <div className={styles.errorWrapper}>
+                <Text
+                  theme={TextTheme.ERROR}
+                  variant={TextVariant.BODY}
+                  bodySize="small"
+                  className={styles.empty}
+                >
+                  {error}
+                </Text>
               </div>
             ) : filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
