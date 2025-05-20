@@ -1,12 +1,16 @@
 export enum LessonTypeEnum {
-  OFFLINE = 'OFFLINE',
-  ONLINE = 'ONLINE',
-  ONLINE_COURSES = 'ONLINE_COURSES'
+  OFFLINE = "OFFLINE",
+  ONLINE = "ONLINE",
+  ONLINE_COURSES = "ONLINE_COURSES"
 }
 export enum LessonLanguageEnum {
-  EN = 'Анг',
-  RU = 'Рус',
-  KZ = 'Каз'
+  EN = "Анг",
+  RU = "Рус",
+  KZ = "Каз"
+}
+export enum LessonLevelEnum {
+  CLASS = "1-4 класс",
+  Beginner = "Начинающий"
 }
 
 export interface Lesson {
@@ -17,6 +21,6 @@ export interface Lesson {
   max_age_str: string
   duration: number
   type: LessonTypeEnum
-  language: LessonLanguageEnum
-  level: string | null
+  languages?: [LessonLanguageEnum]
+  level: LessonLevelEnum | null
 }

@@ -1,0 +1,140 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+  height: 28px;
+  cursor: pointer;
+  &.primary {
+    padding: 6px 8px;
+    .label{
+        color: var(--text-white);
+    }
+  }
+
+  &.secondary {
+    padding: 5px 7px;
+    border: 1px solid;
+    .label{
+        color: var(--gray-600);
+    }
+  }
+
+  &.brand {
+    &.primary{
+     background-color: var(--action-brand);
+     &:hover{
+        background-color: var(--blue-600);
+     }
+    }
+  
+    &.secondary {
+      border-color: var(--blue-200);
+        background-color: var(--blue-50);
+
+      &:hover{
+        background-color: var(--blue-100);
+        border-color: var(--blue-300);
+     }
+    }
+  }
+
+  &.danger {
+    &.primary{
+     background-color: var(--red-600);
+     &:hover{
+        background-color: var(--red-700);
+     }
+    }
+  
+    &.secondary {
+      border-color: var(--red-300);
+      background-color: var(--red-100);
+
+      &:hover{
+        background-color: var(--red-200);
+        border-color: var(--red-400);
+     }
+    }
+  }
+
+  &.positive {
+    &.primary{
+     background-color: var(--green-600);
+     &:hover{
+        background-color: var(--green-700);
+     }
+    }
+  
+    &.secondary {
+      border-color: var(--green-300);
+      background-color: var(--green-100);
+
+      &:hover{
+        background-color: var(--green-200);
+        border-color: var(--green-400);
+     }
+    }
+  }
+
+  &.warning {
+    &.primary{
+     background-color: var(--yellow-500);
+    }
+  
+    &.secondary {
+      border-color: var(--yellow-300);
+      background-color: var(--yellow-100);
+
+      &:hover{
+        background-color: var(--yellow-200);
+        border-color: var(--yellow-400);
+     }
+    }
+  }
+
+  &.neutral {
+    &.primary{
+        .label{
+            color: var(--text-primary);
+        }
+     background-color: var(--gray-100);
+     &:hover{
+     background-color: var(--gray-200);
+
+     }
+    }
+  
+    &.secondary {
+      border-color: var(--border-gray-light);
+      background-color: var(--gray-50);
+
+
+      &:hover{
+        background-color: var(--gray-100);
+        border-color: var(--gray-300);
+     }
+    }
+  }
+
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.remove {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+}

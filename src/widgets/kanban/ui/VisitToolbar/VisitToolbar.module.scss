@@ -29,3 +29,19 @@
     background-color: var(--border-gray-light);
   }
 }
+.dateWrapper{
+  position: relative;
+}
+.pickerWrapper{
+  position: absolute;
+  background: transparent;
+  left: 0;
+  z-index: 10;
+  border-radius: 24px;
+  &.top{
+      bottom: 100%;
+  }
+  &.bottom{
+      top: 100%;
+  }
+}
