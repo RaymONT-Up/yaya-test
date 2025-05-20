@@ -48,6 +48,7 @@ export const CreateSchedule: React.FC<Props> = ({
   const [duration, setDuration] = useState<number>(0)
   const [durationUi, setDurationUi] = useState<number>(0)
   const [minTime, setMinTime] = useState<string>("")
+
   const {
     register,
     handleSubmit,
@@ -80,8 +81,8 @@ export const CreateSchedule: React.FC<Props> = ({
       setDurationUi(0)
       onClose()
     },
-    onError: (err) => {
-      console.error("Ошибка при добавлении расписания:", err)
+    onError: () => {
+      onClose()
     }
   })
 

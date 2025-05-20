@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react"
-import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import { Text, TextTheme, TextVariant } from "@/shared/ui/Text/Text"
 import { Input } from "@/shared/ui/Input/Input"
 import styles from "./Menu.module.scss"
 import { Search } from "@/shared/assets/svg/Search"
@@ -24,6 +24,7 @@ interface MenuProps {
   selectAllText?: string
   showResetBtn?: boolean
   isLoading?: boolean
+  error?: string
 }
 
 export const Menu: React.FC<MenuProps> = ({
@@ -36,7 +37,8 @@ export const Menu: React.FC<MenuProps> = ({
   showSearch = false,
   selectAllText = "Выбрать все",
   showResetBtn = false,
-  isLoading = false
+  isLoading = false,
+  error
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
@@ -101,6 +103,17 @@ export const Menu: React.FC<MenuProps> = ({
             {isLoading ? (
               <div className={styles.loaderWrapper}>
                 <ComponentLoader size={40} />
+              </div>
+            ) : error ? (
+              <div className={styles.errorWrapper}>
+                <Text
+                  theme={TextTheme.ERROR}
+                  variant={TextVariant.BODY}
+                  bodySize="small"
+                  className={styles.empty}
+                >
+                  {error}
+                </Text>
               </div>
             ) : (
               <>

@@ -5,7 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid"
 import interactionPlugin from "@fullcalendar/interaction"
 import { EventClickArg, type DateSelectArg, type DatesSetArg } from "@fullcalendar/core"
 import { CreateSchedule } from "@/features/schedule/CreateSchedule"
-import { useSchedule } from "@/entities/schedule"
+import { useCancelSchedule, useMassCancelSchedules, useSchedule } from "@/entities/schedule"
 import { parseScheduleEvents } from "@/shared/libs/parseScheduleEvents"
 import { DuplicateSchedule } from "@/features/schedule/DuplicateSchedule"
 import "./ScheduleCalendar.css"
@@ -19,7 +19,6 @@ import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 import { NotificationVariant } from "@/shared/ui/Notification/ui/Notification/Notification"
 import styles from "./ScheduleCalendar.module.scss"
 import { Check } from "@/shared/assets/svg/Check"
-import { $cancelSchedule, $cancelSchedules } from "@/shared/api/schedule/schedule"
 import { EventContent } from "../EventContent/EventContent"
 import { DayHeader } from "../DayHeader/DayHeader"
 import { CancelSchedule } from "@/features/schedule/CancelSchedule"
@@ -45,6 +44,15 @@ export const ScheduleCalendar: React.FC = () => {
   const pendingCancelRef = useRef<{ id: string; reason: string } | null>(null)
   const pendingMassCancelRef = useRef<CancelScheduleSDto | null>(null)
 
+  const { mutate: cancelScheduleMutate } = useCancelSchedule({
+    onSuccess: () => {},
+    onError: () => {}
+  })
+
+  const { mutate: massCancelSchedulesMutate } = useMassCancelSchedules({
+    onSuccess: () => {},
+    onError: () => {}
+  })
   const { id } = useAppSelector(selectCurrentCenter)
 
   const { data, isLoading } = useSchedule({
@@ -102,13 +110,10 @@ export const ScheduleCalendar: React.FC = () => {
     setTimeout(() => {
       const current = pendingCancelRef.current
       if (current?.id === id) {
-        cancelSchedule(id, reason)
+        cancelScheduleMutate({ id: Number(id), cancel_reason: reason })
         pendingCancelRef.current = null
       }
     }, 5000)
-  }
-  const cancelSchedule = (id: string, reason: string) => {
-    $cancelSchedule({ id: Number(id), cancel_reason: reason })
   }
 
   const handleMassCancelSchedules = (dto: CancelScheduleSDto) => {
@@ -159,7 +164,7 @@ export const ScheduleCalendar: React.FC = () => {
     setTimeout(() => {
       const current = pendingMassCancelRef.current
       if (current) {
-        $cancelSchedules(current)
+        massCancelSchedulesMutate(current)
         pendingMassCancelRef.current = null
       }
     }, 5000)

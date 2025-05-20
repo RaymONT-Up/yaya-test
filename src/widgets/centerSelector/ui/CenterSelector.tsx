@@ -11,7 +11,6 @@ import {
 import { PopoverSelect, SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import styles from "./CenterSelector.module.scss"
 import { useAppDispatch, useAppSelector } from "@/app/config/store"
-import { Text, TextTheme } from "@/shared/ui/Text/Text"
 
 interface CenterSelectorProps {
   isOpen: boolean
@@ -57,7 +56,6 @@ export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect
     }
     onSelect()
   }
-  if (error) return <Text theme={TextTheme.ERROR}>{error}</Text>
 
   return (
     <div className={styles.wrapper}>
@@ -70,6 +68,7 @@ export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect
           selectedValue={selectedId || null}
           onSelect={handleSelect}
           onClose={() => {}}
+          error={error ? error : undefined}
         />
       )}
     </div>

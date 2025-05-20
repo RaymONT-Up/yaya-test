@@ -41,9 +41,9 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   selectName = "lesson"
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
-  const { data: lessons = [], isError, isLoading } = useLessons(id)
+  const { data: lessons = [], isError, isLoading, error: loadError } = useLessons(id)
   const { isOpen, toggle, close } = useSelectManager(selectName)
-
+  console.log(loadError)
   const options: SelectItem[] = useMemo(
     () =>
       lessons.map((lesson) => ({
@@ -105,7 +105,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   }
 
   // if (isLoading) return <p>Загрузка...</p>
-  if (isError) return <p>Ошибка загрузки занятий</p>
+  // if (isError) return <p>Ошибка загрузки занятий</p>
 
   return (
     <div className={clsx(styles.container, className)}>
@@ -127,6 +127,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
 
       {isMultiply ? (
         <Menu
+          error={isError ? "Ошибка при загрузке списка уроков" : undefined}
           isLoading={isLoading}
           showResetBtn={showResetBtn}
           showSearch
@@ -141,6 +142,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
       ) : (
         <PopoverSelect
           showSearch
+          error={isError ? "Ошибка при загрузке списка уроков" : undefined}
           isLoading={isLoading}
           isOpen={showInput ? isOpen : true}
           selectedValue={selectedIdsArray[0] || null}
