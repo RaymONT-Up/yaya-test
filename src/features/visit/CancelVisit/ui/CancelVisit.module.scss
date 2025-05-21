@@ -1,0 +1,79 @@
+.readonlyFields{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 552px;
+}
+.childInfo{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-gray-light);
+}
+.readonlyField{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.label{
+    max-width: 180px;
+    width: 100%;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+.duration{
+    color: var(--text-secondary);
+}
+
+.icon{
+    path{
+        stroke: #6B6B6F;
+    }
+}
+
+// dialog
+.userInfoList {
+  list-style: none;
+  padding-left: 0;
+  margin-top: -16px;
+  margin-bottom: 24px;
+}
+
+.userInfoItem {
+  position: relative;
+  padding-left: 20px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;     
+    height: 8px;
+    background-color: var(--text-secondary); 
+    border-radius: 50%; 
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 12px; 
+  }
+}
+.userInfoItem {
+  margin-bottom: 8px;
+}
+.userInfoText{
+    color: var(--text-secondary);
+}
+.cancelReason{
+    height: 100px;
+}
+
+.childAge{
+  color: var(--text-secondary);
+}

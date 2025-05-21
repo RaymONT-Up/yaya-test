@@ -1,0 +1,105 @@
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  height: calc(100% - 75px);
+  margin-bottom: 24px;
+}
+
+.column {
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+}
+
+
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border-gray-light);
+}
+
+.title {
+  margin-bottom: 8px;
+  margin-left: 8px;
+  margin-top: 4px;
+}
+
+.booked {
+  background-color: #F1FBFF;
+}
+
+.approved {
+  background-color: var(--green-50);
+}
+
+.canceled {
+  background-color: var(--red-50);
+}
+
+.missed {
+  background-color: var(--gray-25);
+}
+
+.tag{
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kanbanLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 100px); 
+  border: 1px solid var(--border-gray-light);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.cancelNotification{
+    width: 400px;
+}
+// scroll
+
+.items {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.items::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.items::-webkit-scrollbar-thumb {
+  background-color: #D0D0D1B2;
+  border-radius: 16px;
+  opacity: 0.7;
+}
+
+.items:hover::-webkit-scrollbar {
+  display: block;
+}
+
+.items:hover {
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+}

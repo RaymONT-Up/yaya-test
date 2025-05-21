@@ -41,9 +41,8 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   selectName = "lesson"
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
-  const { data: lessons = [], isError, isLoading, error: loadError } = useLessons(id)
+  const { data: lessons = [], isError, isLoading } = useLessons(id)
   const { isOpen, toggle, close } = useSelectManager(selectName)
-  console.log(loadError)
   const options: SelectItem[] = useMemo(
     () =>
       lessons.map((lesson) => ({
@@ -55,10 +54,10 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
             </span>
             <span className={styles.dot}></span>
             <span>{lesson.duration} мин</span>
-            {lesson.language && (
+            {lesson.languages && lesson.languages?.length > 0 && (
               <>
                 <span className={styles.dot}></span>
-                <span>{lesson.language}</span>
+                <span>{lesson?.languages?.join(", ")}</span>
               </>
             )}
             {lesson.level && (
@@ -131,7 +130,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
           isLoading={isLoading}
           showResetBtn={showResetBtn}
           showSearch
-          isOpen={showInput ? isOpen : true}
+          isOpen={isOpen}
           selectedValues={selectedIdsArray}
           options={options}
           onClose={close}
@@ -144,7 +143,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
           showSearch
           error={isError ? "Ошибка при загрузке списка уроков" : undefined}
           isLoading={isLoading}
-          isOpen={showInput ? isOpen : true}
+          isOpen={isOpen}
           selectedValue={selectedIdsArray[0] || null}
           options={options}
           onClose={close}

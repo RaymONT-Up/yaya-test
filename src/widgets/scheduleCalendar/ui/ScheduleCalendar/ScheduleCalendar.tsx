@@ -25,6 +25,7 @@ import { CancelSchedule } from "@/features/schedule/CancelSchedule"
 import { CancelScheduleSDto } from "@/shared/types/schedule"
 import { formatDateShort } from "@/shared/libs/formaDate"
 import { ComponentLoader } from "@/shared/ui/ComponentLoader/ComponentLoader"
+import { useDebounce } from "@/shared/libs/useDebounce"
 
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -32,15 +33,31 @@ export const ScheduleCalendar: React.FC = () => {
   const [cancelModalOpen, setCancelModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [range, setRange] = useState<{ start: string; end: string } | null>(null)
-  const today = new Date()
-  const [dateRange, setDateRange] = useState({
-    startDate: new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10),
-    endDate: new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().slice(0, 10)
-  })
+  const getWeekRange = (date: Date) => {
+    const day = date.getDay() || 7
+    const monday = new Date(date)
+    monday.setDate(date.getDate() - day + 1)
+    const sunday = new Date(monday)
+    sunday.setDate(monday.getDate() + 7)
+    return {
+      startDate: monday.toISOString().slice(0, 10),
+      endDate: sunday.toISOString().slice(0, 10)
+    }
+  }
+
+  const [dateRange, setDateRange] = useState(getWeekRange(new Date()))
   const [selectedEvent, setSelectedEvent] = useState<EventApi | null>()
   const [hiddenEvents, setHiddenEvents] = useState<string[]>([])
   const [selectedLessonIds, setLessonIds] = useState<number[]>([])
+  const debouncedLessonIds = useDebounce(selectedLessonIds, 1000)
+  const { id } = useAppSelector(selectCurrentCenter)
 
+  const { data, isLoading } = useSchedule({
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
+    centerId: id,
+    lesson_ids: debouncedLessonIds
+  })
   const pendingCancelRef = useRef<{ id: string; reason: string } | null>(null)
   const pendingMassCancelRef = useRef<CancelScheduleSDto | null>(null)
 
@@ -53,26 +70,15 @@ export const ScheduleCalendar: React.FC = () => {
     onSuccess: () => {},
     onError: () => {}
   })
-  const { id } = useAppSelector(selectCurrentCenter)
 
-  const { data, isLoading } = useSchedule({
-    startDate: dateRange.startDate,
-    endDate: dateRange.endDate,
-    centerId: id
-  })
   const { addNotification, removeNotification } = useNotifications()
 
   const parsedEvents = useMemo(() => {
     return data ? parseScheduleEvents(data.events) : []
   }, [data])
   const visibleEvents = useMemo(() => {
-    return parsedEvents?.filter(
-      (event) =>
-        !hiddenEvents.includes(event.id) &&
-        (!selectedLessonIds.length ||
-          selectedLessonIds.includes(Number(event.extendedProps.lesson?.id)))
-    )
-  }, [parsedEvents, hiddenEvents, selectedLessonIds])
+    return parsedEvents?.filter((event) => !hiddenEvents.includes(event.id))
+  }, [parsedEvents, hiddenEvents])
 
   const handleCancelScheduleRequest = (id: string, reason: string) => {
     setHiddenEvents((prev) => [...prev, id])
@@ -215,6 +221,7 @@ export const ScheduleCalendar: React.FC = () => {
         setCancelModalOpen={setCancelModalOpen}
         setModalOpen={setModalOpen}
         onLessonIdsChange={setLessonIds}
+        selectedLessonIds={selectedLessonIds}
       />
       {isLoading ? (
         <div className={styles.calendarLoader}>
