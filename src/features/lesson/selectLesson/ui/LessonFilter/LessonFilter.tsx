@@ -8,7 +8,7 @@ import { Filter } from "@/shared/assets/svg/Filter"
 import styles from "./LessonFilter.module.scss"
 import { useLessons } from "../../model/useLessons"
 import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
-import { Counter } from "@/shared/ui/Counter/Counter"
+import { Counter, CounterVariant } from "@/shared/ui/Counter/Counter"
 
 interface LessonFilterProps {
   selectedIds: (number | string)[]
@@ -16,6 +16,7 @@ interface LessonFilterProps {
   selectName: string
   showResetBtn?: boolean
   filterLabel?: string
+  counterVariant?: CounterVariant
 }
 
 export const LessonFilter: React.FC<LessonFilterProps> = ({
@@ -23,7 +24,8 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
   onSelect,
   selectName,
   showResetBtn = true,
-  filterLabel
+  filterLabel,
+  counterVariant = CounterVariant.Default
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isLoading, isError } = useLessons(id)
@@ -72,7 +74,13 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
       </Button>
       {selectedIds.length > 0 && (
         <div className={styles.counterWrapper}>
-          <Counter count={selectedIds.length} />
+          {selectedIds.length === lessons.length ? (
+            <Counter count={"Все"} variant={counterVariant} size="default" />
+          ) : selectedIds.length > 0 && selectedIds.length <= 10 ? (
+            <Counter count={selectedIds.length} variant={counterVariant} size="circle" />
+          ) : selectedIds.length > 10 ? (
+            <Counter count={selectedIds.length} variant={counterVariant} size="default" />
+          ) : null}
         </div>
       )}
       <Menu

@@ -8,6 +8,7 @@ import { ru } from "date-fns/locale"
 import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
 import { LessonFilter } from "@/features/lesson/selectLesson"
+import { CounterVariant } from "@/shared/ui/Counter/Counter"
 
 type Props = {
   date: Date
@@ -95,6 +96,7 @@ export const VisitToolbar = ({
             selectedIds={selectedLessonIds}
             selectName="lesson_filter_visits"
             filterLabel="Занятия"
+            counterVariant={CounterVariant.Neutral}
           />
         </div>
       </div>

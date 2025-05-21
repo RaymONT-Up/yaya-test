@@ -16,7 +16,7 @@ export const $getVisits = async (
   return response
 }
 // Отмена одного конкретного посещения
-export const $cancelSchedule = async (data: CancelVisitDto): Promise<AxiosResponse<IVisit>> => {
+export const $cancelVisit = async (data: CancelVisitDto): Promise<AxiosResponse<IVisit>> => {
   const response = await apiWithTokenAndCenter.post("/partners/visits/cancel/", data)
   return response
 }

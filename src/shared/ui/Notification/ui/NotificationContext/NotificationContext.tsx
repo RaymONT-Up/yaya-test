@@ -1,5 +1,5 @@
-import { createContext } from 'react'
-import { NotificationProps } from '../Notification/Notification'
+import { createContext } from "react"
+import { NotificationProps } from "../Notification/Notification"
 
 export interface NotificationState extends NotificationProps {
   id: string
@@ -8,14 +8,14 @@ export interface NotificationState extends NotificationProps {
 
 interface NotificationContextType {
   notifications: NotificationState[]
-  addNotification: (notification: Omit<NotificationProps, 'id'> & { timeout?: number }) => string
+  addNotification: (notification: Omit<NotificationProps, "id">, timeout?: number) => string
   removeNotification: (id: string) => void
 }
 
 export const NotificationContext = createContext<NotificationContextType>({
   notifications: [],
   addNotification: () => {
-    return ''
+    return ""
   },
   removeNotification: () => {}
 })

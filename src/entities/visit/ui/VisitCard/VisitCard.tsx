@@ -7,11 +7,13 @@ import { getAge } from "@/shared/libs/getChildAge"
 
 interface VisitCardProps {
   visit: IVisit
+  onClick: () => void
+  canceledNow?: boolean
 }
 
-export const VisitCard: React.FC<VisitCardProps> = ({ visit }) => {
+export const VisitCard: React.FC<VisitCardProps> = ({ visit, onClick, canceledNow }) => {
   return (
-    <div className={s.card}>
+    <div className={`${s.card} ${canceledNow ? s.canceled : ""}`} onClick={onClick}>
       <div className={s.cardMark} />
       <Text className={s.cardTitle} fontWeight={600} bodySize="small">
         {visit.lesson.name}

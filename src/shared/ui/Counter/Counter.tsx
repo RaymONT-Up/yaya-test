@@ -9,18 +9,20 @@ export enum CounterVariant {
 }
 
 interface CounterProps {
-  count: number
+  count: string | number
   variant?: CounterVariant
   className?: string
+  size?: "circle" | "default"
 }
 
 export const Counter: FC<CounterProps> = ({
   count,
   variant = CounterVariant.Default,
-  className
+  className,
+  size = "default"
 }) => {
   return (
-    <div className={clsx(styles.counter, styles[variant], className)}>
+    <div className={clsx(styles.counter, styles[variant], styles[size], className)}>
       <Text variant={TextVariant.BUTTON} buttonSize="small" className={styles.text}>
         {count}
       </Text>
