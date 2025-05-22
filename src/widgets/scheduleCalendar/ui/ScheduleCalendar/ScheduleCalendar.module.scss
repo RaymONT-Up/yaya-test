@@ -1,6 +1,6 @@
 .custom-slot-label{
     color: var(--text-secondary);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lato', sans-serif;
     font-weight: 600;
     font-size: 14px;
     line-height: 150%;
@@ -18,4 +18,40 @@
   border: 1px solid var(--border-gray-light);
   border-radius: 16px;
   padding: 16px;
+}
+// Now Indicator
+.nowIndicator {
+  position: relative;
+  z-index: 5;
+
+  // dashedLine
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -1000px;
+    width: 1000px;
+    height: 0;
+    border-top: 2px dashed var(--action-danger);
+    z-index: 4;
+  }
+  .leftDot,
+  .rightDot {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: var(--action-danger);
+    border-radius: 50%;
+    z-index: 6;
+  }
+
+  .leftDot {
+    left: -4px;
+  }
+
+  .rightDot {
+    left: 98%; 
+  }
 }

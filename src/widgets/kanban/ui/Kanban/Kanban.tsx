@@ -6,7 +6,6 @@ import { CancelVisitDto, IVisit, LessonStateEnum } from "@/shared/types/visit"
 import { useCancelVisit, useVisits, VisitCard } from "@/entities/visit"
 import { useAppSelector } from "@/app/config/store"
 import { selectCurrentCenter } from "@/entities/center"
-import { Loader } from "@/shared/ui/Loader/Loader"
 import { useRef, useState } from "react"
 import { format } from "date-fns"
 import { useDebounce } from "@/shared/libs/useDebounce"
@@ -136,7 +135,6 @@ export const Kanban = () => {
       }
     }, 8000)
   }
-  if (!visits) return <Loader />
   return (
     <>
       <VisitToolbar

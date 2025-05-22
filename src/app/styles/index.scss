@@ -3,6 +3,8 @@
 
 @use "./libs/reset" as *;
 @use "./libs/utils" as *;
+// Fonts
+@use "../../shared/assets/fonts/lato.scss" as *;
 // vars
 
 @use "./vars/global" as *;

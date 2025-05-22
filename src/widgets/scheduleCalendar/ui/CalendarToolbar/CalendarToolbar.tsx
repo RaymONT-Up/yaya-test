@@ -76,6 +76,26 @@ export const CalendarToolbar: React.FC<Props> = ({
             onClick={() => calendarRef.current?.getApi().prev()}
             iconEnd={<ChevronLeft color="#262527" width={16} height={16} />}
           />
+          <div className={styles.dateWrapper}>
+            <Button
+              size={ButtonSize.Small}
+              iconStart={<Calendar width={16} height={16} />}
+              variant={ButtonVariant.Subtle}
+              onClick={toggleDatePicker}
+            >
+              {formatDateRange(dateRange.startDate, dateRange.endDate)}
+            </Button>
+            {showDatePicker && (
+              <div className={styles.pickerWrapper}>
+                <CustomDatePicker
+                  showWeekPicker
+                  selected={start}
+                  onChange={(date) => date && handleWeekChange(date as Date)}
+                  dateFormat="dd.MM.yyyy"
+                />
+              </div>
+            )}
+          </div>
           <Button
             isIconButton
             size={ButtonSize.Small}
@@ -84,26 +104,7 @@ export const CalendarToolbar: React.FC<Props> = ({
             iconEnd={<ChevronRight color="#262527" width={16} height={16} />}
           />
         </div>
-        <div className={styles.dateWrapper}>
-          <Button
-            size={ButtonSize.Small}
-            iconStart={<Calendar width={16} height={16} />}
-            variant={ButtonVariant.Subtle}
-            onClick={toggleDatePicker}
-          >
-            {formatDateRange(dateRange.startDate, dateRange.endDate)}
-          </Button>
-          {showDatePicker && (
-            <div className={styles.pickerWrapper}>
-              <CustomDatePicker
-                showWeekPicker
-                selected={start}
-                onChange={(date) => date && handleWeekChange(date as Date)}
-                dateFormat="dd.MM.yyyy"
-              />
-            </div>
-          )}
-        </div>
+
         <div className={styles.lessonWrapper}>
           <LessonFilter
             selectName="lesson_filter"

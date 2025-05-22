@@ -74,7 +74,7 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
       </Button>
       {selectedIds.length > 0 && (
         <div className={styles.counterWrapper}>
-          {selectedIds.length === lessons.length ? (
+          {selectedIds.length === lessons.length || selectedIds.length === 0 ? (
             <Counter count={"Все"} variant={counterVariant} size="default" />
           ) : selectedIds.length > 0 && selectedIds.length <= 10 ? (
             <Counter count={selectedIds.length} variant={counterVariant} size="circle" />

@@ -40,6 +40,9 @@
     border-bottom: 3px solid var(--action-brand);
   }
 /* Calendar body */
+.fc .fc-day-today{
+  background: transparent !important;
+}
 .fc .fc-timegrid-slot-label{
   text-align: center;
   vertical-align: top;
@@ -47,7 +50,7 @@
   line-height: 150%;
   color: var(--text-secondary);
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Lato', sans-serif;
 
 }
 .fc .fc-timegrid-slot {
@@ -66,28 +69,10 @@
     background-color: var(--gray-100);
   }
 
-.fc-timegrid-now-indicator-line {
-background-color: var(--action-danger);
-height: 2px;
-position: relative;
-z-index: 5;
-}
-.fc-timegrid-now-indicator-line::before,
-.fc-timegrid-now-indicator-line::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  background-color: var(--action-danger);
-  border-radius: 50%;
-}
 
-
-.fc-timegrid-now-indicator-line::after {
-  right: 0;
-}
+.fc-timegrid-now-indicator-arrow {
+      display: none;
+    }
 
 .fc .fc-highlight {
   background-color: transparent;
@@ -190,4 +175,17 @@ z-index: 5;
   display: none;
   height: 0;
   width: 0;
+}
+
+
+/* Now Indicator */
+
+.fc .fc-timegrid-now-indicator-container{
+  overflow: visible;
+  height: 5px;
+}
+
+.fc .fc-timegrid-now-indicator-line{
+  border-width: 2px 0 0;
+  border-color: var(--action-danger);
 }

@@ -250,6 +250,12 @@ export const ScheduleCalendar: React.FC = () => {
             allDaySlot={false}
             datesSet={handleDatesSet}
             nowIndicator={true}
+            nowIndicatorContent={() => (
+              <div className={styles.nowIndicator}>
+                <div className={styles.leftDot} />
+                <div className={styles.rightDot} />
+              </div>
+            )}
             dayHeaderContent={DayHeader}
             eventClick={handleEventClick}
             slotMinTime="06:00:00"

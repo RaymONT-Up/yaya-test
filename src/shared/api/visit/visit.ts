@@ -11,6 +11,21 @@ export const $getVisits = async (
     params: {
       date,
       lesson_ids
+    },
+    paramsSerializer: (params) => {
+      const searchParams = new URLSearchParams()
+
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            searchParams.append(key, val.toString())
+          })
+        } else if (value !== undefined && value !== null) {
+          searchParams.append(key, value.toString())
+        }
+      })
+
+      return searchParams.toString()
     }
   })
   return response
