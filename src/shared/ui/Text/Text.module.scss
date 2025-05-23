@@ -23,9 +23,10 @@
 
 /* Варианты */
 .heading {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Lato';
   line-height: 120%;
   font-weight: 600;
+  letter-spacing: -1%;
 }
 
 .h1 {
@@ -62,17 +63,20 @@
 
 /* Label */
 .label {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Lato';
   line-height: 120%;
   font-weight: 400;
+  letter-spacing: 0%;
 }
 
 .label-large {
+  letter-spacing: -1%;
   font-size: 20px;
 }
 
 .label-medium {
   font-size: 16px;
+
 }
 
 .label-small {
@@ -81,8 +85,9 @@
 
 /* Body */
 .body {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Lato';
   line-height: 150%;
+  letter-spacing: 0%;
 }
 
 .body-large {
@@ -115,9 +120,10 @@
 
 // Button text
 .button{
-  font-family: 'Lato', sans-serif;
+  font-family: 'Lato';
   line-height: 100%;
   font-weight: 500;
+  letter-spacing: 0%;
 }
 
 .button-medium{
