@@ -77,3 +77,43 @@
 .childAge{
   color: var(--text-secondary);
 }
+.reasonList{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.requiredCancelText{
+  color:var(--text-secondary);
+  margin-bottom: 24px;
+  display: block;
+}
+.scheduleCard {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--surface-card);
+}
+
+.scheduleCardTitle {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.scheduleCardDetails {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.secondaryText {
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--gray-200);
+  align-self: center;
+}

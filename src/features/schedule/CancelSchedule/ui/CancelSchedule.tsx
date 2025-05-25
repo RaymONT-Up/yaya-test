@@ -80,6 +80,7 @@ export const CancelSchedule: React.FC<Props> = ({
             }}
             render={({ field }) => (
               <DateRangeSelect
+                position="bottom"
                 value={field.value}
                 onChange={field.onChange}
                 label="Период"

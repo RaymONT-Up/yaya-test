@@ -23,4 +23,5 @@ export interface Lesson {
   type: LessonTypeEnum
   languages?: [LessonLanguageEnum]
   level: LessonLevelEnum | null
+  color?: string | null
 }

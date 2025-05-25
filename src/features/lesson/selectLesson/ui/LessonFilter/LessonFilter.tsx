@@ -17,6 +17,7 @@ interface LessonFilterProps {
   showResetBtn?: boolean
   filterLabel?: string
   counterVariant?: CounterVariant
+  showColorMarks?: boolean
 }
 
 export const LessonFilter: React.FC<LessonFilterProps> = ({
@@ -25,7 +26,8 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
   selectName,
   showResetBtn = true,
   filterLabel,
-  counterVariant = CounterVariant.Default
+  counterVariant = CounterVariant.Default,
+  showColorMarks = false
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isLoading, isError } = useLessons(id)
@@ -74,7 +76,7 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
       </Button>
       {selectedIds.length > 0 && (
         <div className={styles.counterWrapper}>
-          {selectedIds.length === lessons.length ? (
+          {selectedIds.length === lessons.length || selectedIds.length === 0 ? (
             <Counter count={"Все"} variant={counterVariant} size="default" />
           ) : selectedIds.length > 0 && selectedIds.length <= 10 ? (
             <Counter count={selectedIds.length} variant={counterVariant} size="circle" />
@@ -84,6 +86,7 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
         </div>
       )}
       <Menu
+        showColorMarks={showColorMarks}
         isOpen={isOpen}
         isLoading={isLoading}
         error={isError ? "Ошибка при загрузке списка занятий" : undefined}

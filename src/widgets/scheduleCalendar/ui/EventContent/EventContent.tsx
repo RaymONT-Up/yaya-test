@@ -3,6 +3,7 @@ import styles from "./EventContent.module.scss"
 import { Text } from "@/shared/ui/Text/Text"
 import { Users } from "@/shared/assets/svg/Users"
 import { Tooltip } from "@/shared/ui/Tooltip/Tooltip"
+import { formatAgeRange } from "@/shared/libs/getAgeRangeLabel"
 
 export const EventContent = (arg: EventContentArg) => {
   const { event, isMirror, timeText } = arg
@@ -28,7 +29,7 @@ export const EventContent = (arg: EventContentArg) => {
       text={[
         lesson?.name,
         `${timeText}`,
-        `${lesson?.min_age_str} - ${lesson?.max_age_str}`,
+        `${formatAgeRange(lesson?.min_age_str, lesson?.max_age_str)}`,
         lesson?.center?.name,
         lesson?.format,
         `${booked_counts}/${places}`
@@ -53,7 +54,7 @@ export const EventContent = (arg: EventContentArg) => {
             </Text>
             <div className={styles.eventInfo}>
               <Text bodySize="tiny" fontWeight={500} className={styles.eventAge}>
-                {lesson?.min_age_str} - {lesson?.max_age_str}
+                {formatAgeRange(lesson?.min_age_str, lesson?.max_age_str)}
               </Text>
               <div className={styles.dotSeparator} />
               <Text bodySize="tiny" fontWeight={500} className={styles.eventPlaces}>

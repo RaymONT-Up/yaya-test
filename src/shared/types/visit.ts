@@ -1,6 +1,11 @@
 import { Child } from "./child"
 import { Lesson } from "./lesson"
 
+export interface VisitScheduleModel {
+  id: number
+  start_timestamp: string
+  end_timestamp: string
+}
 export enum LessonStateEnum {
   BOOKED = "BOOKED",
   MISSED = "MISSED",
@@ -15,6 +20,7 @@ export interface IVisit {
   book_timestamp: string
   approve_timestamp: string | null
   cancelled_timestamp: string | null
+  schedule?: VisitScheduleModel
 }
 export interface CancelVisitDto {
   visit_id: number

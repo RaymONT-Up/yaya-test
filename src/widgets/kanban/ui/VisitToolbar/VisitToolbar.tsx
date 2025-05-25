@@ -97,6 +97,7 @@ export const VisitToolbar = ({
             selectName="lesson_filter_visits"
             filterLabel="Занятия"
             counterVariant={CounterVariant.Neutral}
+            showColorMarks
           />
         </div>
       </div>
