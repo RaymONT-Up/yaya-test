@@ -74,11 +74,13 @@ export const Kanban = () => {
   const { addNotification, removeNotification } = useNotifications()
   const pendingCancelRef = useRef<PendingCancel | null>(null)
   const [temporaryCanceledIds, setTemporaryCanceledIds] = useState<number[]>([])
-
+  const clearAfterCanceletion = () => {
+    setSelectedVisit(null)
+    setTemporaryCanceledIds([])
+  }
   const { mutate: cancelVisit } = useCancelVisit({
     onSuccess: () => {
-      setSelectedVisit(null)
-      setTemporaryCanceledIds([])
+      clearAfterCanceletion()
       pendingCancelRef.current = null
     },
     onError: () => {
@@ -88,15 +90,19 @@ export const Kanban = () => {
         icon: <AlertTriangle />,
         className: s.cancelNotification
       })
-      setSelectedVisit(null)
-      setTemporaryCanceledIds([])
+      clearAfterCanceletion()
       pendingCancelRef.current = null
     },
     notifyOnError: false
   })
 
   const { mutate: cancelSchedule } = useCancelSchedule({
-    onSuccess: (data) => console.log("Отменено", data),
+    onSuccess: () => {
+      clearAfterCanceletion()
+    },
+    onError: () => {
+      clearAfterCanceletion()
+    },
     invalidateVisits: true
   })
   const handleOpenCancel = (visit: IVisit) => {

@@ -81,7 +81,8 @@ export const CancelVisit: React.FC<Props> = ({
     }
     if (isLessonUnavailableReason(selectedReason)) {
       if (selectedVisit.schedule?.id) handleScheduleCancel(selectedVisit?.schedule?.id, payload)
-      else handleScheduleCancel(813569, payload)
+      // !TODO убрать это просто для теста сценария отмены занятия через посещение
+      else handleScheduleCancel(813570, payload)
     } else {
       handleCancel(payload)
     }
