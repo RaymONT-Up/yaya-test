@@ -11,6 +11,7 @@ export type SelectItem = {
   title: string
   text?: React.ReactNode | string
   value: string | number
+  color?: string
 }
 
 interface MenuProps {
@@ -25,6 +26,7 @@ interface MenuProps {
   showResetBtn?: boolean
   isLoading?: boolean
   error?: string
+  showColorMarks?: boolean
 }
 
 export const Menu: React.FC<MenuProps> = ({
@@ -37,7 +39,8 @@ export const Menu: React.FC<MenuProps> = ({
   selectAllText = "Выбрать все",
   showResetBtn = false,
   isLoading = false,
-  error
+  error,
+  showColorMarks = false
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
@@ -53,6 +56,7 @@ export const Menu: React.FC<MenuProps> = ({
 
   const allValues = useMemo(() => options.map((opt) => opt.value), [options])
   const allSelected = allValues.length > 0 && allValues.every((v) => selectedValues.includes(v))
+  const isIndeterminate = selectedValues.length > 0 && !allSelected
 
   const handleToggleAll = () => {
     if (allSelected) {
@@ -102,7 +106,11 @@ export const Menu: React.FC<MenuProps> = ({
               <>
                 {filteredOptions.length > 0 && (
                   <div className={styles.option}>
-                    <Checkbox checked={allSelected} onChange={handleToggleAll}>
+                    <Checkbox
+                      indeterminate={isIndeterminate}
+                      checked={allSelected}
+                      onChange={handleToggleAll}
+                    >
                       <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
                         {selectAllText}
                       </Text>
@@ -122,31 +130,39 @@ export const Menu: React.FC<MenuProps> = ({
                 {filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => {
                     const isChecked = selectedValues.includes(option.value)
-
                     return (
                       <div className={styles.option} key={option.value}>
                         <Checkbox
                           checked={isChecked}
                           onChange={() => handleToggleValue(option.value)}
                           value={option.value}
+                          className={showColorMarks ? styles.alignCenter : undefined}
                         >
-                          <div>
-                            <Text
-                              variant={TextVariant.LABEL}
-                              labelSize="medium"
-                              className={styles.title}
-                            >
-                              {option.title}
-                            </Text>
-                            {option.text && (
-                              <Text
-                                variant={TextVariant.BODY}
-                                bodySize="small"
-                                className={styles.text}
-                              >
-                                {option.text}
-                              </Text>
+                          <div className={styles.markContainer}>
+                            {showColorMarks && (
+                              <div
+                                className={styles.colorMark}
+                                style={{ backgroundColor: option.color || "var(--blue-900)" }}
+                              />
                             )}
+                            <div>
+                              <Text
+                                variant={TextVariant.LABEL}
+                                labelSize="medium"
+                                className={styles.title}
+                              >
+                                {option.title}
+                              </Text>
+                              {option.text && (
+                                <Text
+                                  variant={TextVariant.BODY}
+                                  bodySize="small"
+                                  className={styles.text}
+                                >
+                                  {option.text}
+                                </Text>
+                              )}
+                            </div>
                           </div>
                         </Checkbox>
                       </div>

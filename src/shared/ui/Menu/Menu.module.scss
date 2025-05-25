@@ -2,14 +2,6 @@
     position: relative;
   }
   
-  .popoverTrigger {
-    cursor: pointer;
-    padding: 8px 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f5f5f5;
-  }
-  
   .menuContent {
     z-index: 10;
     position: absolute;
@@ -17,7 +9,7 @@
     right: 0;
     top: 10px;
     width: 360px;
-    max-height: 320px;
+    max-height: 400px;
     padding: 4px;
     overflow-y: auto;
     border: 1px solid var(--border-gray-light);
@@ -30,9 +22,11 @@
   
   .option {
     display: flex;
+    align-items: stretch;
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
+    padding-right: 8px;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -67,7 +61,7 @@
 .optionsWrapper {
   max-height: 300px;
   overflow-y: auto;
-      &::-webkit-scrollbar {
+    &::-webkit-scrollbar {
       width: 8px;
     }
     &::-webkit-scrollbar-thumb {
@@ -87,4 +81,19 @@
 .errorWrapper{
   padding: 12px 16px;
   text-align: center;
+}
+.markContainer{
+  display: flex;
+  align-items: stretch;
+}
+.alignCenter{
+  align-items: center;
+}
+
+.colorMark {
+  display: block;
+  min-height: 44px;
+  width: 12px;
+  border-radius: 2px;
+  margin-right: 12px;
 }

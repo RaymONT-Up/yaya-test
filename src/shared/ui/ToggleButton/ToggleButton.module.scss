@@ -1,0 +1,25 @@
+.toggleButton {
+  background-color: var(--surface-card);
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0 16px;
+  border-radius: 12px;
+  transition: border 0.2s;
+  border: 2px solid transparent;
+  transition: border 0.2s, box-shadow 0.2s;
+  &:hover {
+    box-shadow: 0 0 0 1px var(--border-gray-light);
+  }
+}
+
+.selected {
+  border: 2px solid var(--action-brand);
+  &:hover {
+    box-shadow: none;
+  }
+}

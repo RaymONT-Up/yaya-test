@@ -16,6 +16,7 @@ import { Check } from "@/shared/assets/svg/Check"
 import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 import { NotificationVariant } from "@/shared/ui/Notification/ui/Notification/Notification"
 import { AlertTriangle } from "@/shared/assets/svg/AlertTriangle"
+import { useCancelSchedule } from "@/entities/schedule"
 
 type ColumnHeader = {
   title: string
@@ -23,7 +24,13 @@ type ColumnHeader = {
   state: LessonStateEnum
   className: string
 }
+type CancelTarget = "visit" | "schedule"
 
+interface PendingCancel {
+  id: number
+  payload: CancelVisitDto
+  type: CancelTarget
+}
 const columns: ColumnHeader[] = [
   {
     title: "Записались",
@@ -65,7 +72,7 @@ export const Kanban = () => {
   })
 
   const { addNotification, removeNotification } = useNotifications()
-  const pendingCancelRef = useRef<{ id: number; payload: CancelVisitDto } | null>(null)
+  const pendingCancelRef = useRef<PendingCancel | null>(null)
   const [temporaryCanceledIds, setTemporaryCanceledIds] = useState<number[]>([])
 
   const { mutate: cancelVisit } = useCancelVisit({
@@ -88,20 +95,25 @@ export const Kanban = () => {
     notifyOnError: false
   })
 
+  const { mutate: cancelSchedule } = useCancelSchedule({
+    onSuccess: (data) => console.log("Отменено", data),
+    invalidateVisits: true
+  })
   const handleOpenCancel = (visit: IVisit) => {
     if (visit.state !== LessonStateEnum.CANCELED && !temporaryCanceledIds.includes(visit.id)) {
       setSelectedVisit(visit)
       setCancelOpen(true)
     }
   }
-  const handleCancel = (payload: CancelVisitDto) => {
-    const { visit_id: id } = payload
-    setTemporaryCanceledIds((prev) => [...prev, id])
-    pendingCancelRef.current = { id, payload }
+  const handleGenericCancel = (id: number, payload: CancelVisitDto, type: CancelTarget) => {
+    const visitId = type === "visit" ? id : payload.visit_id
+    setTemporaryCanceledIds((prev) => [...prev, visitId])
+
+    pendingCancelRef.current = { id, payload, type }
 
     const notificationId = addNotification(
       {
-        title: "Запись отменена",
+        title: type === "visit" ? "Запись отменена" : "Занятие отменено",
         variant: NotificationVariant.Success,
         icon: <Check />,
         className: s.cancelNotification,
@@ -110,11 +122,11 @@ export const Kanban = () => {
             variant={ButtonVariant.Subtle}
             size={ButtonSize.Small}
             onClick={() => {
-              setTemporaryCanceledIds((prev) => prev.filter((vid) => vid !== id))
+              setTemporaryCanceledIds((prev) => prev.filter((vid) => vid !== visitId))
               pendingCancelRef.current = null
               removeNotification(notificationId)
               addNotification({
-                title: "Запись восстановлена",
+                title: type === "visit" ? "Запись восстановлена" : "Занятие восстановлено",
                 variant: NotificationVariant.Success,
                 icon: <Check />,
                 className: s.cancelNotification
@@ -130,10 +142,22 @@ export const Kanban = () => {
 
     setTimeout(() => {
       const current = pendingCancelRef.current
-      if (current?.id === id) {
-        cancelVisit(current.payload)
+      if (current?.id === id && current?.type === type) {
+        if (type === "visit") {
+          cancelVisit(current.payload)
+        } else {
+          cancelSchedule({ id, cancel_reason: current.payload.cancel_reason })
+        }
       }
     }, 8000)
+  }
+  const handleCancel = (payload: CancelVisitDto) => {
+    const { visit_id: id } = payload
+    handleGenericCancel(id, payload, "visit")
+  }
+
+  const handleScheduleCancel = (schedule_id: number, payload: CancelVisitDto) => {
+    handleGenericCancel(schedule_id, payload, "schedule")
   }
   return (
     <>
@@ -195,6 +219,7 @@ export const Kanban = () => {
           selectedVisit={selectedVisit}
           onClose={() => setCancelOpen(false)}
           handleCancel={handleCancel}
+          handleScheduleCancel={handleScheduleCancel}
         />
       )}
     </>

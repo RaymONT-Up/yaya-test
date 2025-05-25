@@ -21,6 +21,7 @@
   }
   
   .dialogHeader {
+    width: calc(100% - 56px);
     padding: 32px;
     display: flex;
     flex-direction: column;

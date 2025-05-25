@@ -164,8 +164,8 @@
 
 .calendar-scroll-container::-webkit-scrollbar-track {
   background: transparent;
-
 }
+
 
 .calendar-scroll-container::-webkit-scrollbar-thumb {
   background-color: var(--gray-300);
