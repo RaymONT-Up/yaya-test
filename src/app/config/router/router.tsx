@@ -3,6 +3,7 @@ import { getToken } from "@/entities/currentSession"
 import { ErrorPage } from "@/pages/error"
 import { LoginPage } from "@/pages/LoginPage"
 import { MainPage } from "@/pages/MainPage"
+import { ReportPage } from "@/pages/ReportPage"
 import { SelectCenterPage } from "@/pages/SelectCentetPage"
 import { VisitPage } from "@/pages/VisitPage"
 import { RoutePath } from "@/shared/consts/routerPaths"
@@ -60,6 +61,20 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: withSuspense(VisitPage)
+      }
+    ]
+  },
+  {
+    path: RoutePath.REPORT,
+    element: (
+      <AuthGuard mustBe="authorized">
+        <MainLayout />
+      </AuthGuard>
+    ),
+    children: [
+      {
+        index: true,
+        element: withSuspense(ReportPage)
       }
     ]
   },

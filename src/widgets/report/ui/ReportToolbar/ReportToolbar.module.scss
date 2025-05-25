@@ -1,0 +1,25 @@
+
+.filters{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.chevron {
+transition: transform 0.2s ease;
+}
+
+.isOpen {
+transform: rotate(180deg);
+}
+
+.input{
+    width: 240px;
+    height: 32px;
+    padding: 5px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+    text-overflow: ellipsis;
+    padding-right: 40px;
+}
+

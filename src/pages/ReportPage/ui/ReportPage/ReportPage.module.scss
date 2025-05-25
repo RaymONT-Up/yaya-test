@@ -1,0 +1,16 @@
+
+.title{
+    display: block;
+    margin-bottom: 16px;
+}
+.reportPage{
+    height: 100%;
+    padding-bottom: 24px;
+}
+
+.stats {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
