@@ -106,10 +106,8 @@ export const Kanban = () => {
     invalidateVisits: true
   })
   const handleOpenCancel = (visit: IVisit) => {
-    if (visit.state !== LessonStateEnum.CANCELED && !temporaryCanceledIds.includes(visit.id)) {
-      setSelectedVisit(visit)
-      setCancelOpen(true)
-    }
+    setSelectedVisit(visit)
+    setCancelOpen(true)
   }
   const handleGenericCancel = (id: number, payload: CancelVisitDto, type: CancelTarget) => {
     const visitId = type === "visit" ? id : payload.visit_id
@@ -221,6 +219,10 @@ export const Kanban = () => {
       )}
       {selectedVisit && (
         <CancelVisit
+          canCancelVisit={
+            selectedVisit.state == LessonStateEnum.BOOKED &&
+            !temporaryCanceledIds.includes(selectedVisit.id)
+          }
           isOpen={isCancelOpen}
           selectedVisit={selectedVisit}
           onClose={() => setCancelOpen(false)}

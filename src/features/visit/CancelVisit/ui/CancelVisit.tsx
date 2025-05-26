@@ -24,6 +24,7 @@ import { CancelReason, cancelReasonsList } from "../const/cancelReason"
 import { Textarea } from "@/shared/ui/Textarea/Textarea"
 import { ChevronLeft } from "@/shared/assets/svg/ChevronLeft"
 import { ReasonOptions } from "./ReasonOptions/ReasonOptions"
+import { formatTimeToUtc5 } from "@/shared/libs/formatTimeToUTC5"
 
 interface Props {
   isOpen: boolean
@@ -31,6 +32,7 @@ interface Props {
   selectedVisit: IVisit
   handleCancel: (payload: CancelVisitDto) => void
   handleScheduleCancel: (schedule_id: number, payload: CancelVisitDto) => void
+  canCancelVisit: boolean
 }
 
 interface FormValues {
@@ -42,7 +44,8 @@ export const CancelVisit: React.FC<Props> = ({
   onClose,
   selectedVisit,
   handleCancel,
-  handleScheduleCancel
+  handleScheduleCancel,
+  canCancelVisit
 }) => {
   const [showDialog, setShowDialog] = useState(false)
   const [selectedReason, setSelectedReason] = useState<CancelReason | null>(null)
@@ -81,8 +84,6 @@ export const CancelVisit: React.FC<Props> = ({
     }
     if (isLessonUnavailableReason(selectedReason)) {
       if (selectedVisit.schedule?.id) handleScheduleCancel(selectedVisit?.schedule?.id, payload)
-      // !TODO убрать это просто для теста сценария отмены занятия через посещение
-      else handleScheduleCancel(813570, payload)
     } else {
       handleCancel(payload)
     }
@@ -120,7 +121,6 @@ export const CancelVisit: React.FC<Props> = ({
   const end = selectedVisit.schedule?.end_timestamp
     ? new Date(selectedVisit.schedule.end_timestamp)
     : null
-  const formatTime = (date: Date) => date.toISOString().slice(11, 16)
   const formatDate = (date: Date) =>
     `${date.getDate()} ${date.toLocaleString("ru-RU", { month: "long" })}`
   const durationMinutes = end ? Math.round((end.getTime() - start.getTime()) / 60000) : null
@@ -136,15 +136,17 @@ export const CancelVisit: React.FC<Props> = ({
         headline="Запись"
         title={`${selectedVisit.child.first_name} ${selectedVisit.child.last_name}`}
         actions={
-          <>
-            <Button
-              iconStart={<Trash />}
-              variant={ButtonVariant.Neutral}
-              onClick={handleDialogOpen}
-            >
-              Отменить запись
-            </Button>
-          </>
+          canCancelVisit && (
+            <>
+              <Button
+                iconStart={<Trash />}
+                variant={ButtonVariant.Neutral}
+                onClick={handleDialogOpen}
+              >
+                Отменить запись
+              </Button>
+            </>
+          )
         }
       >
         <div className={styles.readonlyFields}>
@@ -167,7 +169,9 @@ export const CancelVisit: React.FC<Props> = ({
                 Телефон родителя
               </Text>
               <Text bodySize="medium" fontWeight={600} className={styles.value}>
-                +7 777 777 77 77
+                {selectedVisit.child.parent?.phone
+                  ? `+${selectedVisit.child.parent?.phone}`
+                  : "Не указан"}
               </Text>
             </div>
           </div>
@@ -195,10 +199,8 @@ export const CancelVisit: React.FC<Props> = ({
               Расписание
             </Text>
             <Text bodySize="medium" fontWeight={600} className={styles.value}>
-              <Text bodySize="medium" className={styles.userInfoText}>
-                Время: {formatDate(start)}, {formatTime(start)}
-                {end ? `–${formatTime(end)}` : ""}
-              </Text>
+              Время: {formatDate(start)}, {formatTimeToUtc5(start)}
+              {end ? `–${formatTimeToUtc5(end)}` : ""}
               {durationMinutes && (
                 <Text fontWeight={400} className={styles.duration}>
                   ({durationMinutes} мин)
@@ -292,8 +294,8 @@ export const CancelVisit: React.FC<Props> = ({
             </li>
             <li className={styles.userInfoItem}>
               <Text bodySize="medium" className={styles.userInfoText}>
-                Время: {formatDate(start)}, {formatTime(start)}
-                {end ? `–${formatTime(end)}` : ""}
+                Время: {formatDate(start)}, {formatTimeToUtc5(start)}
+                {end ? `–${formatTimeToUtc5(end)}` : ""}
               </Text>
             </li>
           </ul>
@@ -350,8 +352,8 @@ export const CancelVisit: React.FC<Props> = ({
                 </Text>
                 <div className={styles.scheduleCardDetails}>
                   <Text bodySize="small" fontWeight={600} className={styles.scheduleCardTime}>
-                    {formatTime(start)}
-                    {end ? `–${formatTime(end)}` : ""}
+                    {formatTimeToUtc5(start)}
+                    {end ? `–${formatTimeToUtc5(end)}` : ""}
                   </Text>
                   <div className={styles.dot} />
                   <Text bodySize="small" className={styles.secondaryText}>
