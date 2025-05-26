@@ -5,6 +5,7 @@ import { IVisit } from "@/shared/types/visit"
 import { LessonTypeEnum } from "@/shared/types/lesson"
 import { getAge } from "@/shared/libs/getChildAge"
 import { formatAgeRange } from "@/shared/libs/getAgeRangeLabel"
+import { formatTimeToUtc5 } from "@/shared/libs/formatTimeToUTC5"
 
 interface VisitCardProps {
   visit: IVisit
@@ -13,8 +14,8 @@ interface VisitCardProps {
 }
 
 export const VisitCard: React.FC<VisitCardProps> = ({ visit, onClick, canceledNow }) => {
-  const start = visit.schedule?.start_timestamp ?? visit.book_timestamp
-  const end = visit.schedule?.end_timestamp
+  const start = new Date(visit.schedule?.start_timestamp ?? visit.book_timestamp)
+  const end = visit.schedule?.end_timestamp ? new Date(visit.schedule.end_timestamp) : null
   const markerStyle = {
     backgroundColor: visit.lesson?.color || "var(--blue-800)"
   }
@@ -26,8 +27,8 @@ export const VisitCard: React.FC<VisitCardProps> = ({ visit, onClick, canceledNo
       </Text>
       <div className={s.cardInfo}>
         <Text className={s.cardTime} fontWeight={600} bodySize="tiny">
-          {start.slice(11, 16)}
-          {end ? ` – ${end.slice(11, 16)}` : ""}
+          {formatTimeToUtc5(start)}
+          {end ? `–${formatTimeToUtc5(end)}` : ""}
         </Text>
         <div className={s.dot} />
         <Text className={s.cardAge} bodySize="tiny">

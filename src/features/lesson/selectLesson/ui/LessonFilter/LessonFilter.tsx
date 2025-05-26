@@ -58,7 +58,8 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
             )}
           </>
         ),
-        value: lesson.id
+        value: lesson.id,
+        color: lesson?.color || undefined
       })),
     [lessons]
   )
