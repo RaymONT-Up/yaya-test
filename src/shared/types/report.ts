@@ -36,3 +36,5 @@ export interface ReportFilters {
   page?: number
   page_size?: number
 }
+
+export type ReportStatsFilters = Omit<ReportFilters, "page" | "page_size">

@@ -23,3 +23,17 @@ transform: rotate(180deg);
     padding-right: 40px;
 }
 
+
+
+// popovers
+
+.menuPopover{
+  top: auto;
+  left: 0;
+  bottom: 50px;
+  max-width: 240px;
+  max-height: 360px;
+}
+.menuPopoverOptions{
+  max-height: none;
+}

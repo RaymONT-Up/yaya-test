@@ -4,6 +4,7 @@ import { Input } from "@/shared/ui/Input/Input"
 import styles from "./PopoverSelect.module.scss"
 import { Search } from "@/shared/assets/svg/Search"
 import { ComponentLoader } from "@/shared/ui/ComponentLoader/ComponentLoader"
+import clsx from "clsx"
 
 export type SelectItem = {
   title: string
@@ -21,6 +22,9 @@ interface PopoverSelectProps {
   showSearch?: boolean
   isLoading?: boolean
   error?: string
+  clickOutside?: boolean
+  className?: string
+  optionWrapperClassName?: string
 }
 
 export const PopoverSelect: React.FC<PopoverSelectProps> = ({
@@ -32,12 +36,16 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   width = "360px",
   showSearch = false,
   isLoading = false,
-  error
+  error,
+  clickOutside = true,
+  className,
+  optionWrapperClassName
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
 
   useEffect(() => {
+    if (!clickOutside || !isOpen) return
     const handleClickOutside = (event: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         onClose()
@@ -53,7 +61,7 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, clickOutside])
 
   const handleSelectOption = (option: SelectItem) => {
     onSelect(option)
@@ -69,7 +77,7 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   return (
     <div className={styles.popoverContainer}>
       {isOpen && (
-        <div className={styles.popoverContent} ref={popoverRef} style={{ width }}>
+        <div className={clsx(styles.popoverContent, className)} ref={popoverRef} style={{ width }}>
           {showSearch && (
             <div className={styles.search}>
               <Input
@@ -80,7 +88,7 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
               />
             </div>
           )}
-          <div className={styles.optionsWrapper}>
+          <div className={clsx(styles.optionsWrapper, optionWrapperClassName)}>
             {isLoading ? (
               <div className={styles.loaderWrapper}>
                 <ComponentLoader size={40} />

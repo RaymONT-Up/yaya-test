@@ -8,8 +8,8 @@ import { Text, TextVariant } from "@/shared/ui/Text/Text"
 
 type StatsProps = {
   icon: React.ReactNode
-  title: string
-  text: string
+  title: React.ReactNode
+  text: React.ReactNode
   size?: "tall" | "small"
   loading?: boolean
   className?: string
@@ -57,7 +57,12 @@ export const Stats = ({
       <div className={styles.icon}>{icon}</div>
 
       {loading ? (
-        <div className={clsx(styles.skeleton, styles[`skeleton-${size}`])} />
+        <>
+          <div className={clsx(styles.skeleton, styles[`skeleton-${size}`])} />
+          <Text className={styles.text} fontWeight={600}>
+            {text}
+          </Text>
+        </>
       ) : (
         <>
           <Text

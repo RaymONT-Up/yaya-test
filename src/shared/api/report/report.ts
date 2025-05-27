@@ -1,6 +1,11 @@
 import { AxiosResponse } from "axios"
 import { apiWithTokenAndCenter } from "../api"
-import { GeneralStatsResponse, PartnerReportResponse, ReportFilters } from "../../types/report"
+import {
+  GeneralStatsResponse,
+  PartnerReportResponse,
+  ReportFilters,
+  ReportStatsFilters
+} from "../../types/report"
 
 export const $getPartnerReportData = async (
   filters: ReportFilters
@@ -13,9 +18,18 @@ export const $getPartnerReportData = async (
         const searchParams = new URLSearchParams()
 
         Object.entries(params).forEach(([key, value]) => {
+          if (
+            value === undefined ||
+            value === null ||
+            value === "" ||
+            (Array.isArray(value) && value.length === 0)
+          ) {
+            return
+          }
+
           if (Array.isArray(value)) {
             searchParams.append(key, value.join(","))
-          } else if (value !== undefined && value !== null) {
+          } else {
             searchParams.append(key, value.toString())
           }
         })
@@ -29,7 +43,7 @@ export const $getPartnerReportData = async (
 }
 
 export const $getPartnerGeneralStats = async (
-  filters: ReportFilters
+  filters: ReportStatsFilters
 ): Promise<AxiosResponse<GeneralStatsResponse>> => {
   const response = await apiWithTokenAndCenter.get<GeneralStatsResponse>(
     "/partners/reports/general-stats/",
@@ -39,9 +53,18 @@ export const $getPartnerGeneralStats = async (
         const searchParams = new URLSearchParams()
 
         Object.entries(params).forEach(([key, value]) => {
+          if (
+            value === undefined ||
+            value === null ||
+            value === "" ||
+            (Array.isArray(value) && value.length === 0)
+          ) {
+            return
+          }
+
           if (Array.isArray(value)) {
             searchParams.append(key, value.join(","))
-          } else if (value !== undefined && value !== null) {
+          } else {
             searchParams.append(key, value.toString())
           }
         })

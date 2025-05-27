@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
     path: RoutePath.REPORT,
     element: (
       <AuthGuard mustBe="authorized">
-        <MainLayout />
+        <MainLayout shouldContentScroll />
       </AuthGuard>
     ),
     children: [

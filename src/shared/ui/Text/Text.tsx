@@ -16,7 +16,7 @@ export enum TextVariant {
   BUTTON = "button"
 }
 
-export type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7" | "h8"
+export type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7" | "h8" | "h9"
 
 export type LabelSize = "large" | "medium" | "small"
 

@@ -1,12 +1,14 @@
-import { centerReducer } from '@/entities/center'
-import { currentSessionSliceReducer } from '@/entities/currentSession'
-import { configureStore } from '@reduxjs/toolkit'
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import { centerReducer } from "@/entities/center"
+import { currentSessionSliceReducer } from "@/entities/currentSession"
+import { reportFiltersReducer } from "@/entities/report"
+import { configureStore } from "@reduxjs/toolkit"
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 
 export const store = configureStore({
   reducer: {
     currentSessionSliceReducer,
-    centerReducer
+    centerReducer,
+    reportFiltersReducer
   }
 })
 
