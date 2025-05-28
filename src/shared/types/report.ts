@@ -25,6 +25,7 @@ export interface PartnerReportResponse {
   next: string | null
   previous: string | null
   results: PartnerReport[]
+  page_count: number
 }
 
 export interface ReportFilters {
@@ -35,6 +36,7 @@ export interface ReportFilters {
   centers?: number[]
   page?: number
   page_size?: number
+  page_count?: number
 }
 
 export type ReportStatsFilters = Omit<ReportFilters, "page" | "page_size">

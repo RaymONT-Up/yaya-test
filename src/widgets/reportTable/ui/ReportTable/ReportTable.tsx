@@ -1,4 +1,4 @@
-import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import { Text } from "@/shared/ui/Text/Text"
 import s from "./ReportTable.module.scss"
 import { useAppDispatch, useAppSelector } from "@/app/config/store"
 import { reportFiltersActions, useReportFilters, useReportTable } from "@/entities/report"
@@ -6,6 +6,8 @@ import { selectCurrentCenter } from "@/entities/center"
 import { useEffect } from "react"
 import { InfoBlock } from "@/shared/ui/InfoBlock/InfoBlock"
 import { Filter } from "@/shared/assets/svg/Filter"
+import { ReportTableThead } from "../ReportTableThead/ReportTableThead"
+import { TableSkeleton } from "@/widgets/reportTable/ui/TableSkeleton/TableSkeleton"
 
 export const ReportTable = () => {
   const dispatch = useAppDispatch()
@@ -26,10 +28,13 @@ export const ReportTable = () => {
     }
   })
   useEffect(() => {
+    if (data?.page_count !== undefined) {
+      dispatch(reportFiltersActions.setPagesCount(data.page_count))
+    }
     if (data?.count !== undefined) {
       dispatch(reportFiltersActions.setTotalCount(data.count))
     }
-  }, [data?.count, dispatch])
+  }, [data?.page_count, data?.count, dispatch])
   if (!isLoading && data?.count === 0) {
     return (
       <div className={s.emptyWrapper}>
@@ -41,92 +46,56 @@ export const ReportTable = () => {
       </div>
     )
   }
-  const startIndex = (page - 1) * page_size
-  const endIndex = startIndex + page_size
-  const paginatedData = data?.results.slice(startIndex, endIndex)
+
   return (
     <div className={s.wrapper}>
       <table className={s.table}>
-        <thead>
-          <tr>
-            <th>
-              <Text variant={TextVariant.HEADING} headingLevel="h9" className={s.theadTitle}>
-                №
-              </Text>
-            </th>
-            <th>
-              <Text variant={TextVariant.HEADING} headingLevel="h9" className={s.theadTitle}>
-                Фио ребенка
-              </Text>
-            </th>
-            <th>
-              <Text variant={TextVariant.HEADING} headingLevel="h9" className={s.theadTitle}>
-                Центр
-              </Text>
-            </th>
-            <th>
-              <Text variant={TextVariant.HEADING} headingLevel="h9" className={s.theadTitle}>
-                Секция
-              </Text>
-            </th>
-            <th>
-              <Text variant={TextVariant.HEADING} headingLevel="h9" className={s.theadTitle}>
-                Тренер
-              </Text>
-            </th>
-            <th>
-              <Text variant={TextVariant.HEADING} headingLevel="h9" className={s.theadTitle}>
-                Дата и время
-              </Text>
-            </th>
-            <th>
-              <Text variant={TextVariant.HEADING} headingLevel="h9" className={s.theadTitle}>
-                Заработано
-              </Text>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedData?.map((item, idx) => (
-            <tr key={idx}>
-              <td>
-                <Text className={s.tableText} bodySize="small">
-                  {idx + 1}
-                </Text>
-              </td>
-              <td>
-                <Text className={s.tableText} bodySize="small">
-                  {item.child_name}
-                </Text>
-              </td>
-              <td>
-                <Text className={s.tableText} bodySize="small">
-                  {item.center_name}
-                </Text>
-              </td>
-              <td>
-                <Text className={s.tableText} bodySize="small">
-                  {item.lesson_name}
-                </Text>
-              </td>
-              <td>
-                <Text className={s.tableText} bodySize="small">
-                  {item.trainer_name}
-                </Text>
-              </td>
-              <td>
-                <Text className={s.tableText} bodySize="small">
-                  {item.datetime_str.replace(/-/g, ".").replace(" ", " ")}–{item.end_time}
-                </Text>
-              </td>
-              <td>
-                <Text className={s.tableText} bodySize="small">
-                  {item.earned} ₸
-                </Text>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        <ReportTableThead />
+        {isLoading ? (
+          <TableSkeleton />
+        ) : (
+          <tbody>
+            {data?.results?.map((item, idx) => (
+              <tr key={idx}>
+                <td>
+                  <Text className={s.tableText} bodySize="small">
+                    {idx + 1}
+                  </Text>
+                </td>
+                <td>
+                  <Text className={s.tableText} bodySize="small">
+                    {item.child_name}
+                  </Text>
+                </td>
+                <td>
+                  <Text className={s.tableText} bodySize="small">
+                    {item.center_name}
+                  </Text>
+                </td>
+                <td>
+                  <Text className={s.tableText} bodySize="small">
+                    {item.lesson_name}
+                  </Text>
+                </td>
+                <td>
+                  <Text className={s.tableText} bodySize="small">
+                    {item.trainer_name}
+                  </Text>
+                </td>
+                <td>
+                  <Text className={s.tableText} bodySize="small">
+                    {item.datetime_str.replace(/-/g, ".").replace(" ", " ")}–{item.end_time}
+                  </Text>
+                </td>
+                <td>
+                  <Text className={s.tableText} bodySize="small">
+                    {item.earned} ₸
+                  </Text>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        )}
       </table>
     </div>
   )

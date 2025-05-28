@@ -12,6 +12,7 @@ overflow: hidden;
 }
 
 .content {
+  width: calc(100% - var(--sidebar-colapsed-width));
 flex: 1;
 padding: 24px;
 margin-left: var(--sidebar-colapsed-width);

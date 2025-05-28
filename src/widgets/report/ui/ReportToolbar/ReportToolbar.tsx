@@ -9,12 +9,16 @@ import { useEffect, useMemo, useState } from "react"
 import { reportFiltersActions, useReportFilters } from "@/entities/report"
 import { endOfMonth, format, startOfMonth, parse } from "date-fns"
 import { ru } from "date-fns/locale"
-import { useLessons } from "@/features/lesson/selectLesson/model/useLessons"
 import { selectCenters, selectCurrentCenter } from "@/entities/center"
-import { useTrainers } from "@/features/trainer/model/useTrainers"
 import { SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import { Menu } from "@/shared/ui/Menu/Menu"
 import { useDebounce } from "@/shared/libs/useDebounce"
+import { Download } from "@/shared/assets/svg/Download"
+import { useLessonsForCenters } from "@/features/lesson/selectLesson"
+import { useTrainersForCenters } from "@/features/trainer"
+import { Tooltip } from "@/shared/ui/Tooltip/Tooltip"
+import { Text } from "@/shared/ui/Text/Text"
+import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
 
 function getInputValue<T extends { id: number; name?: string; full_name?: string }>(
   selectedIds: (string | number)[],
@@ -35,11 +39,11 @@ function getInputValue<T extends { id: number; name?: string; full_name?: string
 
 export const ReportToolbar = () => {
   const dispatch = useAppDispatch()
-  const { id } = useAppSelector(selectCurrentCenter)
-  const { date_from, date_to } = useAppSelector(useReportFilters)
+  const { name } = useAppSelector(selectCurrentCenter)
+  const { date_from, date_to, centers } = useAppSelector(useReportFilters)
   const centerList = useAppSelector(selectCenters)
-  const { data: lessons } = useLessons(id)
-  const { data: trainers } = useTrainers(id)
+  const { data: lessons } = useLessonsForCenters(centers)
+  const { data: trainers } = useTrainersForCenters(centers)
 
   const [selectedCenters, setSelectedCenters] = useState<(string | number)[]>([])
   const [selectedLessons, setSelectedLessons] = useState<(string | number)[]>([])
@@ -52,6 +56,22 @@ export const ReportToolbar = () => {
   const [isCenterOpen, setIsCenterOpen] = useState(false)
   const [isSectionOpen, setIsSectionOpen] = useState(false)
   const [isTrainerOpen, setIsTrainerOpen] = useState(false)
+
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [range, setRange] = useState<[Date | null, Date | null]>([null, null])
+
+  const toggleDatePicker = () => setShowDatePicker((prev) => !prev)
+
+  const handleRangeSelect = (dates: [Date | null, Date | null]) => {
+    setRange(dates)
+
+    const [start, end] = dates
+    if (start && end) {
+      dispatch(reportFiltersActions.setDateFrom(format(start, "dd.MM.yyyy")))
+      dispatch(reportFiltersActions.setDateTo(format(end, "dd.MM.yyyy")))
+      setShowDatePicker(false)
+    }
+  }
 
   const toggleCenter = () => {
     setIsCenterOpen((prev) => !prev)
@@ -71,8 +91,8 @@ export const ReportToolbar = () => {
   const centerOptions: SelectItem[] = useMemo(
     () =>
       centerList.map((center) => ({
-        title: center.address,
-        text: "",
+        title: center.name,
+        text: <Text className={styles.centerFilterText}> {center.address}</Text>,
         value: center.id
       })),
     [centerList]
@@ -120,13 +140,7 @@ export const ReportToolbar = () => {
       ? `${format(fromDate, "dd", { locale: ru })} - ${format(toDate, "dd MMMM, yyyy", { locale: ru })}`
       : "Выберите даты"
 
-  const centerInputValue = getInputValue(
-    selectedCenters,
-    centerList,
-    "Центр музыкального образования",
-    "Центров",
-    true
-  )
+  const centerInputValue = getInputValue(selectedCenters, centerList, name, "Центров", true)
   const lessonInputValue = getInputValue(selectedLessons, lessons, "Все секции", "Секций")
   const trainerInputValue = getInputValue(
     selectedTrainers,
@@ -139,9 +153,17 @@ export const ReportToolbar = () => {
     setSelectedCenters([])
     setSelectedTrainers([])
     setSelectedLessons([])
+    setRange([null, null])
     dispatch(reportFiltersActions.resetFilters())
   }
 
+  // Изначально выбираются все центры, если они есть
+  useEffect(() => {
+    if (centerList.length) {
+      setSelectedCenters(centerList.map((center) => center.id))
+    }
+  }, [centerList])
+  // Изначально выбирается текущая неделя
   useEffect(() => {
     const now = new Date()
     const from = startOfMonth(now)
@@ -151,6 +173,7 @@ export const ReportToolbar = () => {
     dispatch(reportFiltersActions.setDateTo(format(to, "dd.MM.yyyy")))
   }, [dispatch])
 
+  // Диспатчим выбранные значения в стор при изменении с дебаунсом
   useEffect(() => {
     const numericValues = debouncedCenters.map((v) => (typeof v === "string" ? parseInt(v, 10) : v))
     dispatch(reportFiltersActions.setCenters(numericValues))
@@ -175,9 +198,21 @@ export const ReportToolbar = () => {
             variant={ButtonVariant.Subtle}
             size={ButtonSize.Small}
             iconStart={<Calendar width={16} height={16} />}
+            onClick={toggleDatePicker}
           >
             {formattedDate}
           </Button>
+          {showDatePicker && (
+            <div className={styles.pickerWrapper}>
+              <CustomDatePicker
+                selectsRange
+                startDate={range[0]}
+                endDate={range[1]}
+                onChange={handleRangeSelect}
+                inline
+              />
+            </div>
+          )}
         </div>
         <div className={styles.inputWrapper} style={{ position: "relative" }}>
           <Input
@@ -191,7 +226,6 @@ export const ReportToolbar = () => {
             onClick={toggleCenter}
           />
           <Menu
-            showSelectAll={false}
             isOpen={isCenterOpen}
             options={centerOptions}
             selectedValues={selectedCenters || []}
@@ -202,7 +236,7 @@ export const ReportToolbar = () => {
             className={styles.centersPopover}
             optionWrapperClassName={styles.centersOptionWrapper}
             showResetBtn={false}
-            showSearch={false}
+            showSearch={true}
             error={undefined}
             isLoading={false}
           />
@@ -272,6 +306,24 @@ export const ReportToolbar = () => {
         >
           Сбросить
         </Button>
+
+        {/* Файл с сервера буду получать */}
+        <div className={styles.downloadButtonWrapper}>
+          <Tooltip
+            maxWidth={200}
+            text="Отчет будет основан на примененных фильтрах."
+            position="left"
+          >
+            <Button
+              size={ButtonSize.Small}
+              variant={ButtonVariant.Primary}
+              className={styles.downloadButton}
+              iconStart={<Download width={16} height={16} />}
+            >
+              Скачать отчёт
+            </Button>
+          </Tooltip>
+        </div>
       </div>
     </div>
   )

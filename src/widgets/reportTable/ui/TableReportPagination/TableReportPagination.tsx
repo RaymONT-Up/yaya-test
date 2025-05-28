@@ -20,14 +20,11 @@ const PAGE_SIZE_OPTIONS = [10, 15, 20, 25, 50, 75, 100].map((num) => ({
 
 export const TableReportPagination = () => {
   const dispatch = useAppDispatch()
-  const { page, count, page_size } = useAppSelector(useReportFilters)
+  const { page, page_count, count, page_size } = useAppSelector(useReportFilters)
   const [isOpen, setIsOpen] = useState(false)
-  const totalPages = Math.ceil(count / page_size)
-  const startItem = (page - 1) * page_size + 1
-  const endItem = Math.min(page * page_size, count)
 
   const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
+    if (newPage >= 1 && newPage <= page_count) {
       dispatch(reportFiltersActions.setPage(newPage))
     }
   }
@@ -38,9 +35,9 @@ export const TableReportPagination = () => {
   const renderPages = () => {
     const pages = []
     const maxVisible = 4
-    const showEllipsis = totalPages > maxVisible + 1
+    const showEllipsis = page_count > maxVisible + 1
 
-    for (let i = 1; i <= Math.min(maxVisible, totalPages); i++) {
+    for (let i = 1; i <= Math.min(maxVisible, page_count); i++) {
       pages.push(
         <Button
           key={i}
@@ -61,19 +58,20 @@ export const TableReportPagination = () => {
       )
       pages.push(
         <Button
-          key={totalPages}
-          variant={page === totalPages ? ButtonVariant.Primary : ButtonVariant.Neutral}
+          key={page_count}
+          variant={page === page_count ? ButtonVariant.Primary : ButtonVariant.Neutral}
           className={styles.paginationBtn}
-          onClick={() => handlePageChange(totalPages)}
+          onClick={() => handlePageChange(page_count)}
         >
-          {totalPages}
+          {page_count}
         </Button>
       )
     }
 
     return pages
   }
-  if (!count) return null
+
+  if (!page_count) return null
   return (
     <div className={styles.pagination}>
       <div className={styles.left}>
@@ -100,7 +98,7 @@ export const TableReportPagination = () => {
         </div>
 
         <Text className={styles.paginationText}>
-          Показано {startItem}–{endItem} из {count}
+          Показано {page_size < count ? page_size : count} из {count}
         </Text>
       </div>
       <div className={styles.right}>
@@ -118,7 +116,7 @@ export const TableReportPagination = () => {
           variant={ButtonVariant.Subtle}
           iconEnd={<ChevronRight color="#262527" width={16} height={16} />}
           onClick={() => handlePageChange(page + 1)}
-          disabled={page === totalPages}
+          disabled={page === page_count}
           className={styles.iconBtn}
         />
       </div>
