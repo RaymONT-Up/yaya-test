@@ -9,9 +9,10 @@ type TooltipPosition = "top" | "bottom" | "left" | "right"
 interface TooltipProps {
   children: ReactNode
   title?: string
-  text: string
+  text: ReactNode | string
   position?: TooltipPosition
   maxWidth?: number | string
+  className?: string
 }
 
 export const Tooltip: FC<TooltipProps> = ({
@@ -19,7 +20,8 @@ export const Tooltip: FC<TooltipProps> = ({
   title,
   text,
   position = "top",
-  maxWidth
+  maxWidth,
+  className
 }) => {
   const [visible, setVisible] = useState(false)
   const [coords, setCoords] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
@@ -68,7 +70,7 @@ export const Tooltip: FC<TooltipProps> = ({
         ReactDOM.createPortal(
           <div
             ref={tooltipRef}
-            className={clsx(styles.tooltip, styles[position])}
+            className={clsx(styles.tooltip, styles[position], className)}
             style={{
               position: "absolute",
               top: `${coords.top}px`,

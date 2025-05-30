@@ -1,6 +1,7 @@
-import { Calendar } from '@/shared/assets/svg/Calendar'
-import { Columns } from '@/shared/assets/svg/Columns'
-import { RoutePath } from '@/shared/consts/routerPaths'
+import { BarChart } from "@/shared/assets/svg/BarChart"
+import { Calendar } from "@/shared/assets/svg/Calendar"
+import { Columns } from "@/shared/assets/svg/Columns"
+import { RoutePath } from "@/shared/consts/routerPaths"
 export interface SidebarItem {
   path: string
   icon: React.FC<React.SVGProps<SVGSVGElement>>
@@ -11,11 +12,16 @@ export const sidebarItems: SidebarItem[] = [
   {
     path: RoutePath.MAIN,
     icon: Calendar,
-    label: 'Расписания'
+    label: "Расписания"
   },
   {
     path: RoutePath.VISITS,
     icon: Columns,
-    label: 'Посещения'
+    label: "Посещения"
+  },
+  {
+    path: RoutePath.REPORT,
+    icon: BarChart,
+    label: "Отчеты"
   }
 ]

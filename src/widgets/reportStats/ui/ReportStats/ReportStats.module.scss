@@ -1,0 +1,31 @@
+.stats {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+.smallStats{
+    margin-top: 24px;
+    display: flex;
+    gap: 56px;
+}
+.smallStat{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 16px;
+}
+.title{
+    display: block;
+    margin-bottom: 2px;
+}
+.text{
+    color: var(--text-secondary);
+}
+.skeleton{
+     border-radius: 8px;
+  background: linear-gradient(270deg, #f5f5f6 0%, #e6e6e7 100%);
+  width: 200px;
+  height: 19px;
+  border-radius: 8px;
+}

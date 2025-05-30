@@ -1,0 +1,57 @@
+.card {
+  position: relative;
+  border-radius: 16px;
+  padding: 24px;
+  background: var(--surface-card);
+  display: flex;
+  flex-direction: column;
+}
+
+.icon {
+  margin-bottom: 24px;
+}
+
+.title {
+  margin-bottom: 8px;
+}
+
+.text {
+  color: var(--text-secondary);
+}
+
+.copyIcon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.tag {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(270deg, #f5f5f6 0%, #e6e6e7 100%);
+}
+
+.skeleton-tall {
+  width: 120px;
+  height: 40px;
+}
+
+.skeleton-small {
+  width: 120px;
+  height: 30px;
+}
+
+.tall {
+  min-height: 180px;
+}
+
+.small {
+  min-height: 140px;
+}

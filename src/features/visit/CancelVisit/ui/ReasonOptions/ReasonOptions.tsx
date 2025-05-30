@@ -1,33 +1,31 @@
 import React from "react"
 import styles from "./ReasonOptions.module.scss"
-import { CancelReason } from "../../const/cancelReason"
 import { ToggleButton } from "@/shared/ui/ToggleButton/ToggleButton"
 import { Button, ButtonVariant } from "@/shared/ui/Button"
 import { Edit } from "@/shared/assets/svg/Edit"
+import { cancelReasonsList, VisitCancelReasonEnum } from "@/shared/types/visit"
 
 interface ReasonOptionsProps {
-  selectedReason: CancelReason | null
-  setSelectedReason: (reason: CancelReason | null) => void
+  selectedReason: VisitCancelReasonEnum | null
+  setSelectedReason: (reason: VisitCancelReasonEnum | null) => void
   handleCustomReason: () => void
-  cancelReasonsList: CancelReason[]
 }
 
 export const ReasonOptions: React.FC<ReasonOptionsProps> = ({
   selectedReason,
   setSelectedReason,
-  handleCustomReason,
-  cancelReasonsList
+  handleCustomReason
 }) => {
   return (
     <>
       {cancelReasonsList.map((reason) => (
         <ToggleButton
-          key={reason}
-          selected={selectedReason === reason}
-          onClick={() => setSelectedReason(reason)}
+          key={reason.value}
+          selected={selectedReason === reason.value}
+          onClick={() => setSelectedReason(reason.value)}
           className={styles.cancelReasonBtn}
         >
-          {reason}
+          {reason.label}
         </ToggleButton>
       ))}
       <Button iconStart={<Edit />} variant={ButtonVariant.Subtle} onClick={handleCustomReason}>

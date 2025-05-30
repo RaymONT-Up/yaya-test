@@ -6,9 +6,11 @@ import { Search } from "@/shared/assets/svg/Search"
 import { Checkbox } from "@/shared/ui/Checkbox/Checkbox"
 import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 import { ComponentLoader } from "@/shared/ui/ComponentLoader/ComponentLoader"
+import clsx from "clsx"
 
 export type SelectItem = {
   title: string
+  titleComponent?: React.ReactNode
   text?: React.ReactNode | string
   value: string | number
   color?: string
@@ -27,6 +29,9 @@ interface MenuProps {
   isLoading?: boolean
   error?: string
   showColorMarks?: boolean
+  className?: string
+  optionWrapperClassName?: string
+  showSelectAll?: boolean
 }
 
 export const Menu: React.FC<MenuProps> = ({
@@ -40,7 +45,10 @@ export const Menu: React.FC<MenuProps> = ({
   showResetBtn = false,
   isLoading = false,
   error,
-  showColorMarks = false
+  showColorMarks = false,
+  className,
+  optionWrapperClassName,
+  showSelectAll = true
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
@@ -75,7 +83,7 @@ export const Menu: React.FC<MenuProps> = ({
   return (
     <div className={styles.menuContainer}>
       {isOpen && (
-        <div className={styles.menuContent} ref={popoverRef} style={{ width }}>
+        <div className={clsx(styles.menuContent, className)} ref={popoverRef} style={{ width }}>
           {showSearch && (
             <div className={styles.search}>
               <Input
@@ -86,7 +94,7 @@ export const Menu: React.FC<MenuProps> = ({
               />
             </div>
           )}
-          <div className={styles.optionsWrapper}>
+          <div className={clsx(styles.optionsWrapper, optionWrapperClassName)}>
             {isLoading ? (
               <div className={styles.loaderWrapper}>
                 <ComponentLoader size={40} />
@@ -104,7 +112,7 @@ export const Menu: React.FC<MenuProps> = ({
               </div>
             ) : (
               <>
-                {filteredOptions.length > 0 && (
+                {filteredOptions.length > 0 && showSelectAll && (
                   <div className={styles.option}>
                     <Checkbox
                       indeterminate={isIndeterminate}
@@ -151,7 +159,7 @@ export const Menu: React.FC<MenuProps> = ({
                                 labelSize="medium"
                                 className={styles.title}
                               >
-                                {option.title}
+                                {option.titleComponent ? option.titleComponent : option.title}
                               </Text>
                               {option.text && (
                                 <Text
