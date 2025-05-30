@@ -11,7 +11,7 @@
     z-index: 12;
     border-right: 1px solid var(--border-gray-light);
     padding: 24px 8px;
-  
+
     &:hover {
       width: var(--sidebar-open-width);
       .nav{
@@ -27,7 +27,6 @@
 
 
   .nav {
-    margin-top: 24px;
     padding: 4px;
     border: 1px solid var(--border-gray-light);
     border-radius: 12px;

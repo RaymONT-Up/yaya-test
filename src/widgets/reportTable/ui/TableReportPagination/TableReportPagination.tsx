@@ -12,7 +12,7 @@ import { reportFiltersActions } from "@/entities/report"
 import { PopoverSelect } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import { useState } from "react"
 
-const PAGE_SIZE_OPTIONS = [10, 15, 20, 25, 50, 75, 100].map((num) => ({
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100].map((num) => ({
   title: num.toString(),
   value: num,
   text: undefined
@@ -71,7 +71,7 @@ export const TableReportPagination = () => {
     return pages
   }
 
-  if (!page_count) return null
+  if (!count) return null
   return (
     <div className={styles.pagination}>
       <div className={styles.left}>

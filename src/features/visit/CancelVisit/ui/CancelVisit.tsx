@@ -4,7 +4,7 @@ import { Dialog } from "@/shared/ui/Dialog/Dialog"
 import { Button, ButtonVariant } from "@/shared/ui/Button"
 import { Trash } from "@/shared/assets/svg/Trash"
 import { useForm } from "react-hook-form"
-import { CancelVisitDto, IVisit } from "@/shared/types/visit"
+import { CancelVisitDto, IVisit, VisitCancelReasonEnum } from "@/shared/types/visit"
 import styles from "./CancelVisit.module.scss"
 import { Text, TextVariant } from "@/shared/ui/Text/Text"
 import { Calendar } from "@/shared/assets/svg/Calendar"
@@ -20,7 +20,6 @@ import { ru } from "date-fns/locale"
 import { getAge } from "@/shared/libs/getChildAge"
 import { getLessonTypeLabel } from "@/shared/libs/getLessonTypeLabel"
 import { formatAgeRange } from "@/shared/libs/getAgeRangeLabel"
-import { CancelReason, cancelReasonsList } from "../const/cancelReason"
 import { Textarea } from "@/shared/ui/Textarea/Textarea"
 import { ChevronLeft } from "@/shared/assets/svg/ChevronLeft"
 import { ReasonOptions } from "./ReasonOptions/ReasonOptions"
@@ -31,12 +30,12 @@ interface Props {
   onClose: () => void
   selectedVisit: IVisit
   handleCancel: (payload: CancelVisitDto) => void
-  handleScheduleCancel: (schedule_id: number, payload: CancelVisitDto) => void
   canCancelVisit: boolean
 }
 
 interface FormValues {
-  cancel_reason: string
+  cancel_reason: VisitCancelReasonEnum | null
+  cancel_comment?: string
 }
 
 export const CancelVisit: React.FC<Props> = ({
@@ -44,11 +43,10 @@ export const CancelVisit: React.FC<Props> = ({
   onClose,
   selectedVisit,
   handleCancel,
-  handleScheduleCancel,
   canCancelVisit
 }) => {
   const [showDialog, setShowDialog] = useState(false)
-  const [selectedReason, setSelectedReason] = useState<CancelReason | null>(null)
+  const [selectedReason, setSelectedReason] = useState<VisitCancelReasonEnum | null>(null)
   const [customReasonMode, setCustomReasonMode] = useState(false)
 
   const {
@@ -60,11 +58,10 @@ export const CancelVisit: React.FC<Props> = ({
     formState: { touchedFields }
   } = useForm<FormValues>({
     defaultValues: {
-      cancel_reason: ""
+      cancel_reason: null,
+      cancel_comment: undefined
     }
   })
-
-  const reason = watch("cancel_reason")
 
   const handleDialogOpen = () => {
     setShowDialog(true)
@@ -78,19 +75,22 @@ export const CancelVisit: React.FC<Props> = ({
 
   const onSubmit = (data: FormValues) => {
     const reason = data.cancel_reason
-    const payload = {
+    if (reason === null) {
+      return
+    }
+
+    const payload: CancelVisitDto = {
       visit_id: selectedVisit.id,
       cancel_reason: reason
     }
-    if (isLessonUnavailableReason(selectedReason)) {
-      if (selectedVisit.schedule?.id) handleScheduleCancel(selectedVisit?.schedule?.id, payload)
-    } else {
-      handleCancel(payload)
+    if (reason === VisitCancelReasonEnum.OTHER) {
+      payload.cancel_comment = data.cancel_comment
     }
+    handleCancel(payload)
 
     setCustomReasonMode(false)
     setSelectedReason(null)
-    setValue("cancel_reason", "")
+    setValue("cancel_reason", null)
     reset()
     setShowDialog(false)
     onClose()
@@ -101,14 +101,14 @@ export const CancelVisit: React.FC<Props> = ({
 
   const handleCustomReason = () => {
     setCustomReasonMode(true)
-    setSelectedReason(null)
-    setValue("cancel_reason", "")
+    setSelectedReason(VisitCancelReasonEnum.OTHER)
+    setValue("cancel_reason", null)
   }
 
   useEffect(() => {
     if (
-      selectedReason === CancelReason.USER_REQUESTED ||
-      selectedReason === CancelReason.GROUP_FULL
+      selectedReason === VisitCancelReasonEnum.USER_REQUESTED ||
+      selectedReason === VisitCancelReasonEnum.GROUP_OVERFLOW
     ) {
       setValue("cancel_reason", selectedReason)
     }
@@ -124,8 +124,9 @@ export const CancelVisit: React.FC<Props> = ({
   const formatDate = (date: Date) =>
     `${date.getDate()} ${date.toLocaleString("ru-RU", { month: "long" })}`
   const durationMinutes = end ? Math.round((end.getTime() - start.getTime()) / 60000) : null
-  const isLessonUnavailableReason = (reason: CancelReason | null): boolean =>
-    reason === CancelReason.TEACHER_SICK || reason === CancelReason.LESSON_CANCELED
+  const isLessonUnavailableReason = (reason: VisitCancelReasonEnum | null): boolean =>
+    reason === VisitCancelReasonEnum.TEACHER_SICK ||
+    reason === VisitCancelReasonEnum.SCHEDULE_CANCELED
   return (
     <>
       <Modal
@@ -242,8 +243,8 @@ export const CancelVisit: React.FC<Props> = ({
         isOpen={showDialog}
         onClose={handleDialogClose}
         title={
-          selectedReason === CancelReason.TEACHER_SICK ||
-          selectedReason === CancelReason.LESSON_CANCELED
+          selectedReason === VisitCancelReasonEnum.TEACHER_SICK ||
+          selectedReason === VisitCancelReasonEnum.SCHEDULE_CANCELED
             ? "Занятие не должно быть доступно для записи"
             : "Укажите причину отмены записи"
         }
@@ -273,7 +274,11 @@ export const CancelVisit: React.FC<Props> = ({
               variant={ButtonVariant.RED}
               iconStart={<Trash color="#fff" />}
               onClick={handleSubmit(onSubmit)}
-              disabled={!reason}
+              disabled={
+                selectedReason === VisitCancelReasonEnum.OTHER
+                  ? !watch("cancel_comment")
+                  : !selectedReason
+              }
             >
               Отменить {isLessonUnavailableReason(selectedReason) ? "занятие" : "запись"}
             </Button>
@@ -301,13 +306,12 @@ export const CancelVisit: React.FC<Props> = ({
           </ul>
         )}
         <div className={styles.reasonList}>
-          {(selectedReason === CancelReason.GROUP_FULL ||
-            selectedReason === CancelReason.USER_REQUESTED) && (
+          {(selectedReason === VisitCancelReasonEnum.GROUP_OVERFLOW ||
+            selectedReason === VisitCancelReasonEnum.USER_REQUESTED) && (
             <ReasonOptions
               selectedReason={selectedReason}
               setSelectedReason={setSelectedReason}
               handleCustomReason={handleCustomReason}
-              cancelReasonsList={cancelReasonsList}
             />
           )}
 
@@ -316,7 +320,6 @@ export const CancelVisit: React.FC<Props> = ({
               selectedReason={selectedReason}
               setSelectedReason={setSelectedReason}
               handleCustomReason={handleCustomReason}
-              cancelReasonsList={cancelReasonsList}
             />
           )}
           {customReasonMode && (
@@ -325,11 +328,13 @@ export const CancelVisit: React.FC<Props> = ({
               label="Причина отмены"
               placeholder="Родитель увидит причину отмены"
               resizeable
-              required={!reason}
-              {...register("cancel_reason", { required: "Причина не может быть пустой" })}
+              required={!watch("cancel_comment")}
+              {...register("cancel_comment", { required: "Причина не может быть пустой" })}
               className={styles.cancelReason}
               error={
-                touchedFields.cancel_reason && !reason ? "Причина не может быть пустой" : undefined
+                touchedFields.cancel_reason && !watch("cancel_comment")
+                  ? "Причина не может быть пустой"
+                  : undefined
               }
             />
           )}
@@ -337,7 +342,7 @@ export const CancelVisit: React.FC<Props> = ({
           {isLessonUnavailableReason(selectedReason) && (
             <>
               <Text bodySize="medium" className={styles.requiredCancelText}>
-                {selectedReason === CancelReason.TEACHER_SICK
+                {selectedReason === VisitCancelReasonEnum.TEACHER_SICK
                   ? `На это занятие уже записано 10 человек. При отмене оно будет удалено из расписания для всех.`
                   : "Если занятие было отменено, то его также необходимо отменить в системе."}
               </Text>

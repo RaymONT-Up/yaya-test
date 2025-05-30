@@ -10,6 +10,7 @@ import clsx from "clsx"
 
 export type SelectItem = {
   title: string
+  titleComponent?: React.ReactNode
   text?: React.ReactNode | string
   value: string | number
   color?: string
@@ -158,7 +159,7 @@ export const Menu: React.FC<MenuProps> = ({
                                 labelSize="medium"
                                 className={styles.title}
                               >
-                                {option.title}
+                                {option.titleComponent ? option.titleComponent : option.title}
                               </Text>
                               {option.text && (
                                 <Text

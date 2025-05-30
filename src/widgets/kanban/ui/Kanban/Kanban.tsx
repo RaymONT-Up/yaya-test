@@ -160,9 +160,9 @@ export const Kanban = () => {
     handleGenericCancel(id, payload, "visit")
   }
 
-  const handleScheduleCancel = (schedule_id: number, payload: CancelVisitDto) => {
-    handleGenericCancel(schedule_id, payload, "schedule")
-  }
+  // const handleScheduleCancel = (schedule_id: number, payload: CancelVisitDto) => {
+  //   handleGenericCancel(schedule_id, payload, "schedule")
+  // }
   return (
     <>
       <VisitToolbar
@@ -227,7 +227,6 @@ export const Kanban = () => {
           selectedVisit={selectedVisit}
           onClose={() => setCancelOpen(false)}
           handleCancel={handleCancel}
-          handleScheduleCancel={handleScheduleCancel}
         />
       )}
     </>

@@ -5,13 +5,12 @@ import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
 import clsx from "clsx"
 import { Input } from "@/shared/ui/Input/Input"
 import { useAppDispatch, useAppSelector } from "@/app/config/store"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { reportFiltersActions, useReportFilters } from "@/entities/report"
 import { endOfMonth, format, startOfMonth, parse } from "date-fns"
 import { ru } from "date-fns/locale"
 import { selectCenters, selectCurrentCenter } from "@/entities/center"
-import { SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
-import { Menu } from "@/shared/ui/Menu/Menu"
+import { Menu, SelectItem } from "@/shared/ui/Menu/Menu"
 import { useDebounce } from "@/shared/libs/useDebounce"
 import { Download } from "@/shared/assets/svg/Download"
 import { useLessonsForCenters } from "@/features/lesson/selectLesson"
@@ -98,14 +97,47 @@ export const ReportToolbar = () => {
     [centerList]
   )
 
+  const getCenterAddressById = useCallback(
+    (id: number) => {
+      const center = centerList.find((c) => c.id === id)
+      return center ? center.address : ""
+    },
+    [centerList]
+  )
   const lessonOptions: SelectItem[] = useMemo(
     () =>
       (lessons ?? []).map((lesson) => ({
         title: lesson.name,
-        text: "",
-        value: lesson.id
+        text: (
+          <>
+            <span>
+              {lesson.min_age_str} - {lesson.max_age_str}
+            </span>
+            <span className={styles.dot}></span>
+            <span>{lesson.duration} мин</span>
+            {lesson.languages && lesson.languages?.length > 0 && (
+              <>
+                <span className={styles.dot}></span>
+                <span>{lesson?.languages?.join(", ")}</span>
+              </>
+            )}
+            {lesson.level && (
+              <>
+                <span className={styles.dot}></span>
+                <span>{lesson.level}</span>
+              </>
+            )}
+          </>
+        ),
+        value: lesson.id,
+        titleComponent: (
+          <div>
+            {lesson.name} -{" "}
+            <Text className={styles.centerName}>{getCenterAddressById(lesson.center_id)}</Text>{" "}
+          </div>
+        )
       })),
-    [lessons]
+    [lessons, getCenterAddressById]
   )
 
   const trainerOptions: SelectItem[] = useMemo(
@@ -145,7 +177,7 @@ export const ReportToolbar = () => {
   const trainerInputValue = getInputValue(
     selectedTrainers,
     trainers,
-    "Выберите тренеров",
+    "Все тренера",
     "Тренеров",
     true
   )
@@ -232,10 +264,10 @@ export const ReportToolbar = () => {
             onClose={closeCenter}
             onChange={handleSelectCenters}
             selectAllText="Все центры"
-            width="100%"
+            width="460px"
             className={styles.centersPopover}
             optionWrapperClassName={styles.centersOptionWrapper}
-            showResetBtn={false}
+            showResetBtn
             showSearch={true}
             error={undefined}
             isLoading={false}
@@ -263,7 +295,7 @@ export const ReportToolbar = () => {
             width="460px"
             className={styles.lessonsPopover}
             optionWrapperClassName={styles.lessonsOptionWrapper}
-            showResetBtn={false}
+            showResetBtn
             showSearch={true}
             error={undefined}
             isLoading={false}
@@ -282,7 +314,7 @@ export const ReportToolbar = () => {
             onClick={toggleTrainer}
           />
           <Menu
-            showSelectAll={false}
+            showSelectAll={true}
             isOpen={isTrainerOpen}
             options={trainerOptions}
             selectedValues={selectedTrainers || []}
@@ -291,11 +323,11 @@ export const ReportToolbar = () => {
             selectAllText="Все тренеры"
             className={styles.trainersPopover}
             optionWrapperClassName={styles.trainersOptionWrapper}
-            showResetBtn={false}
-            showSearch={false}
+            showResetBtn={true}
+            showSearch={true}
             error={undefined}
             isLoading={false}
-            width="100%"
+            width="460px"
           />
         </div>
 
@@ -310,8 +342,9 @@ export const ReportToolbar = () => {
         {/* Файл с сервера буду получать */}
         <div className={styles.downloadButtonWrapper}>
           <Tooltip
-            maxWidth={200}
-            text="Отчет будет основан на примененных фильтрах."
+            className={styles.downloadTooltip}
+            maxWidth={330}
+            text={<div>Сформируем Excel отчет с данными в соответствии с выбранными фильтрами</div>}
             position="left"
           >
             <Button
