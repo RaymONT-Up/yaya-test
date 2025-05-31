@@ -1,16 +1,16 @@
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import styles from './LoginForm.module.scss'
-import { LoginFormValues, schema } from '@/shared/schemes/loginSheme'
-import { loginThunk } from '@/entities/currentSession'
-import { useAppDispatch, useAppSelector } from '@/app/config/store'
-import { useNavigate } from 'react-router-dom'
-import { RoutePath } from '@/shared/consts/routerPaths'
-import { Input } from '@/shared/ui/Input/Input'
-import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
-import { Text, TextTheme } from '@/shared/ui/Text/Text'
-import { AuthErrorMessage } from '@/shared/consts/errorMessages'
-import { AlertCircle } from '@/shared/assets/svg/AlertCircle'
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import styles from "./LoginForm.module.scss"
+import { LoginFormValues, schema } from "@/shared/schemes/loginSheme"
+import { loginThunk } from "@/entities/currentSession"
+import { useAppDispatch, useAppSelector } from "@/app/config/store"
+import { useNavigate } from "react-router-dom"
+import { RoutePath } from "@/shared/consts/routerPaths"
+import { Input } from "@/shared/ui/Input/Input"
+import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
+import { Text, TextTheme } from "@/shared/ui/Text/Text"
+import { AuthErrorMessage } from "@/shared/consts/errorMessages"
+import { AlertCircle } from "@/shared/assets/svg/AlertCircle"
 
 export const LoginForm = () => {
   const {
@@ -19,7 +19,7 @@ export const LoginForm = () => {
     formState: { errors, isSubmitting, isValid }
   } = useForm<LoginFormValues>({
     resolver: zodResolver(schema),
-    mode: 'onBlur'
+    mode: "onChange"
   })
 
   const dispatch = useAppDispatch()
@@ -40,14 +40,14 @@ export const LoginForm = () => {
         <Input
           type="text"
           placeholder="Имя пользователя"
-          {...register('username')}
+          {...register("username")}
           error={errors.username}
         />
 
         <Input
           type="password"
           placeholder="Пароль"
-          {...register('password')}
+          {...register("password")}
           error={errors.password}
         />
 
@@ -63,8 +63,8 @@ export const LoginForm = () => {
       </form>
       {error && (
         <div className={styles.errorWrapper}>
-          {(error === AuthErrorMessage['UNKNOWN'] ||
-            error === AuthErrorMessage['SERVER_ERROR']) && (
+          {(error === AuthErrorMessage["UNKNOWN"] ||
+            error === AuthErrorMessage["SERVER_ERROR"]) && (
             <AlertCircle className={styles.errorIcon} />
           )}
           <Text theme={TextTheme.ERROR}>{error}</Text>

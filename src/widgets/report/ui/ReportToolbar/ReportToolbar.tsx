@@ -6,7 +6,7 @@ import clsx from "clsx"
 import { Input } from "@/shared/ui/Input/Input"
 import { useAppDispatch, useAppSelector } from "@/app/config/store"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { reportFiltersActions, useReportFilters } from "@/entities/report"
+import { reportFiltersActions, useDownloadReport, useReportFilters } from "@/entities/report"
 import { endOfMonth, format, startOfMonth, parse } from "date-fns"
 import { ru } from "date-fns/locale"
 import { selectCenters, selectCurrentCenter } from "@/entities/center"
@@ -38,7 +38,7 @@ function getInputValue<T extends { id: number; name?: string; full_name?: string
 
 export const ReportToolbar = () => {
   const dispatch = useAppDispatch()
-  const { name } = useAppSelector(selectCurrentCenter)
+  const { name, id } = useAppSelector(selectCurrentCenter)
   const { date_from, date_to, centers } = useAppSelector(useReportFilters)
   const centerList = useAppSelector(selectCenters)
   const { data: lessons } = useLessonsForCenters(centers)
@@ -59,6 +59,15 @@ export const ReportToolbar = () => {
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [range, setRange] = useState<[Date | null, Date | null]>([null, null])
 
+  const { mutate: downloadFile } = useDownloadReport(id)
+  const handleReportDownload = async () => {
+    downloadFile({
+      date_from,
+      date_to,
+      lessons: selectedLessons.map((l) => (typeof l === "string" ? parseInt(l, 10) : l)),
+      trainers: selectedTrainers.map((t) => (typeof t === "string" ? parseInt(t, 10) : t))
+    })
+  }
   const toggleDatePicker = () => setShowDatePicker((prev) => !prev)
 
   const handleRangeSelect = (dates: [Date | null, Date | null]) => {
@@ -352,6 +361,7 @@ export const ReportToolbar = () => {
               variant={ButtonVariant.Primary}
               className={styles.downloadButton}
               iconStart={<Download width={16} height={16} />}
+              onClick={handleReportDownload}
             >
               Скачать отчёт
             </Button>

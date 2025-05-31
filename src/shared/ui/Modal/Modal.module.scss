@@ -4,11 +4,25 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.overlayOpen {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &.overlayClose {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 .modal {
@@ -17,6 +31,20 @@
   min-width: 300px;
   position: relative;
   width: auto;
+
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  &.modalOpen {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &.modalClose {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
 .modalHeader {

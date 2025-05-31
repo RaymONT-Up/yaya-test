@@ -1,10 +1,10 @@
-import { ReactNode, useEffect } from 'react'
-import styles from './Modal.module.scss'
-import { Portal } from '../Portal/Portal'
-import { Button, ButtonSize, ButtonVariant } from '@/shared/ui/Button'
-import { CloseX } from '@/shared/assets/svg/Close'
-import { Text, TextVariant } from '@/shared/ui/Text/Text'
-import { Info } from '@/shared/assets/svg/Info'
+import { ReactNode, useEffect, useState } from "react"
+import styles from "./Modal.module.scss"
+import { Portal } from "../Portal/Portal"
+import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
+import { CloseX } from "@/shared/assets/svg/Close"
+import { Text, TextVariant } from "@/shared/ui/Text/Text"
+import { Info } from "@/shared/assets/svg/Info"
 
 interface ModalProps {
   isOpen: boolean
@@ -36,27 +36,33 @@ export const Modal = ({
   showTitle = true,
   showActions = true,
   dismissable = true,
-  width = 'auto',
+  width = "auto",
   actions,
   children
 }: ModalProps) => {
+  const [visible, setVisible] = useState(isOpen)
+
   useEffect(() => {
     if (isOpen) {
+      setVisible(true)
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden"
       document.body.style.paddingRight = `${scrollbarWidth}px`
     } else {
-      document.body.style.overflow = ''
-      document.body.style.paddingRight = ''
+      // Дать время анимации закрытия
+      const timeoutId = setTimeout(() => setVisible(false), 300)
+      document.body.style.overflow = ""
+      document.body.style.paddingRight = ""
+      return () => clearTimeout(timeoutId)
     }
 
     return () => {
-      document.body.style.overflow = ''
-      document.body.style.paddingRight = ''
+      document.body.style.overflow = ""
+      document.body.style.paddingRight = ""
     }
   }, [isOpen])
 
-  if (!isOpen) return null
+  if (!visible) return null
 
   const handleClose = () => {
     if (dismissable) onClose()
@@ -64,8 +70,15 @@ export const Modal = ({
 
   return (
     <Portal>
-      <div className={styles.overlay} onClick={handleClose}>
-        <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ width }}>
+      <div
+        className={`${styles.overlay} ${isOpen ? styles.overlayOpen : styles.overlayClose}`}
+        onClick={handleClose}
+      >
+        <div
+          className={`${styles.modal} ${isOpen ? styles.modalOpen : styles.modalClose}`}
+          onClick={(e) => e.stopPropagation()}
+          style={{ width }}
+        >
           <div className={styles.modalHeader}>
             <div className={styles.modalHeaderText}>
               {showHeadline && headline && (
@@ -95,10 +108,10 @@ export const Modal = ({
             <div className={styles.actions}>
               {showMessage ? (
                 <div className={styles.message}>
-                  <Info />{' '}
+                  <Info />{" "}
                   <Text bodySize="medium" className={styles.infoMessage}>
-                    {' '}
-                    {message}{' '}
+                    {" "}
+                    {message}{" "}
                   </Text>
                 </div>
               ) : (

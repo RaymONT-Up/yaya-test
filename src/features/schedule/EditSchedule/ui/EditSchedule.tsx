@@ -16,6 +16,7 @@ import { Info } from "@/shared/assets/svg/Info"
 import { Trash } from "@/shared/assets/svg/Trash"
 import { Dialog } from "@/shared/ui/Dialog/Dialog"
 import { Textarea } from "@/shared/ui/Textarea/Textarea"
+import { ModalOverlay } from "@/shared/ui/ModalOverlay/ModalOverlay"
 
 interface Props {
   isOpen: boolean
@@ -102,157 +103,163 @@ export const EditSchedule: React.FC<Props> = ({
   const isPlacesValid = places && Number(places) >= selectedEvent.extendedProps.booked_counts
   return (
     <>
-      <Modal
-        showHeadline
-        headline="Тег для занятия"
-        title={selectedEvent.extendedProps?.lesson?.name || "Редактировать расписание"}
-        isOpen={isOpen && !showCancelDialog}
-        onClose={onClose}
-        actions={
-          <>
-            <Button
-              iconStart={<Trash />}
-              variant={ButtonVariant.Neutral}
-              type="button"
-              onClick={handleCancelClick}
-            >
-              Отменить расписание
-            </Button>
-            <Button
-              variant={ButtonVariant.Primary}
-              type="submit"
-              loading={updateMutation.isPending}
-              onClick={() => onSubmit(getValues())}
-              disabled={!isPlacesValid}
-            >
-              Сохранить
-            </Button>
-          </>
-        }
-      >
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-          <div className={styles.readonlyFields}>
-            <div className={styles.readonlyField}>
-              <Text bodySize="medium" fontWeight={600} className={styles.label}>
-                <Calendar width={16} height={16} className={styles.icon} />
-                Дата
-              </Text>
-              {selectedEvent.start &&
-                selectedEvent.end &&
-                (() => {
-                  const { dateTime, duration } = formatScheduleTimeRaw(
-                    selectedEvent.startStr,
-                    selectedEvent.endStr
-                  )
-                  return (
-                    <Text bodySize="medium" fontWeight={600} className={styles.value}>
-                      {dateTime} <span className={styles.duration}>({duration})</span>
-                    </Text>
-                  )
-                })()}
-            </div>
+      <ModalOverlay isOpen={isOpen || showCancelDialog} onClose={onClose}>
+        <Modal
+          showHeadline
+          headline="Тег для занятия"
+          title={selectedEvent.extendedProps?.lesson?.name || "Редактировать расписание"}
+          isOpen={isOpen && !showCancelDialog}
+          onClose={onClose}
+          actions={
+            <>
+              <Button
+                iconStart={<Trash />}
+                variant={ButtonVariant.Neutral}
+                type="button"
+                onClick={handleCancelClick}
+              >
+                Отменить расписание
+              </Button>
+              <Button
+                variant={ButtonVariant.Primary}
+                type="submit"
+                loading={updateMutation.isPending}
+                onClick={() => onSubmit(getValues())}
+                disabled={!isPlacesValid}
+              >
+                Сохранить
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <div className={styles.readonlyFields}>
+              <div className={styles.readonlyField}>
+                <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                  <Calendar width={16} height={16} className={styles.icon} />
+                  Дата
+                </Text>
+                {selectedEvent.start &&
+                  selectedEvent.end &&
+                  (() => {
+                    const { dateTime, duration } = formatScheduleTimeRaw(
+                      selectedEvent.startStr,
+                      selectedEvent.endStr
+                    )
+                    return (
+                      <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                        {dateTime} <span className={styles.duration}>({duration})</span>
+                      </Text>
+                    )
+                  })()}
+              </div>
 
-            <div className={styles.readonlyField}>
-              <Text bodySize="medium" fontWeight={600} className={styles.label}>
-                <User className={styles.icon} />
-                Тренер
-              </Text>
-              <Text bodySize="medium" fontWeight={600} className={styles.value}>
-                {selectedEvent.extendedProps.trainer ?? ""}
-              </Text>
-            </div>
-
-            <div className={styles.readonlyField}>
-              <Text bodySize="medium" fontWeight={600} className={styles.label}>
-                <User className={styles.icon} />
-                Записалось
-              </Text>
-              <Text bodySize="medium" fontWeight={600} className={styles.value}>
-                {selectedEvent.extendedProps.booked_counts ?? 0}
-              </Text>
-            </div>
-            <div className={styles.readonlyField}>
-              <Text bodySize="medium" fontWeight={600} className={styles.label}>
-                <Users className={styles.icon} />
-                Количество мест
-              </Text>
-              <Input
-                required={!watch("places")}
-                type="number"
-                {...register("places", {
-                  required: true,
-                  min: 1,
-                  validate: (value) =>
-                    (value && value >= selectedEvent.extendedProps.booked_counts) ||
-                    `Не может быть меньше записанных участников (${selectedEvent.extendedProps.booked_counts})`
-                })}
-                error={!isPlacesValid ? "Error" : undefined}
-                className={styles.placeInput}
-              />
-            </div>
-          </div>
-
-          {watch("places") !== null &&
-            watch("places")! < selectedEvent.extendedProps.booked_counts && (
-              <div className={styles.errorBlock}>
-                <Info className={styles.errorIcon} />
-                <Text variant={TextVariant.HEADING} headingLevel="h8" className={styles.errorText}>
-                  Количество мест меньше числа записанных участников.
+              <div className={styles.readonlyField}>
+                <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                  <User className={styles.icon} />
+                  Тренер
+                </Text>
+                <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                  {selectedEvent.extendedProps.trainer ?? ""}
                 </Text>
               </div>
-            )}
-          <div className={styles.alertBlock}>
-            <Alert
-              icon={<Info />}
-              variant={AlertVariant.Info}
-              title="Количество мест должно быть не меньше одного и не меньше числа записанных участников."
-              className={styles.alert}
-            />
-          </div>
-        </form>
-      </Modal>
-      <Dialog
-        type="default"
-        width="466px"
-        bodyText={
-          selectedEvent.extendedProps?.booked_counts > 0
-            ? `На занятие «${selectedEvent.extendedProps?.lesson?.name}» записано ${selectedEvent.extendedProps?.booked_counts} человек. Если вы отмените его, оно исчезнет из расписания всех участников.`
-            : `Занятие «${selectedEvent.extendedProps?.lesson?.name}» будет удалено из расписания.`
-        }
-        title="Отменить занятие?"
-        isOpen={showCancelDialog}
-        onClose={handleCancelDialogClose}
-        actions={
-          <>
-            <Button variant={ButtonVariant.Neutral} onClick={handleCancelDialogClose}>
-              Отмена
-            </Button>
-            <Button
-              variant={ButtonVariant.RED}
-              iconStart={<Trash color="#fff" />}
-              onClick={handleConfirmedCancel}
-              disabled={!watch("cancel_reason")}
-            >
-              Отменить занятие
-            </Button>
-          </>
-        }
-      >
-        <Textarea
-          label="Причина отмены"
-          placeholder="Укажите причину"
-          required={!watch("cancel_reason")}
-          resizeable
-          {...register("cancel_reason", { required: "Причина не может быть пустой" })}
-          error={
-            touchedFields.cancel_reason && !watch("cancel_reason")
-              ? "Причина не может быть пустой"
-              : undefined
+
+              <div className={styles.readonlyField}>
+                <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                  <User className={styles.icon} />
+                  Записалось
+                </Text>
+                <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                  {selectedEvent.extendedProps.booked_counts ?? 0}
+                </Text>
+              </div>
+              <div className={styles.readonlyField}>
+                <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                  <Users className={styles.icon} />
+                  Количество мест
+                </Text>
+                <Input
+                  required={!watch("places")}
+                  type="number"
+                  {...register("places", {
+                    required: true,
+                    min: 1,
+                    validate: (value) =>
+                      (value && value >= selectedEvent.extendedProps.booked_counts) ||
+                      `Не может быть меньше записанных участников (${selectedEvent.extendedProps.booked_counts})`
+                  })}
+                  error={!isPlacesValid ? "Error" : undefined}
+                  className={styles.placeInput}
+                />
+              </div>
+            </div>
+
+            {watch("places") !== null &&
+              watch("places")! < selectedEvent.extendedProps.booked_counts && (
+                <div className={styles.errorBlock}>
+                  <Info className={styles.errorIcon} />
+                  <Text
+                    variant={TextVariant.HEADING}
+                    headingLevel="h8"
+                    className={styles.errorText}
+                  >
+                    Количество мест меньше числа записанных участников.
+                  </Text>
+                </div>
+              )}
+            <div className={styles.alertBlock}>
+              <Alert
+                icon={<Info />}
+                variant={AlertVariant.Info}
+                title="Количество мест должно быть не меньше одного и не меньше числа записанных участников."
+                className={styles.alert}
+              />
+            </div>
+          </form>
+        </Modal>
+        <Dialog
+          type="default"
+          width="466px"
+          bodyText={
+            selectedEvent.extendedProps?.booked_counts > 0
+              ? `На занятие «${selectedEvent.extendedProps?.lesson?.name}» записано ${selectedEvent.extendedProps?.booked_counts} человек. Если вы отмените его, оно исчезнет из расписания всех участников.`
+              : `Занятие «${selectedEvent.extendedProps?.lesson?.name}» будет удалено из расписания.`
           }
-          showErrorText
-          className={styles.cancelReason}
-        />
-      </Dialog>
+          title="Отменить занятие?"
+          isOpen={showCancelDialog}
+          onClose={handleCancelDialogClose}
+          actions={
+            <>
+              <Button variant={ButtonVariant.Neutral} onClick={handleCancelDialogClose}>
+                Отмена
+              </Button>
+              <Button
+                variant={ButtonVariant.RED}
+                iconStart={<Trash color="#fff" />}
+                onClick={handleConfirmedCancel}
+                disabled={!watch("cancel_reason")}
+              >
+                Отменить занятие
+              </Button>
+            </>
+          }
+        >
+          <Textarea
+            label="Причина отмены"
+            placeholder="Укажите причину"
+            required={!watch("cancel_reason")}
+            resizeable
+            {...register("cancel_reason", { required: "Причина не может быть пустой" })}
+            error={
+              touchedFields.cancel_reason && !watch("cancel_reason")
+                ? "Причина не может быть пустой"
+                : undefined
+            }
+            showErrorText
+            className={styles.cancelReason}
+          />
+        </Dialog>
+      </ModalOverlay>
     </>
   )
 }

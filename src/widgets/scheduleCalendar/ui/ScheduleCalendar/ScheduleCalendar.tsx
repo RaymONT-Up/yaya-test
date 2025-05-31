@@ -26,6 +26,8 @@ import { CancelScheduleSDto } from "@/shared/types/schedule"
 import { formatDateShort } from "@/shared/libs/formaDate"
 import { ComponentLoader } from "@/shared/ui/ComponentLoader/ComponentLoader"
 import { useDebounce } from "@/shared/libs/useDebounce"
+import { useHasPermission } from "@/shared/libs/useHasPermission"
+import { RolePermissionKeys } from "@/shared/types/role"
 
 export const ScheduleCalendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -51,6 +53,9 @@ export const ScheduleCalendar: React.FC = () => {
   const [selectedLessonIds, setLessonIds] = useState<number[]>([])
   const debouncedLessonIds = useDebounce(selectedLessonIds, 1000)
   const { id } = useAppSelector(selectCurrentCenter)
+
+  // Persmission check
+  const hasEditSchedulePermission = useHasPermission(RolePermissionKeys.SCHEDULE_EDIT)
 
   const { data, isLoading } = useSchedule({
     startDate: dateRange.startDate,
@@ -188,6 +193,7 @@ export const ScheduleCalendar: React.FC = () => {
     setRange({ start, end })
     setModalOpen(true)
   }
+  const calendarRef = useRef<FullCalendar | null>(null)
 
   const handleDatesSet = (arg: DatesSetArg) => {
     const newStartDate = arg.startStr.slice(0, 10)
@@ -197,7 +203,11 @@ export const ScheduleCalendar: React.FC = () => {
       setDateRange({ startDate: newStartDate, endDate: newEndDate })
     }
   }
+  // Открытие модального окна редактирования и отмены события
   const handleEventClick = (info: EventClickArg) => {
+    if (!hasEditSchedulePermission) {
+      return
+    }
     const currentDate = new Date()
     const eventDate = new Date(info.event.startStr)
 
@@ -206,7 +216,6 @@ export const ScheduleCalendar: React.FC = () => {
       setEditModalOpen(true)
     }
   }
-  const calendarRef = useRef<FullCalendar | null>(null)
   const handleOnClose = () => {
     setModalOpen(false)
     setRange(null)
@@ -215,6 +224,7 @@ export const ScheduleCalendar: React.FC = () => {
   return (
     <>
       <CalendarToolbar
+        hasEditSchedulePermission={hasEditSchedulePermission}
         calendarRef={calendarRef}
         dateRange={dateRange}
         setDuplicateModalOpen={setDuplicateModalOpen}
@@ -237,7 +247,7 @@ export const ScheduleCalendar: React.FC = () => {
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
-            selectable={true}
+            selectable={hasEditSchedulePermission}
             select={handleSelect}
             selectAllow={(selectInfo) => {
               const now = new Date()

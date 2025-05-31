@@ -7,6 +7,7 @@ import { ReportTable, TableReportPagination } from "@/widgets/reportTable"
 const ReportPage = () => {
   return (
     <section className={s.reportPage}>
+      <title>Yaya for Partners | Отчеты</title>
       <Text variant={TextVariant.HEADING} headingLevel="h5" className={s.title}>
         Отчеты
       </Text>

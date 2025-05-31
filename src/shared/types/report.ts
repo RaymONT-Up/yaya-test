@@ -40,3 +40,7 @@ export interface ReportFilters {
 }
 
 export type ReportStatsFilters = Omit<ReportFilters, "page" | "page_size">
+export type ReportDownloadFilters = Omit<
+  ReportFilters,
+  "page" | "page_size" | "page_count" | "centers"
+>

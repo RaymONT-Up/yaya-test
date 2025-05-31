@@ -8,7 +8,7 @@ import styles from "./SelectLesson.module.scss"
 import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
 import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 import { FieldError } from "react-hook-form"
-import { Lesson } from "@/shared/types/lesson"
+import { Lesson, LessonTypeEnum } from "@/shared/types/lesson"
 import clsx from "clsx"
 import { Menu } from "@/shared/ui/Menu/Menu"
 import { Clipboard } from "@/shared/assets/svg/Clipboard"
@@ -27,6 +27,11 @@ interface SelectLessonProps {
   selectName: string
 }
 
+const lessonTypeMap = {
+  [LessonTypeEnum.OFFLINE]: "Офлайн",
+  [LessonTypeEnum.ONLINE]: "Онлайн",
+  [LessonTypeEnum.ONLINE_COURSES]: "Онлайн курсы"
+}
 export const SelectLesson: React.FC<SelectLessonProps> = ({
   onSelect,
   labelText = "Занятие",
@@ -66,6 +71,8 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
                 <span>{lesson.level}</span>
               </>
             )}
+            <span className={styles.dot}></span>
+            <span>{lessonTypeMap[lesson.type]}</span>
           </>
         ),
         value: lesson.id
@@ -88,7 +95,29 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
     const lesson = selectedLessons[0]
     if (!lesson) return ""
 
-    return `${lesson.name} (${lesson.min_age_str}-${lesson.max_age_str}, ${lesson.duration}м)`
+    const parts = [
+      lesson.name,
+      `${lesson.min_age_str} - ${lesson.max_age_str}`,
+      `${lesson.duration} м`
+    ]
+
+    if (lesson.languages && lesson.languages.length > 0) {
+      parts.push(lesson.languages.join(", "))
+    }
+
+    if (lesson.level) {
+      parts.push(lesson.level)
+    }
+
+    const lessonTypeMap = {
+      [LessonTypeEnum.OFFLINE]: "Offline",
+      [LessonTypeEnum.ONLINE]: "Online",
+      [LessonTypeEnum.ONLINE_COURSES]: "Online Courses"
+    }
+
+    parts.push(lessonTypeMap[lesson.type] ?? lesson.type)
+
+    return parts.join(" ∙ ")
   }, [isMultiply, selectedLessons])
 
   const handleSelectSingle = (item: SelectItem) => {

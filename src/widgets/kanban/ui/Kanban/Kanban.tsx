@@ -17,6 +17,8 @@ import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 import { NotificationVariant } from "@/shared/ui/Notification/ui/Notification/Notification"
 import { AlertTriangle } from "@/shared/assets/svg/AlertTriangle"
 import { useCancelSchedule } from "@/entities/schedule"
+import { useHasPermission } from "@/shared/libs/useHasPermission"
+import { RolePermissionKeys } from "@/shared/types/role"
 
 type ColumnHeader = {
   title: string
@@ -74,6 +76,10 @@ export const Kanban = () => {
   const { addNotification, removeNotification } = useNotifications()
   const pendingCancelRef = useRef<PendingCancel | null>(null)
   const [temporaryCanceledIds, setTemporaryCanceledIds] = useState<number[]>([])
+
+  // Permission check
+  const hasCancelPermisson = useHasPermission(RolePermissionKeys.VISIT_CANCEL)
+
   const clearAfterCanceletion = () => {
     setSelectedVisit(null)
     setTemporaryCanceledIds([])
@@ -220,6 +226,7 @@ export const Kanban = () => {
       {selectedVisit && (
         <CancelVisit
           canCancelVisit={
+            hasCancelPermisson &&
             selectedVisit.state == LessonStateEnum.BOOKED &&
             !temporaryCanceledIds.includes(selectedVisit.id)
           }

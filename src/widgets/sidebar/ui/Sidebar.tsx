@@ -3,14 +3,25 @@ import { sidebarItems } from "../config/sidebarConfig"
 import styles from "./Sidebar.module.scss"
 import { Text, TextVariant } from "@/shared/ui/Text/Text"
 import { useLocation } from "react-router-dom"
+import { RootState, useAppSelector } from "@/app/config/store"
 export const Sidebar = () => {
   const location = useLocation()
+  const permissions = useAppSelector(
+    (state: RootState) => state.currentSessionSliceReducer.permissions
+  )
+
+  const visibleItems = sidebarItems.filter((item) => {
+    if (!permissions) {
+      return false
+    }
+    return permissions[item.permission] === true
+  })
+
   return (
     <aside className={styles.sidebar}>
-      {/* Navigation */}
       <nav className={styles.nav}>
         <ul>
-          {sidebarItems.map(({ label, path, icon }) => {
+          {visibleItems.map(({ label, path, icon }) => {
             const Icon = icon
             const isActive = location.pathname === path
             return (

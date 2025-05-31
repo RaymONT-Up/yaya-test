@@ -29,6 +29,7 @@ type Props = {
   setCancelModalOpen: (open: boolean) => void
   onLessonIdsChange: (lessonIds: number[]) => void
   selectedLessonIds: number[]
+  hasEditSchedulePermission: boolean
 }
 export const CalendarToolbar: React.FC<Props> = ({
   calendarRef,
@@ -37,7 +38,8 @@ export const CalendarToolbar: React.FC<Props> = ({
   setCancelModalOpen,
   setModalOpen,
   onLessonIdsChange,
-  selectedLessonIds
+  selectedLessonIds,
+  hasEditSchedulePermission
 }) => {
   const [start, setStart] = useState<Date | null>(null)
   const { isOpen: showDatePicker, toggle: toggleDatePicker } = useSelectManager("date_pick")
@@ -114,46 +116,48 @@ export const CalendarToolbar: React.FC<Props> = ({
         </div>
       </div>
       <div className={styles.center}></div>
-      <div className={styles.right}>
-        <div className={styles.popoverContainer} ref={popoverRef}>
+      {hasEditSchedulePermission && (
+        <div className={styles.right}>
+          <div className={styles.popoverContainer} ref={popoverRef}>
+            <Button
+              iconStart={<Settings />}
+              iconEnd={<ChevronDown />}
+              size={ButtonSize.Small}
+              variant={ButtonVariant.Neutral}
+              onClick={togglePopover}
+            >
+              Редактировать
+            </Button>
+
+            {showPopover && (
+              <div className={styles.popoverContent}>
+                <div className={styles.option} onClick={() => handleOptionClick("duplicate")}>
+                  <Calendar width={20} height={20} />
+                  <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
+                    Дублирование расписания
+                  </Text>
+                  <span className={styles.title}></span>
+                </div>
+                <div className={styles.option} onClick={() => handleOptionClick("cancel")}>
+                  <XSquare width={20} height={20} />
+
+                  <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
+                    Отмена расписания
+                  </Text>
+                </div>
+              </div>
+            )}
+          </div>
           <Button
-            iconStart={<Settings />}
-            iconEnd={<ChevronDown />}
+            iconStart={<Plus />}
             size={ButtonSize.Small}
-            variant={ButtonVariant.Neutral}
-            onClick={togglePopover}
+            variant={ButtonVariant.Primary}
+            onClick={() => setModalOpen(true)}
           >
-            Редактировать
+            Добавить занятие
           </Button>
-
-          {showPopover && (
-            <div className={styles.popoverContent}>
-              <div className={styles.option} onClick={() => handleOptionClick("duplicate")}>
-                <Calendar width={20} height={20} />
-                <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
-                  Дублирование расписания
-                </Text>
-                <span className={styles.title}></span>
-              </div>
-              <div className={styles.option} onClick={() => handleOptionClick("cancel")}>
-                <XSquare width={20} height={20} />
-
-                <Text variant={TextVariant.LABEL} labelSize="medium" className={styles.title}>
-                  Отмена расписания
-                </Text>
-              </div>
-            </div>
-          )}
         </div>
-        <Button
-          iconStart={<Plus />}
-          size={ButtonSize.Small}
-          variant={ButtonVariant.Primary}
-          onClick={() => setModalOpen(true)}
-        >
-          Добавить занятие
-        </Button>
-      </div>
+      )}
     </div>
   )
 }

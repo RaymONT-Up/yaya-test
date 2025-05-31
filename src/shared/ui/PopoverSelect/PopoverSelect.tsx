@@ -65,6 +65,7 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
 
   const handleSelectOption = (option: SelectItem) => {
     onSelect(option)
+    setSearchValue("")
     onClose()
   }
 

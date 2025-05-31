@@ -3,6 +3,7 @@ import { apiWithTokenAndCenter } from "../api"
 import {
   GeneralStatsResponse,
   PartnerReportResponse,
+  ReportDownloadFilters,
   ReportFilters,
   ReportStatsFilters
 } from "../../types/report"
@@ -73,6 +74,34 @@ export const $getPartnerGeneralStats = async (
       }
     }
   )
+
+  return response
+}
+export const $downloadReportFile = async (
+  filters: ReportDownloadFilters
+): Promise<AxiosResponse<Blob>> => {
+  const response = await apiWithTokenAndCenter.get<Blob>("/partners/reports/download/", {
+    params: filters,
+    responseType: "blob",
+    headers: {
+      Accept: "*/*"
+    },
+    paramsSerializer: (params) => {
+      const searchParams = new URLSearchParams()
+      Object.entries(params).forEach(([key, value]) => {
+        if (
+          value === undefined ||
+          value === null ||
+          value === "" ||
+          (Array.isArray(value) && value.length === 0)
+        ) {
+          return
+        }
+        searchParams.append(key, Array.isArray(value) ? value.join(",") : value.toString())
+      })
+      return searchParams.toString()
+    }
+  })
 
   return response
 }
