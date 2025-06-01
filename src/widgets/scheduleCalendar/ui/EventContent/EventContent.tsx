@@ -57,10 +57,6 @@ export const EventContent = (arg: EventContentArg) => {
                 {formatAgeRange(lesson?.min_age_str, lesson?.max_age_str)}
               </Text>
               <div className={styles.dotSeparator} />
-              <Text bodySize="tiny" fontWeight={500} className={styles.eventPlaces}>
-                {booked_counts}/{places}
-              </Text>
-              <div className={styles.dotSeparator} />
             </div>
             <Text bodySize="tiny" fontWeight={500} className={styles.eventTag}>
               Intermediate

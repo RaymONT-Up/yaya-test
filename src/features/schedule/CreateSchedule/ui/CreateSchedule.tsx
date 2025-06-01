@@ -195,6 +195,14 @@ export const CreateSchedule: React.FC<Props> = ({
       }
     }
   }, [startTime, duration, setValue, watch])
+  // useEffect(() => {
+  //   if (startTime && durationUi) {
+  //     const startMin = parseTimeToMinutes(startTime)
+  //     const newEndMin = startMin + durationUi
+  //     const newEndStr = formatTime(newEndMin)
+  //     setValue("end", newEndStr, { shouldValidate: true })
+  //   }
+  // }, [startTime, durationUi])
   return (
     <ModalOverlay isOpen={isOpen} onClose={resetOnClose}>
       <Modal
@@ -280,8 +288,20 @@ export const CreateSchedule: React.FC<Props> = ({
                 label="Длит. (мин)"
                 placeholder="00"
                 type="number"
-                value={durationUi}
-                readOnly
+                value={durationUi === 0 ? "" : durationUi}
+                onChange={(e) => {
+                  const input = e.target.value
+                  const val = Math.max(0, parseInt(input || "0", 10))
+                  if (startTime) {
+                    const startMin = parseTimeToMinutes(startTime)
+                    const newEndMin = startMin + val
+                    if (newEndMin <= 1320) {
+                      setDurationUi(val)
+                      const newEndStr = formatTime(newEndMin)
+                      setValue("end", newEndStr, { shouldValidate: true })
+                    }
+                  }
+                }}
               />
             </div>
           </div>

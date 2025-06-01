@@ -69,6 +69,11 @@
     width: 400px;
 }
 // scroll
+.itemsInner{
+  position: relative;
+  overflow-y: visible;
+  max-height: 100%;
+}
 .items {
 position: relative;
 display: flex;

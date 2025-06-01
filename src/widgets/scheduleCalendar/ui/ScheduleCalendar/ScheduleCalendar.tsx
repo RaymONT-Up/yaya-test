@@ -221,6 +221,22 @@ export const ScheduleCalendar: React.FC = () => {
     setRange(null)
     setRange({ start: "", end: "" })
   }
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     const scrollContainer = document.querySelector('.fc-scroller-harness .fc-scroller')
+  //     if (scrollContainer) {
+  //       const now = new Date()
+  //       const hours = now.getHours()
+  //       const minutes = now.getMinutes()
+  //       const totalMinutes = hours * 60 + minutes
+
+  //       const slotHeight = 40
+  //       scrollContainer.scrollTop = (totalMinutes / 30) * slotHeight
+  //     }
+  //   }, 100) // Дать календарю прогрузиться
+
+  //   return () => clearTimeout(timer)
+  // }, [])
   return (
     <>
       <CalendarToolbar
@@ -240,12 +256,13 @@ export const ScheduleCalendar: React.FC = () => {
       ) : (
         <div className="calendar-scroll-container">
           <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            height={"100%"}
+            scrollTime={new Date().toTimeString().slice(0, 8)}
             expandRows={false}
-            height="auto"
             firstDay={1}
             timeZone="Asia/Aqtobe"
             ref={calendarRef}
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
             selectable={hasEditSchedulePermission}
             select={handleSelect}

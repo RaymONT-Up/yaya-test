@@ -30,6 +30,9 @@ const currentSessionSlice = createSlice({
       state.role_display = null
       state.loading = false
       state.error = null
+    },
+    clearError: (state) => {
+      state.error = null
     }
   },
   extraReducers: (builder) => {
@@ -76,5 +79,5 @@ const currentSessionSlice = createSlice({
   }
 })
 
-export const { clearSession } = currentSessionSlice.actions
+export const { clearSession, clearError } = currentSessionSlice.actions
 export const currentSessionSliceReducer = currentSessionSlice.reducer

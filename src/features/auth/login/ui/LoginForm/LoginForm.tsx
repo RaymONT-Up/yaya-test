@@ -1,8 +1,8 @@
-import { useForm } from "react-hook-form"
+import { FieldError, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import styles from "./LoginForm.module.scss"
 import { LoginFormValues, schema } from "@/shared/schemes/loginSheme"
-import { loginThunk } from "@/entities/currentSession"
+import { clearError, loginThunk } from "@/entities/currentSession"
 import { useAppDispatch, useAppSelector } from "@/app/config/store"
 import { useNavigate } from "react-router-dom"
 import { RoutePath } from "@/shared/consts/routerPaths"
@@ -26,6 +26,11 @@ export const LoginForm = () => {
   const navigate = useNavigate()
   const error = useAppSelector((state) => state.currentSessionSliceReducer.error)
 
+  const onChangeWithClearError = () => {
+    if (error) {
+      dispatch(clearError())
+    }
+  }
   const onSubmit = async (data: LoginFormValues) => {
     const result = await dispatch(loginThunk(data))
 
@@ -33,22 +38,37 @@ export const LoginForm = () => {
       navigate(RoutePath.SELECT_CENTER)
     }
   }
+  const isBadRequest = error === AuthErrorMessage.BAD_REQUEST
 
   return (
     <div className={styles.container}>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <Input
+          showErrorMessage
           type="text"
           placeholder="Имя пользователя"
           {...register("username")}
+          onChange={(e) => {
+            onChangeWithClearError()
+            register("username").onChange(e)
+          }}
           error={errors.username}
         />
 
         <Input
+          showErrorMessage
           type="password"
           placeholder="Пароль"
           {...register("password")}
-          error={errors.password}
+          onChange={(e) => {
+            onChangeWithClearError()
+            register("password").onChange(e)
+          }}
+          error={
+            isBadRequest
+              ? ({ message: AuthErrorMessage.BAD_REQUEST } as FieldError)
+              : errors.password
+          }
         />
 
         <Button
@@ -61,7 +81,7 @@ export const LoginForm = () => {
           Войти
         </Button>
       </form>
-      {error && (
+      {error && !isBadRequest && (
         <div className={styles.errorWrapper}>
           {(error === AuthErrorMessage["UNKNOWN"] ||
             error === AuthErrorMessage["SERVER_ERROR"]) && (
