@@ -5,10 +5,11 @@ import { ChevronLeft } from "@/shared/assets/svg/ChevronLeft"
 import { Calendar } from "@/shared/assets/svg/Calendar"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
 import { LessonFilter } from "@/features/lesson/selectLesson"
 import { CounterVariant } from "@/shared/ui/Counter/Counter"
+import { useRef, useState } from "react"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 type Props = {
   date: Date
@@ -22,12 +23,10 @@ export const VisitToolbar = ({
   onLessonIdsChange,
   selectedLessonIds
 }: Props) => {
-  const {
-    isOpen: showDatePicker,
-    toggle: toggleDatePicker,
-    close
-  } = useSelectManager("date_picker_visit")
-
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const toggleDatePicker = () => {
+    setShowDatePicker((prev) => !prev)
+  }
   const goToPrevDay = () => {
     const newDate = new Date(date)
     newDate.setDate(date.getDate() - 1)
@@ -44,6 +43,11 @@ export const VisitToolbar = ({
     onChangeDate(newDate)
     close()
   }
+  const selectDateRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectDateRef,
+    close: () => setShowDatePicker(false)
+  })
   return (
     <div className={styles.visitToolbar}>
       <div className={styles.left}>
@@ -62,7 +66,7 @@ export const VisitToolbar = ({
             iconEnd={<ChevronLeft color="#262527" width={16} height={16} />}
             onClick={goToPrevDay}
           />
-          <div className={styles.dateWrapper}>
+          <div className={styles.dateWrapper} ref={selectDateRef}>
             <Button
               size={ButtonSize.Small}
               iconStart={<Calendar width={16} height={16} />}

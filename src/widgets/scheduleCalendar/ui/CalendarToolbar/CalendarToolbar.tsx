@@ -14,7 +14,7 @@ import { XSquare } from "@/shared/assets/svg/XSquare"
 import { startOfWeek } from "date-fns"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
 import { LessonFilter } from "@/features/lesson/selectLesson"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 type DateRange = {
   startDate: string
@@ -42,10 +42,21 @@ export const CalendarToolbar: React.FC<Props> = ({
   hasEditSchedulePermission
 }) => {
   const [start, setStart] = useState<Date | null>(null)
-  const { isOpen: showDatePicker, toggle: toggleDatePicker } = useSelectManager("date_pick")
-  const { isOpen: showPopover, toggle: togglePopover, close } = useSelectManager("edit")
-
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const toggleDatePicker = () => {
+    setShowDatePicker((prev) => !prev)
+  }
+  const [showPopover, setShowPopover] = useState(false)
+  const togglePopover = () => {
+    setShowPopover((prev) => !prev)
+  }
   const popoverRef = useRef<HTMLDivElement | null>(null)
+  const closePopover = () => {
+    setShowPopover(false)
+  }
+  const closeDatePicker = () => {
+    setShowDatePicker(false)
+  }
 
   const handleOptionClick = (action: "duplicate" | "cancel") => {
     if (action === "duplicate") {
@@ -53,13 +64,22 @@ export const CalendarToolbar: React.FC<Props> = ({
     } else {
       setCancelModalOpen(true)
     }
-    close()
+    closePopover()
   }
   const handleWeekChange = (date: Date) => {
     const start = startOfWeek(date, { weekStartsOn: 2 })
     calendarRef.current?.getApi().gotoDate(start)
     setStart(start)
   }
+  useClickOutside<HTMLDivElement>({
+    ref: popoverRef,
+    close: closePopover
+  })
+  const selectDateRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectDateRef,
+    close: closeDatePicker
+  })
   return (
     <div className={styles.calendarToolbar}>
       <div className={styles.left}>
@@ -78,7 +98,7 @@ export const CalendarToolbar: React.FC<Props> = ({
             onClick={() => calendarRef.current?.getApi().prev()}
             iconEnd={<ChevronLeft color="#262527" width={16} height={16} />}
           />
-          <div className={styles.dateWrapper}>
+          <div className={styles.dateWrapper} ref={selectDateRef}>
             <Button
               size={ButtonSize.Small}
               iconStart={<Calendar width={16} height={16} />}

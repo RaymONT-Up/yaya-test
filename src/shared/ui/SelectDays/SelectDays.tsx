@@ -5,7 +5,8 @@ import styles from "./SelectDays.module.scss"
 import { FieldError } from "react-hook-form"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
 import clsx from "clsx"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
+import { useRef, useState } from "react"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 interface DaySelectProps {
   value: Date[] | undefined
   onChange: (date: Date[] | null) => void
@@ -25,8 +26,11 @@ export const SelectDays = ({
   error,
   position = "top"
 }: DaySelectProps) => {
-  const { isOpen, toggle } = useSelectManager("date_multiple")
-
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
   const handleDaySelect = (date: Date[] | null) => {
     if (date) {
       onChange(date)
@@ -39,9 +43,13 @@ export const SelectDays = ({
     e.stopPropagation()
     onChange(null)
   }
-
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close
+  })
   return (
-    <div className={styles.container}>
+    <div ref={selectRef} className={styles.container}>
       <Input
         showErrorMessage
         error={error ? error : undefined}
@@ -49,7 +57,7 @@ export const SelectDays = ({
         required={!value && required}
         readOnly
         value={value?.length ? `Выбрано дней: ${value?.length}` : ""}
-        onClick={toggle}
+        onClick={toggleSelect}
         leftIcon={<Calendar />}
         rightIcon={
           value?.length ? <CloseX className={styles.clearIcon} onClick={clearDate} /> : undefined

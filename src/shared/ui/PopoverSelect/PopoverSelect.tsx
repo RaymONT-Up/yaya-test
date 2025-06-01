@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react"
+import React, { useRef, useState, useMemo } from "react"
 import { Text, TextTheme, TextVariant } from "@/shared/ui/Text/Text"
 import { Input } from "@/shared/ui/Input/Input"
 import styles from "./PopoverSelect.module.scss"
@@ -22,7 +22,6 @@ interface PopoverSelectProps {
   showSearch?: boolean
   isLoading?: boolean
   error?: string
-  clickOutside?: boolean
   className?: string
   optionWrapperClassName?: string
 }
@@ -37,31 +36,11 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   showSearch = false,
   isLoading = false,
   error,
-  clickOutside = true,
   className,
   optionWrapperClassName
 }) => {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [searchValue, setSearchValue] = useState("")
-
-  useEffect(() => {
-    if (!clickOutside || !isOpen) return
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
-        onClose()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isOpen, onClose, clickOutside])
 
   const handleSelectOption = (option: SelectItem) => {
     onSelect(option)

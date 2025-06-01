@@ -1,14 +1,14 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import { Menu } from "@/shared/ui/Menu/Menu"
 import { useAppSelector } from "@/app/config/store"
 import { selectCurrentCenter } from "@/entities/center"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 import { SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import { Filter } from "@/shared/assets/svg/Filter"
 import styles from "./LessonFilter.module.scss"
 import { useLessons } from "../../model/useLessons"
 import { Button, ButtonSize, ButtonVariant } from "@/shared/ui/Button"
 import { Counter, CounterVariant } from "@/shared/ui/Counter/Counter"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 interface LessonFilterProps {
   selectedIds: (number | string)[]
@@ -23,7 +23,6 @@ interface LessonFilterProps {
 export const LessonFilter: React.FC<LessonFilterProps> = ({
   selectedIds,
   onSelect,
-  selectName,
   showResetBtn = true,
   filterLabel,
   counterVariant = CounterVariant.Default,
@@ -31,8 +30,16 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isLoading, isError } = useLessons(id)
-  const { isOpen, toggle } = useSelectManager(selectName)
-
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close
+  })
   const options: SelectItem[] = useMemo(
     () =>
       lessons.map((lesson) => ({
@@ -65,12 +72,12 @@ export const LessonFilter: React.FC<LessonFilterProps> = ({
   )
 
   return (
-    <div className={styles.filterWrapper}>
+    <div className={styles.filterWrapper} ref={selectRef}>
       <Button
         size={ButtonSize.Small}
         variant={ButtonVariant.Subtle}
         iconStart={<Filter width={16} height={16} />}
-        onClick={toggle}
+        onClick={toggleSelect}
         isIconButton={filterLabel ? false : true}
       >
         {filterLabel}

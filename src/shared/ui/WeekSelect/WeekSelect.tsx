@@ -6,7 +6,8 @@ import styles from "./WeekSelect.module.scss"
 import { FieldError } from "react-hook-form"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
 import clsx from "clsx"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
+import { useRef, useState } from "react"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 interface WeekSelectProps {
   value: Date | null
@@ -16,7 +17,6 @@ interface WeekSelectProps {
   minDate?: Date
   error?: FieldError | undefined
   position?: "top" | "bottom"
-  popoverName?: string
 }
 
 export const WeekSelect = ({
@@ -26,11 +26,18 @@ export const WeekSelect = ({
   required,
   minDate,
   error,
-  position = "top",
-  popoverName = "week"
+  position = "top"
 }: WeekSelectProps) => {
-  const { isOpen, toggle, close } = useSelectManager(popoverName)
-
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close
+  })
   const handleWeekSelect = (date: Date | null) => {
     if (date) {
       onChange(date)
@@ -53,7 +60,7 @@ export const WeekSelect = ({
   }
 
   return (
-    <div className={styles.container}>
+    <div ref={selectRef} className={styles.container}>
       <Input
         showErrorMessage
         error={error}
@@ -61,7 +68,7 @@ export const WeekSelect = ({
         required={!value && required}
         readOnly
         value={getWeekLabel(value)}
-        onClick={toggle}
+        onClick={toggleSelect}
         leftIcon={<Calendar />}
         rightIcon={value ? <CloseX className={styles.clearIcon} onClick={clearDate} /> : undefined}
         placeholder="Выберите неделю"

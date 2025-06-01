@@ -55,15 +55,23 @@ export const CancelSchedule: React.FC<Props> = ({
     reset()
     onClose()
   }
+  const resetOnClose = () => {
+    reset({
+      lesson_ids: [],
+      reason: "",
+      date_range: [null, null]
+    })
+    onClose()
+  }
   return (
-    <ModalOverlay isOpen={isOpen} onClose={onClose}>
+    <ModalOverlay isOpen={isOpen} onClose={resetOnClose}>
       <Dialog
         title="Отмена расписания"
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={resetOnClose}
         actions={
           <>
-            <Button variant={ButtonVariant.Neutral} type="button" onClick={onClose}>
+            <Button variant={ButtonVariant.Neutral} type="button" onClick={resetOnClose}>
               Закрыть
             </Button>
             <Button onClick={handleSubmit(onSubmit)} type="submit">

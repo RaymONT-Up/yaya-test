@@ -33,6 +33,22 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
   const { addNotification } = useNotifications()
 
   const [mode, setMode] = useState(DuplicateScheduleType.DAY)
+  const onChangeMode = (newMode: DuplicateScheduleType) => {
+    setMode(newMode)
+    reset({
+      lesson_ids: [],
+      source_date: null as unknown as Date,
+      target_dates: []
+    })
+  }
+  const resetOnClose = () => {
+    reset({
+      lesson_ids: [],
+      source_date: undefined,
+      target_dates: []
+    })
+    onClose()
+  }
   const { mutate: duplicateSchedule, isPending } = useDuplicateSchedule({
     onSuccess: () => {
       addNotification({
@@ -76,17 +92,17 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
     duplicateSchedule(payload)
   }
   return (
-    <ModalOverlay isOpen={isOpen} onClose={onClose}>
+    <ModalOverlay isOpen={isOpen} onClose={resetOnClose}>
       <Dialog
         title="Дублирование расписания"
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={resetOnClose}
         actions={
           <>
             <Button
               variant={ButtonVariant.Neutral}
               type="button"
-              onClick={onClose}
+              onClick={resetOnClose}
               loading={isPending}
             >
               Закрыть
@@ -104,12 +120,12 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
                 {
                   title: "День",
                   isActive: mode === "day",
-                  onClick: () => setMode(DuplicateScheduleType.DAY)
+                  onClick: () => onChangeMode(DuplicateScheduleType.DAY)
                 },
                 {
                   title: "Неделя",
                   isActive: mode === "week",
-                  onClick: () => setMode(DuplicateScheduleType.WEEK)
+                  onClick: () => onChangeMode(DuplicateScheduleType.WEEK)
                 }
               ]}
               className={styles.tabs}

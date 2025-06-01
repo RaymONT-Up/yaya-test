@@ -55,11 +55,11 @@ cursor: pointer;
   border-color:var(--blue-200) ;
 }
 .react-datepicker__day--today{
-  border: 1px solid var(--text-brand);
-  color: var(--text-primary);
+  border: 1px solid var(--text-brand) !important;
+  color: var(--text-primary) !important;
   background: transparent !important;
 }
-.react-datepicker__day--selected {
+.react-datepicker__day--selected,.react-datepicker__day--highlighted {
   height: 40px;
   color: #fff !important;
   border: 1px solid var(--text-brand);

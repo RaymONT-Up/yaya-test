@@ -6,7 +6,8 @@ import styles from "./DateRangeSelect.module.scss"
 import { FieldError } from "react-hook-form"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
 import clsx from "clsx"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
+import { useRef, useState } from "react"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 interface DateRangeSelectProps {
   value: [Date | null, Date | null]
@@ -29,8 +30,8 @@ export const DateRangeSelect = ({
   error,
   position = "top"
 }: DateRangeSelectProps) => {
-  const { isOpen, toggle, close } = useSelectManager("date_range")
-
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
   const handleRangeSelect = (dates: [Date | null, Date | null]) => {
     onChange(dates)
     if (dates[0] && dates[1]) close()
@@ -46,8 +47,16 @@ export const DateRangeSelect = ({
       ? `${format(value[0], "dd.MM.yyyy")} – ${format(value[1], "dd.MM.yyyy")}`
       : ""
 
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close
+  })
   return (
-    <div className={styles.container}>
+    <div ref={selectRef} className={styles.container}>
       <Input
         showErrorMessage
         error={error}
@@ -55,7 +64,7 @@ export const DateRangeSelect = ({
         required={required && (!value[0] || !value[1])}
         readOnly
         value={formattedValue}
-        onClick={toggle}
+        onClick={toggleSelect}
         leftIcon={<Calendar />}
         rightIcon={
           value[0] && value[1] ? (

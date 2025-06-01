@@ -9,7 +9,7 @@
 }
 .readonlyField{
     display: flex;
-    align-items: start;
+    align-items: center;
     gap: 16px;
 }
 .label{
@@ -33,6 +33,7 @@
     margin: 32px 0;
 }
 .placeInput{
+    margin-left: -16px;
     max-width: 200px;
 }
 .alertBlock{

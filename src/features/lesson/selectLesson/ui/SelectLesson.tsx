@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import { Input } from "@/shared/ui/Input/Input"
 import { PopoverSelect, SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import { useLessons } from "../model/useLessons"
@@ -6,12 +6,12 @@ import { useAppSelector } from "@/app/config/store"
 import { selectCurrentCenter } from "@/entities/center"
 import styles from "./SelectLesson.module.scss"
 import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 import { FieldError } from "react-hook-form"
 import { Lesson, LessonTypeEnum } from "@/shared/types/lesson"
 import clsx from "clsx"
 import { Menu } from "@/shared/ui/Menu/Menu"
 import { Clipboard } from "@/shared/assets/svg/Clipboard"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 interface SelectLessonProps {
   onSelect: (lesson: Lesson | (string | number)[]) => void
@@ -42,12 +42,12 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   isMultiply = false,
   showErrorMessage = false,
   showInput = true,
-  showResetBtn = false,
-  selectName = "lesson"
+  showResetBtn = false
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isError, isLoading } = useLessons(id)
-  const { isOpen, toggle, close } = useSelectManager(selectName)
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
   const options: SelectItem[] = useMemo(
     () =>
       lessons.map((lesson) => ({
@@ -132,11 +132,16 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
     onSelect(values)
   }
 
-  // if (isLoading) return <p>Загрузка...</p>
-  // if (isError) return <p>Ошибка загрузки занятий</p>
-
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
+  const selectLessonRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectLessonRef,
+    close: close
+  })
   return (
-    <div className={clsx(styles.container, className)}>
+    <div ref={selectLessonRef} className={clsx(styles.container, className)}>
       {showInput && (
         <Input
           showErrorMessage={showErrorMessage}
@@ -148,7 +153,7 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
           label={labelText}
           value={valueParts}
           readOnly
-          onClick={toggle}
+          onClick={toggleSelect}
           rightIcon={<ChevronDown className={clsx(styles.chevron, isOpen && styles.isOpen)} />}
         />
       )}

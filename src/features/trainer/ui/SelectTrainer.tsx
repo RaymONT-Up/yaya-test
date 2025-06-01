@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import { Input } from "@/shared/ui/Input/Input"
 import { PopoverSelect, SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import { useTrainers } from "../model/useTrainers"
@@ -7,7 +7,7 @@ import { selectCurrentCenter } from "@/entities/center"
 import styles from "./SelectTrainer.module.scss"
 import { User } from "@/shared/assets/svg/User"
 import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 interface SelectTrainerProps {
   onSelect: (trainerId: number) => void
@@ -19,8 +19,9 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
   selectedTrainerId = null
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
-  const { data: trainers = [], isLoading, isError } = useTrainers(id)
-  const { isOpen, toggle, close } = useSelectManager("trainer")
+  const { data: trainers = [], isLoading } = useTrainers(id)
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
 
   const options: SelectItem[] = useMemo(
     () =>
@@ -39,16 +40,23 @@ export const SelectTrainer: React.FC<SelectTrainerProps> = ({
     close()
   }
 
-  if (isError) return <p>Ошибка загрузки тренеров</p>
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close
+  })
 
   return (
-    <div className={styles.container}>
+    <div ref={selectRef} className={styles.container}>
       <Input
         placeholder="Не выбран"
         label="Тренер"
         value={selectedTrainer?.full_name ?? ""}
         readOnly
-        onClick={toggle}
+        onClick={toggleSelect}
         leftIcon={<User />}
         rightIcon={<ChevronDown className={styles.chevron + ` ${isOpen ? styles.isOpen : ""}`} />}
       />
