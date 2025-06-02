@@ -222,6 +222,7 @@ export const DuplicateSchedule: React.FC<Props> = ({ isOpen = false, onClose }) 
               rules={{ required: "Секция не может быть пустой" }}
               render={({ field }) => (
                 <SelectLesson
+                  height={360}
                   selectName="lesson_duplicate"
                   showErrorMessage
                   selectedLessonId={field.value}

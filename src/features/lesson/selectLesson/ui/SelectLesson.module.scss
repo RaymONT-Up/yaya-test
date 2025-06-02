@@ -15,3 +15,8 @@ transform: rotate(180deg);
     flex-shrink: 0;
     align-self: center;
 }
+.menuApaptive {
+ @media (max-width: 1368px) or (max-height: 900px) {
+    top: -170px !important;
+  }
+}

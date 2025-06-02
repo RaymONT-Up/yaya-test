@@ -26,7 +26,7 @@ export const Header = () => {
         <Logo width={80} height={34} />
         <div className={styles.actions}>
           <div className={styles.selectCenter}>
-            <div className={styles.centerSelector} onClick={toggle}>
+            <div ref={selectRef} className={styles.centerSelector} onClick={toggle}>
               <img src={centerImg} alt="Центр" className={styles.image} />
               <div className={styles.centerInfo}>
                 <Text variant={TextVariant.HEADING} headingLevel="h8" className={styles.centerName}>
@@ -44,7 +44,7 @@ export const Header = () => {
               />
             </div>
             <div className={styles.centerSelectorComponent}>
-              <CenterSelector ref={selectRef} isOpen={isSelectCenterOpen} onSelect={close} />
+              <CenterSelector isOpen={isSelectCenterOpen} onSelect={close} />
             </div>
           </div>
           <LogoutButton />

@@ -12,26 +12,20 @@
 // Fonts
 @font-face {
   font-family: 'Lato';
-  src: url('./fonts/Lato-Regular.woff2') format('truetype');
+  src: url('/fonts/Lato-Regular.woff2') format('truetype');
   font-weight: 400;
 }
 
 @font-face {
   font-family: 'Lato';
-  src: url('./fonts/Lato-Medium.woff2') format('truetype');
+  src: url('/fonts/Lato-Medium.woff2') format('truetype');
   font-weight: 500;
 }
 
 @font-face {
-  font-family: 'Lato';
-  src: url('./fonts/Lato-SemiBold.woff2') format('truetype');
+  font-family: 'Lato' ;
+  src: url('/fonts/Lato-SemiBold.woff2') format('truetype');
   font-weight: 600;
-}
-
-@font-face {
-  font-family: 'Lato';
-  src: url('./fonts/Lato-Bold.woff2') format('truetype');
-  font-weight: 700;
 }
 * {
   box-sizing: border-box;

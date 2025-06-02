@@ -23,6 +23,7 @@ interface MenuProps {
   onChange: (values: (string | number)[]) => void
   onClose: () => void
   width?: string | number
+  height?: string | number
   showSearch?: boolean
   selectAllText?: string
   showResetBtn?: boolean
@@ -40,6 +41,7 @@ export const Menu: React.FC<MenuProps> = ({
   selectedValues,
   onChange,
   width = "360px",
+  height = "360px",
   showSearch = false,
   selectAllText = "Выбрать все",
   showResetBtn = false,
@@ -83,7 +85,11 @@ export const Menu: React.FC<MenuProps> = ({
   return (
     <div className={styles.menuContainer}>
       {isOpen && (
-        <div className={clsx(styles.menuContent, className)} ref={popoverRef} style={{ width }}>
+        <div
+          className={clsx(styles.menuContent, className)}
+          ref={popoverRef}
+          style={{ width, height }}
+        >
           {showSearch && (
             <div className={styles.search}>
               <Input
