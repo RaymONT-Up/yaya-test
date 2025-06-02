@@ -54,7 +54,7 @@
 
 }
 .fc .fc-timegrid-slot {
-    height: 3.5rem;
+  height: 3.5rem;
 }
 
 .fc-day{
@@ -103,6 +103,19 @@
   overflow-y: clip;
   z-index: 10;
   min-height: 40px;
+}
+/* убрать */
+.fc-v-event {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden;
+}
+.fc-event-main {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 /* borders */
 .fc .fc-timegrid-slot,

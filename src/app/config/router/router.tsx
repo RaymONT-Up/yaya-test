@@ -1,5 +1,5 @@
 import { getToken } from "@/entities/currentSession"
-// import { RoleGuard } from "@/features/auth/RoleGuard"
+import { RoleGuard } from "@/features/auth/RoleGuard"
 import { ErrorPage } from "@/pages/error"
 import { LoginPage } from "@/pages/LoginPage"
 import { MainPage } from "@/pages/MainPage"
@@ -7,6 +7,7 @@ import { ReportPage } from "@/pages/ReportPage"
 import { SelectCenterPage } from "@/pages/SelectCentetPage"
 import { VisitPage } from "@/pages/VisitPage"
 import { RoutePath } from "@/shared/consts/routerPaths"
+import { RolePermissionKeys } from "@/shared/types/role"
 import { PageLoader } from "@/shared/ui/PageLoader/PageLoader"
 import { MainLayout } from "@/widgets/layout"
 import { JSX, Suspense } from "react"
@@ -38,9 +39,9 @@ export const router = createBrowserRouter([
     path: RoutePath.MAIN,
     element: (
       <AuthGuard mustBe="authorized">
-        {/* <RoleGuard permission="SCHEDULE_VIEW"> */}
-        <MainLayout />
-        {/* </RoleGuard> */}
+        <RoleGuard permission={RolePermissionKeys.SCHEDULE_VIEW}>
+          <MainLayout />
+        </RoleGuard>
       </AuthGuard>
     ),
     children: [
@@ -54,7 +55,9 @@ export const router = createBrowserRouter([
     path: RoutePath.VISITS,
     element: (
       <AuthGuard mustBe="authorized">
-        <MainLayout />
+        <RoleGuard permission={RolePermissionKeys.VISIT_VIEW}>
+          <MainLayout />
+        </RoleGuard>
       </AuthGuard>
     ),
     children: [
@@ -68,7 +71,9 @@ export const router = createBrowserRouter([
     path: RoutePath.REPORT,
     element: (
       <AuthGuard mustBe="authorized">
-        <MainLayout shouldContentScroll />
+        <RoleGuard permission={RolePermissionKeys.REPORT_VIEW}>
+          <MainLayout shouldContentScroll />
+        </RoleGuard>
       </AuthGuard>
     ),
     children: [
@@ -82,7 +87,9 @@ export const router = createBrowserRouter([
     path: RoutePath.SELECT_CENTER,
     element: (
       <AuthGuard mustBe="authorized">
-        <Outlet />
+        <RoleGuard permission={RolePermissionKeys.CENTER_VIEW}>
+          <Outlet />
+        </RoleGuard>
       </AuthGuard>
     ),
     children: [
@@ -115,5 +122,9 @@ export const router = createBrowserRouter([
         element: withSuspense(ErrorPage)
       }
     ]
+  },
+  {
+    path: "*",
+    element: <Navigate to={`${RoutePath.ERROR}?status_code=404`} replace />
   }
 ])

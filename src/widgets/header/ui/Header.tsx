@@ -7,12 +7,19 @@ import centerImg from "@/shared/assets/png/centerImage.png"
 import { useAppSelector } from "@/app/config/store"
 import { selectCurrentCenter } from "@/entities/center"
 import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
+import { useRef, useState } from "react"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 export const Header = () => {
-  const { isOpen: isSelectCenterOpen, toggle, close } = useSelectManager("center")
+  const [isSelectCenterOpen, setIsSelectCenterOpen] = useState(false)
+  const toggle = () => setIsSelectCenterOpen((prev) => !prev)
+  const close = () => setIsSelectCenterOpen(false)
   const currentCenter = useAppSelector(selectCurrentCenter)
-
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close: close
+  })
   return (
     <header className={styles.header}>
       <div className={styles.header__inner}>
@@ -37,7 +44,7 @@ export const Header = () => {
               />
             </div>
             <div className={styles.centerSelectorComponent}>
-              <CenterSelector isOpen={isSelectCenterOpen} onSelect={close} />
+              <CenterSelector ref={selectRef} isOpen={isSelectCenterOpen} onSelect={close} />
             </div>
           </div>
           <LogoutButton />

@@ -88,7 +88,6 @@ export const TableReportPagination = () => {
           <PopoverSelect
             className={styles.pageSizePopover}
             optionWrapperClassName={styles.pageSizeOptions}
-            clickOutside={false}
             isOpen={isOpen}
             onClose={() => setIsOpen((prev) => !prev)}
             options={PAGE_SIZE_OPTIONS}

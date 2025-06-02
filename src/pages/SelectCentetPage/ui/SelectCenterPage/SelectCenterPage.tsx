@@ -27,11 +27,13 @@ const SelectCenterPage: FC = () => {
     }
   }, [centers, navigate])
   if (isLoading) {
-    // !TODO добавить pageLoader для всех страниц общий
     return <PageLoader />
   }
   return (
-    <WelcomeLayout>{centers.length === 0 ? <ContactUs /> : <SelectCenterForm />}</WelcomeLayout>
+    <>
+      <title>Yaya for Partners | Войти</title>
+      <WelcomeLayout>{centers.length === 0 ? <ContactUs /> : <SelectCenterForm />}</WelcomeLayout>
+    </>
   )
 }
 

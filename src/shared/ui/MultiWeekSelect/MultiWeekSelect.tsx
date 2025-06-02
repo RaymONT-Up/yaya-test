@@ -5,8 +5,9 @@ import { startOfWeek, addDays, isSameWeek, compareAsc } from "date-fns"
 import styles from "./MultiWeekSelect.module.scss"
 import clsx from "clsx"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
-import { useSelectManager } from "@/shared/ui/PopoverSelect/useSelectManager"
 import { FieldError } from "react-hook-form"
+import { useRef, useState } from "react"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 interface MultiWeekSelectProps {
   value: Date[]
@@ -15,7 +16,6 @@ interface MultiWeekSelectProps {
   required?: boolean
   minDate?: Date
   position?: "top" | "bottom"
-  popoverName?: string
   error?: FieldError | undefined
 }
 
@@ -31,11 +31,18 @@ export const MultiWeekSelect = ({
   required,
   minDate,
   position = "top",
-  popoverName = "multi-week",
   error
 }: MultiWeekSelectProps) => {
-  const { isOpen, toggle } = useSelectManager(popoverName)
-
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close
+  })
   const toggleWeek = (date: Date | null) => {
     if (!date) return
 
@@ -83,7 +90,7 @@ export const MultiWeekSelect = ({
   }
   console.log(value)
   return (
-    <div className={styles.container}>
+    <div ref={selectRef} className={styles.container}>
       <Input
         showErrorMessage
         error={error || undefined}
@@ -91,7 +98,7 @@ export const MultiWeekSelect = ({
         required={required && value.length === 0}
         readOnly
         value={getLabel(value)}
-        onClick={toggle}
+        onClick={toggleSelect}
         leftIcon={<Calendar />}
         rightIcon={
           value.length > 0 ? (

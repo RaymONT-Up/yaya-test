@@ -9,28 +9,26 @@ import { RolePermissions } from "@/shared/types/role"
 
 interface RoleGuardProps {
   children: JSX.Element
-  permission?: keyof RolePermissions
+  permission: keyof RolePermissions
 }
 
 export const RoleGuard = ({ children, permission }: RoleGuardProps) => {
   const dispatch = useAppDispatch()
-  const { role, permissions, loading, error } = useAppSelector(
+  const { permissions, roleLoading, roleError } = useAppSelector(
     (state) => state.currentSessionSliceReducer
   )
 
   useEffect(() => {
-    if ((!role || !permissions) && !loading && !error) {
+    if (!permissions && !roleError) {
       dispatch(getRoleThunk())
     }
-  }, [dispatch, role, permissions, error, loading])
+  }, [dispatch, permissions])
 
-  if (loading) {
+  if (roleLoading || (!permissions && !roleError)) {
     return <PageLoader />
   }
-
-  if (error || !role || !permissions || (permission && !permissions[permission])) {
-    return <Navigate to={RoutePath.ERROR} />
+  if (roleError || !permissions || !permissions[permission]) {
+    return <Navigate to={`${RoutePath.ERROR}?status_code=403`} />
   }
-
   return children
 }

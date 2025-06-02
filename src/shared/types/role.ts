@@ -12,6 +12,17 @@ export type RolePermissions = {
   SCHEDULE_EDIT: boolean
   SCHEDULE_VIEW: boolean
 }
+export const RolePermissionKeys = {
+  VISIT_VIEW: "VISIT_VIEW",
+  CENTER_EDIT: "CENTER_EDIT",
+  CENTER_VIEW: "CENTER_VIEW",
+  REPORT_VIEW: "REPORT_VIEW",
+  VISIT_CANCEL: "VISIT_CANCEL",
+  SCHEDULE_EDIT: "SCHEDULE_EDIT",
+  SCHEDULE_VIEW: "SCHEDULE_VIEW"
+} as const
+
+export type RolePermissionKey = keyof typeof RolePermissionKeys
 
 export interface RoleResponse {
   role: RoleType

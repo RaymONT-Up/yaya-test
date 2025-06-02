@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { Input } from "@/shared/ui/Input/Input"
 import { PopoverSelect, SelectItem } from "@/shared/ui/PopoverSelect/PopoverSelect"
 import { Clock } from "@/shared/assets/svg/Clock"
@@ -6,6 +6,7 @@ import styles from "./TimeSelect.module.scss"
 import { CloseX } from "@/shared/assets/svg/Close"
 import { parseTimeToMinutes } from "@/shared/libs/formaDate"
 import { FieldError } from "react-hook-form"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 interface TimeSelectProps {
   mode: "start" | "end"
@@ -36,7 +37,10 @@ export const TimeSelect = ({
   error
 }: TimeSelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
-
+  const close = () => setIsOpen(false)
+  const toggleSelect = () => {
+    setIsOpen((prev) => !prev)
+  }
   const timeOptions: SelectItem[] = useMemo(() => {
     const options: SelectItem[] = []
     const baseHour = 6
@@ -74,7 +78,7 @@ export const TimeSelect = ({
 
   const handleSelect = (item: SelectItem) => {
     onChange(item.value.toString())
-    setIsOpen(false)
+    close()
   }
 
   const clearValue = () => {
@@ -153,7 +157,11 @@ export const TimeSelect = ({
       }
     }
   }
-
+  const selectRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectRef,
+    close
+  })
   useEffect(() => {
     if (mode === "end" && startTime && value) {
       const startMinutes = parseTimeToMinutes(startTime)
@@ -175,14 +183,14 @@ export const TimeSelect = ({
     }
   }, [value, minTime, onChange])
   return (
-    <div className={styles.container}>
+    <div ref={selectRef} className={styles.container}>
       <Input
         error={error ? error : undefined}
         required={!value && required}
         label={label}
         placeholder="00:00"
         value={value ?? ""}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={toggleSelect}
         leftIcon={<Clock width={16} height={16} color="#6B6B6F" />}
         rightIcon={value ? <CloseX onClick={clearValue} className={styles.clearIcon} /> : undefined}
         onChange={onInputChange}

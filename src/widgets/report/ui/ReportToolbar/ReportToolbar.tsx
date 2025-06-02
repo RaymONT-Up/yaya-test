@@ -5,8 +5,8 @@ import { ChevronDown } from "@/shared/assets/svg/ChevronDown"
 import clsx from "clsx"
 import { Input } from "@/shared/ui/Input/Input"
 import { useAppDispatch, useAppSelector } from "@/app/config/store"
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { reportFiltersActions, useReportFilters } from "@/entities/report"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { reportFiltersActions, useDownloadReport, useReportFilters } from "@/entities/report"
 import { endOfMonth, format, startOfMonth, parse } from "date-fns"
 import { ru } from "date-fns/locale"
 import { selectCenters, selectCurrentCenter } from "@/entities/center"
@@ -18,6 +18,7 @@ import { useTrainersForCenters } from "@/features/trainer"
 import { Tooltip } from "@/shared/ui/Tooltip/Tooltip"
 import { Text } from "@/shared/ui/Text/Text"
 import { CustomDatePicker } from "@/shared/ui/CustomDatePicker/CustomDatePicker"
+import { useClickOutside } from "@/shared/libs/useClickOutside"
 
 function getInputValue<T extends { id: number; name?: string; full_name?: string }>(
   selectedIds: (string | number)[],
@@ -38,7 +39,7 @@ function getInputValue<T extends { id: number; name?: string; full_name?: string
 
 export const ReportToolbar = () => {
   const dispatch = useAppDispatch()
-  const { name } = useAppSelector(selectCurrentCenter)
+  const { name, id } = useAppSelector(selectCurrentCenter)
   const { date_from, date_to, centers } = useAppSelector(useReportFilters)
   const centerList = useAppSelector(selectCenters)
   const { data: lessons } = useLessonsForCenters(centers)
@@ -59,6 +60,15 @@ export const ReportToolbar = () => {
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [range, setRange] = useState<[Date | null, Date | null]>([null, null])
 
+  const { mutate: downloadFile } = useDownloadReport(id)
+  const handleReportDownload = async () => {
+    downloadFile({
+      date_from,
+      date_to,
+      lessons: selectedLessons.map((l) => (typeof l === "string" ? parseInt(l, 10) : l)),
+      trainers: selectedTrainers.map((t) => (typeof t === "string" ? parseInt(t, 10) : t))
+    })
+  }
   const toggleDatePicker = () => setShowDatePicker((prev) => !prev)
 
   const handleRangeSelect = (dates: [Date | null, Date | null]) => {
@@ -74,18 +84,18 @@ export const ReportToolbar = () => {
 
   const toggleCenter = () => {
     setIsCenterOpen((prev) => !prev)
-    // setIsSectionOpen(false)
-    // setIsTrainerOpen(false)
+    setIsSectionOpen(false)
+    setIsTrainerOpen(false)
   }
   const toggleSection = () => {
     setIsSectionOpen((prev) => !prev)
-    // setIsCenterOpen(false)
-    // setIsTrainerOpen(false)
+    setIsCenterOpen(false)
+    setIsTrainerOpen(false)
   }
   const toggleTrainer = () => {
     setIsTrainerOpen((prev) => !prev)
-    // setIsCenterOpen(false)
-    // setIsSectionOpen(false)
+    setIsCenterOpen(false)
+    setIsSectionOpen(false)
   }
   const centerOptions: SelectItem[] = useMemo(
     () =>
@@ -150,9 +160,31 @@ export const ReportToolbar = () => {
     [trainers]
   )
 
+  const closeDatePicker = () => setShowDatePicker(false)
   const closeCenter = () => setIsCenterOpen(false)
   const closeSection = () => setIsSectionOpen(false)
   const closeTrainer = () => setIsTrainerOpen(false)
+
+  const selectDateRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectDateRef,
+    close: closeDatePicker
+  })
+  const selectLessonRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectLessonRef,
+    close: closeSection
+  })
+  const selectTrainerRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectTrainerRef,
+    close: closeTrainer
+  })
+  const selectCentersRef = useRef<HTMLDivElement>(null)
+  useClickOutside<HTMLDivElement>({
+    ref: selectCentersRef,
+    close: closeCenter
+  })
 
   const handleSelectCenters = (values: (string | number)[]) => {
     setSelectedCenters(values)
@@ -169,7 +201,9 @@ export const ReportToolbar = () => {
 
   const formattedDate =
     fromDate && toDate
-      ? `${format(fromDate, "dd", { locale: ru })} - ${format(toDate, "dd MMMM, yyyy", { locale: ru })}`
+      ? fromDate.getMonth() === toDate.getMonth()
+        ? `${format(fromDate, "dd", { locale: ru })} – ${format(toDate, "dd MMMM, yyyy", { locale: ru })}`
+        : `${format(fromDate, "dd MMMM", { locale: ru })} – ${format(toDate, "dd MMMM, yyyy", { locale: ru })}`
       : "Выберите даты"
 
   const centerInputValue = getInputValue(selectedCenters, centerList, name, "Центров", true)
@@ -185,8 +219,13 @@ export const ReportToolbar = () => {
     setSelectedCenters([])
     setSelectedTrainers([])
     setSelectedLessons([])
-    setRange([null, null])
+    const now = new Date()
+    const from = startOfMonth(now)
+    const to = endOfMonth(now)
+    setRange([from, to])
     dispatch(reportFiltersActions.resetFilters())
+    dispatch(reportFiltersActions.setDateFrom(format(from, "dd.MM.yyyy")))
+    dispatch(reportFiltersActions.setDateTo(format(to, "dd.MM.yyyy")))
   }
 
   // Изначально выбираются все центры, если они есть
@@ -195,7 +234,7 @@ export const ReportToolbar = () => {
       setSelectedCenters(centerList.map((center) => center.id))
     }
   }, [centerList])
-  // Изначально выбирается текущая неделя
+  // Изначально выбирается текущый месяц
   useEffect(() => {
     const now = new Date()
     const from = startOfMonth(now)
@@ -225,7 +264,7 @@ export const ReportToolbar = () => {
   return (
     <div className={styles.reportToolbar}>
       <div className={styles.filters}>
-        <div className={styles.datePicker}>
+        <div className={styles.datePicker} ref={selectDateRef}>
           <Button
             variant={ButtonVariant.Subtle}
             size={ButtonSize.Small}
@@ -246,7 +285,11 @@ export const ReportToolbar = () => {
             </div>
           )}
         </div>
-        <div className={styles.inputWrapper} style={{ position: "relative" }}>
+        <div
+          className={styles.inputWrapper}
+          style={{ position: "relative" }}
+          ref={selectCentersRef}
+        >
           <Input
             readOnly
             placeholder="Центр музыкального образования"
@@ -274,7 +317,7 @@ export const ReportToolbar = () => {
           />
         </div>
 
-        <div className={styles.inputWrapper} style={{ position: "relative" }}>
+        <div className={styles.inputWrapper} style={{ position: "relative" }} ref={selectLessonRef}>
           <Input
             value={lessonInputValue}
             readOnly
@@ -302,7 +345,11 @@ export const ReportToolbar = () => {
           />
         </div>
 
-        <div className={styles.inputWrapper} style={{ position: "relative" }}>
+        <div
+          className={styles.inputWrapper}
+          style={{ position: "relative" }}
+          ref={selectTrainerRef}
+        >
           <Input
             value={trainerInputValue}
             readOnly
@@ -352,6 +399,7 @@ export const ReportToolbar = () => {
               variant={ButtonVariant.Primary}
               className={styles.downloadButton}
               iconStart={<Download width={16} height={16} />}
+              onClick={handleReportDownload}
             >
               Скачать отчёт
             </Button>

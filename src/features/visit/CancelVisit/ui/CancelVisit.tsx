@@ -24,6 +24,7 @@ import { Textarea } from "@/shared/ui/Textarea/Textarea"
 import { ChevronLeft } from "@/shared/assets/svg/ChevronLeft"
 import { ReasonOptions } from "./ReasonOptions/ReasonOptions"
 import { formatTimeToUtc5 } from "@/shared/libs/formatTimeToUTC5"
+import { ModalOverlay } from "@/shared/ui/ModalOverlay/ModalOverlay"
 
 interface Props {
   isOpen: boolean
@@ -129,262 +130,264 @@ export const CancelVisit: React.FC<Props> = ({
     reason === VisitCancelReasonEnum.SCHEDULE_CANCELED
   return (
     <>
-      <Modal
-        width="600px"
-        isOpen={isOpen && !showDialog}
-        onClose={onClose}
-        showHeadline
-        headline="Запись"
-        title={`${selectedVisit.child.first_name} ${selectedVisit.child.last_name}`}
-        actions={
-          canCancelVisit && (
-            <>
-              <Button
-                iconStart={<Trash />}
-                variant={ButtonVariant.Neutral}
-                onClick={handleDialogOpen}
-              >
-                Отменить запись
-              </Button>
-            </>
-          )
-        }
-      >
-        <div className={styles.readonlyFields}>
-          <div className={styles.childInfo}>
-            <div className={styles.readonlyField}>
-              <Text bodySize="medium" fontWeight={600} className={styles.label}>
-                <Calendar width={16} height={16} className={styles.icon} />
-                Дата рождения
-              </Text>
-              <Text bodySize="medium" fontWeight={600} className={styles.value}>
-                {formattedDate}{" "}
-                <span className={styles.childAge}>
-                  ({age} {age === 1 ? "год" : age < 5 ? "года" : "лет"})
-                </span>
-              </Text>
-            </div>
-            <div className={styles.readonlyField}>
-              <Text bodySize="medium" fontWeight={600} className={styles.label}>
-                <Phone width={16} height={16} className={styles.icon} />
-                Телефон родителя
-              </Text>
-              <Text bodySize="medium" fontWeight={600} className={styles.value}>
-                {selectedVisit.child.parent?.phone
-                  ? `+${selectedVisit.child.parent?.phone}`
-                  : "Не указан"}
-              </Text>
-            </div>
-          </div>
-          <div className={styles.readonlyField}>
-            <Text bodySize="medium" fontWeight={600} className={styles.label}>
-              <Briefcase width={16} height={16} className={styles.icon} />
-              Занятие
-            </Text>
-            <Text bodySize="medium" fontWeight={600} className={styles.value}>
-              {selectedVisit.lesson.name}
-            </Text>
-          </div>
-          <div className={styles.readonlyField}>
-            <Text bodySize="medium" fontWeight={600} className={styles.label}>
-              <Home width={16} height={16} className={styles.icon} />
-              Формат
-            </Text>
-            <Text bodySize="medium" fontWeight={600} className={styles.value}>
-              {getLessonTypeLabel(selectedVisit.lesson.type)}
-            </Text>
-          </div>
-          <div className={styles.readonlyField}>
-            <Text bodySize="medium" fontWeight={600} className={styles.label}>
-              <Clock width={16} height={16} className={styles.icon} />
-              Расписание
-            </Text>
-            <Text bodySize="medium" fontWeight={600} className={styles.value}>
-              Время: {formatDate(start)}, {formatTimeToUtc5(start)}
-              {end ? `–${formatTimeToUtc5(end)}` : ""}
-              {durationMinutes && (
-                <Text fontWeight={400} className={styles.duration}>
-                  ({durationMinutes} мин)
+      <ModalOverlay isOpen={isOpen || showDialog} onClose={onClose}>
+        <Modal
+          width="600px"
+          isOpen={isOpen && !showDialog}
+          onClose={onClose}
+          showHeadline
+          headline="Запись"
+          title={`${selectedVisit.child.first_name} ${selectedVisit.child.last_name}`}
+          actions={
+            canCancelVisit && (
+              <>
+                <Button
+                  iconStart={<Trash />}
+                  variant={ButtonVariant.Neutral}
+                  onClick={handleDialogOpen}
+                >
+                  Отменить запись
+                </Button>
+              </>
+            )
+          }
+        >
+          <div className={styles.readonlyFields}>
+            <div className={styles.childInfo}>
+              <div className={styles.readonlyField}>
+                <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                  <Calendar width={16} height={16} className={styles.icon} />
+                  Дата рождения
                 </Text>
-              )}
-            </Text>
-          </div>
-          <div className={styles.readonlyField}>
-            <Text bodySize="medium" fontWeight={600} className={styles.label}>
-              <Users width={16} height={16} className={styles.icon} />
-              Возрастная группа
-            </Text>
-            <Text bodySize="medium" fontWeight={600} className={styles.value}>
-              {formatAgeRange(selectedVisit.lesson.min_age_str, selectedVisit.lesson.max_age_str)}
-            </Text>
-          </div>
-          <div className={styles.readonlyField}>
-            <Text bodySize="medium" fontWeight={600} className={styles.label}>
-              <Zap width={16} height={16} className={styles.icon} />
-              Уровень
-            </Text>
-            <Text bodySize="medium" fontWeight={600} className={styles.value}>
-              {selectedVisit.lesson.level}
-            </Text>
-          </div>
-          <div className={styles.readonlyField}>
-            <Text bodySize="medium" fontWeight={600} className={styles.label}>
-              <Globe width={16} height={16} className={styles.icon} />
-              Язык
-            </Text>
-            <Text bodySize="medium" fontWeight={600} className={styles.value}>
-              {selectedVisit.lesson.languages && selectedVisit.lesson.languages.join(",")}
-            </Text>
-          </div>
-        </div>
-      </Modal>
-
-      <Dialog
-        isOpen={showDialog}
-        onClose={handleDialogClose}
-        title={
-          selectedReason === VisitCancelReasonEnum.TEACHER_SICK ||
-          selectedReason === VisitCancelReasonEnum.SCHEDULE_CANCELED
-            ? "Занятие не должно быть доступно для записи"
-            : "Укажите причину отмены записи"
-        }
-        type="default"
-        width="466px"
-        actions={
-          <>
-            <Button
-              variant={ButtonVariant.Neutral}
-              onClick={() => {
-                if (isLessonUnavailableReason(selectedReason) || customReasonMode) {
-                  setSelectedReason(null)
-                  setCustomReasonMode(false)
-                } else {
-                  handleDialogClose()
-                }
-              }}
-              iconStart={
-                isLessonUnavailableReason(selectedReason) || customReasonMode ? (
-                  <ChevronLeft />
-                ) : undefined
-              }
-            >
-              {isLessonUnavailableReason(selectedReason) || customReasonMode ? "Назад" : "Отмена"}
-            </Button>
-            <Button
-              variant={ButtonVariant.RED}
-              iconStart={<Trash color="#fff" />}
-              onClick={handleSubmit(onSubmit)}
-              disabled={
-                selectedReason === VisitCancelReasonEnum.OTHER
-                  ? !watch("cancel_comment")
-                  : !selectedReason
-              }
-            >
-              Отменить {isLessonUnavailableReason(selectedReason) ? "занятие" : "запись"}
-            </Button>
-          </>
-        }
-      >
-        {!isLessonUnavailableReason(selectedReason) && (
-          <ul className={styles.userInfoList}>
-            <li className={styles.userInfoItem}>
-              <Text bodySize="medium" className={styles.userInfoText}>
-                Студент: {selectedVisit.child.first_name} {selectedVisit.child.last_name}
+                <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                  {formattedDate}{" "}
+                  <span className={styles.childAge}>
+                    ({age} {age === 1 ? "год" : age < 5 ? "года" : "лет"})
+                  </span>
+                </Text>
+              </div>
+              <div className={styles.readonlyField}>
+                <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                  <Phone width={16} height={16} className={styles.icon} />
+                  Телефон родителя
+                </Text>
+                <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                  {selectedVisit.child.parent?.phone
+                    ? `+${selectedVisit.child.parent?.phone}`
+                    : "Не указан"}
+                </Text>
+              </div>
+            </div>
+            <div className={styles.readonlyField}>
+              <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                <Briefcase width={16} height={16} className={styles.icon} />
+                Занятие
               </Text>
-            </li>
-            <li className={styles.userInfoItem}>
-              <Text bodySize="medium" className={styles.userInfoText}>
-                Занятие: {selectedVisit.lesson.name}
+              <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                {selectedVisit.lesson.name}
               </Text>
-            </li>
-            <li className={styles.userInfoItem}>
-              <Text bodySize="medium" className={styles.userInfoText}>
+            </div>
+            <div className={styles.readonlyField}>
+              <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                <Home width={16} height={16} className={styles.icon} />
+                Формат
+              </Text>
+              <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                {getLessonTypeLabel(selectedVisit.lesson.type)}
+              </Text>
+            </div>
+            <div className={styles.readonlyField}>
+              <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                <Clock width={16} height={16} className={styles.icon} />
+                Расписание
+              </Text>
+              <Text bodySize="medium" fontWeight={600} className={styles.value}>
                 Время: {formatDate(start)}, {formatTimeToUtc5(start)}
                 {end ? `–${formatTimeToUtc5(end)}` : ""}
+                {durationMinutes && (
+                  <Text fontWeight={400} className={styles.duration}>
+                    ({durationMinutes} мин)
+                  </Text>
+                )}
               </Text>
-            </li>
-          </ul>
-        )}
-        <div className={styles.reasonList}>
-          {(selectedReason === VisitCancelReasonEnum.GROUP_OVERFLOW ||
-            selectedReason === VisitCancelReasonEnum.USER_REQUESTED) && (
-            <ReasonOptions
-              selectedReason={selectedReason}
-              setSelectedReason={setSelectedReason}
-              handleCustomReason={handleCustomReason}
-            />
-          )}
+            </div>
+            <div className={styles.readonlyField}>
+              <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                <Users width={16} height={16} className={styles.icon} />
+                Возрастная группа
+              </Text>
+              <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                {formatAgeRange(selectedVisit.lesson.min_age_str, selectedVisit.lesson.max_age_str)}
+              </Text>
+            </div>
+            <div className={styles.readonlyField}>
+              <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                <Zap width={16} height={16} className={styles.icon} />
+                Уровень
+              </Text>
+              <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                {selectedVisit.lesson.level}
+              </Text>
+            </div>
+            <div className={styles.readonlyField}>
+              <Text bodySize="medium" fontWeight={600} className={styles.label}>
+                <Globe width={16} height={16} className={styles.icon} />
+                Язык
+              </Text>
+              <Text bodySize="medium" fontWeight={600} className={styles.value}>
+                {selectedVisit.lesson.languages && selectedVisit.lesson.languages.join(",")}
+              </Text>
+            </div>
+          </div>
+        </Modal>
 
-          {selectedReason === null && !customReasonMode && (
-            <ReasonOptions
-              selectedReason={selectedReason}
-              setSelectedReason={setSelectedReason}
-              handleCustomReason={handleCustomReason}
-            />
-          )}
-          {customReasonMode && (
-            <Textarea
-              showErrorText
-              label="Причина отмены"
-              placeholder="Родитель увидит причину отмены"
-              resizeable
-              required={!watch("cancel_comment")}
-              {...register("cancel_comment", { required: "Причина не может быть пустой" })}
-              className={styles.cancelReason}
-              error={
-                touchedFields.cancel_reason && !watch("cancel_comment")
-                  ? "Причина не может быть пустой"
-                  : undefined
-              }
-            />
-          )}
-
-          {isLessonUnavailableReason(selectedReason) && (
+        <Dialog
+          isOpen={showDialog}
+          onClose={handleDialogClose}
+          title={
+            selectedReason === VisitCancelReasonEnum.TEACHER_SICK ||
+            selectedReason === VisitCancelReasonEnum.SCHEDULE_CANCELED
+              ? "Занятие не должно быть доступно для записи"
+              : "Укажите причину отмены записи"
+          }
+          type="default"
+          width="466px"
+          actions={
             <>
-              <Text bodySize="medium" className={styles.requiredCancelText}>
-                {selectedReason === VisitCancelReasonEnum.TEACHER_SICK
-                  ? `На это занятие уже записано 10 человек. При отмене оно будет удалено из расписания для всех.`
-                  : "Если занятие было отменено, то его также необходимо отменить в системе."}
-              </Text>
-              {/* Schedule card */}
-              <div className={styles.scheduleCard}>
-                <Text
-                  variant={TextVariant.HEADING}
-                  headingLevel="h8"
-                  className={styles.scheduleCardTitle}
-                >
-                  {selectedVisit.lesson.name}
-                </Text>
-                <div className={styles.scheduleCardDetails}>
-                  <Text bodySize="small" fontWeight={600} className={styles.scheduleCardTime}>
-                    {formatTimeToUtc5(start)}
-                    {end ? `–${formatTimeToUtc5(end)}` : ""}
-                  </Text>
-                  <div className={styles.dot} />
-                  <Text bodySize="small" className={styles.secondaryText}>
-                    {formatAgeRange(
-                      selectedVisit.lesson.min_age_str,
-                      selectedVisit.lesson.max_age_str
-                    )}
-                  </Text>
-                  <div className={styles.dot} />
-                  <Text bodySize="small" className={styles.secondaryText}>
-                    Англ
-                  </Text>
-                  <div className={styles.dot} />
-                  <Text bodySize="small" className={styles.secondaryText}>
-                    Intermediate
-                  </Text>
-                  <div className={styles.dot} />
-                  <Text bodySize="small" className={styles.secondaryText}>
-                    Онлайн
-                  </Text>
-                </div>
-              </div>
+              <Button
+                variant={ButtonVariant.Neutral}
+                onClick={() => {
+                  if (isLessonUnavailableReason(selectedReason) || customReasonMode) {
+                    setSelectedReason(null)
+                    setCustomReasonMode(false)
+                  } else {
+                    handleDialogClose()
+                  }
+                }}
+                iconStart={
+                  isLessonUnavailableReason(selectedReason) || customReasonMode ? (
+                    <ChevronLeft />
+                  ) : undefined
+                }
+              >
+                {isLessonUnavailableReason(selectedReason) || customReasonMode ? "Назад" : "Отмена"}
+              </Button>
+              <Button
+                variant={ButtonVariant.RED}
+                iconStart={<Trash color="#fff" />}
+                onClick={handleSubmit(onSubmit)}
+                disabled={
+                  selectedReason === VisitCancelReasonEnum.OTHER
+                    ? !watch("cancel_comment")
+                    : !selectedReason
+                }
+              >
+                Отменить {isLessonUnavailableReason(selectedReason) ? "занятие" : "запись"}
+              </Button>
             </>
+          }
+        >
+          {!isLessonUnavailableReason(selectedReason) && (
+            <ul className={styles.userInfoList}>
+              <li className={styles.userInfoItem}>
+                <Text bodySize="medium" className={styles.userInfoText}>
+                  Студент: {selectedVisit.child.first_name} {selectedVisit.child.last_name}
+                </Text>
+              </li>
+              <li className={styles.userInfoItem}>
+                <Text bodySize="medium" className={styles.userInfoText}>
+                  Занятие: {selectedVisit.lesson.name}
+                </Text>
+              </li>
+              <li className={styles.userInfoItem}>
+                <Text bodySize="medium" className={styles.userInfoText}>
+                  Время: {formatDate(start)}, {formatTimeToUtc5(start)}
+                  {end ? `–${formatTimeToUtc5(end)}` : ""}
+                </Text>
+              </li>
+            </ul>
           )}
-        </div>
-      </Dialog>
+          <div className={styles.reasonList}>
+            {(selectedReason === VisitCancelReasonEnum.GROUP_OVERFLOW ||
+              selectedReason === VisitCancelReasonEnum.USER_REQUESTED) && (
+              <ReasonOptions
+                selectedReason={selectedReason}
+                setSelectedReason={setSelectedReason}
+                handleCustomReason={handleCustomReason}
+              />
+            )}
+
+            {selectedReason === null && !customReasonMode && (
+              <ReasonOptions
+                selectedReason={selectedReason}
+                setSelectedReason={setSelectedReason}
+                handleCustomReason={handleCustomReason}
+              />
+            )}
+            {customReasonMode && (
+              <Textarea
+                showErrorText
+                label="Причина отмены"
+                placeholder="Родитель увидит причину отмены"
+                resizeable
+                required={!watch("cancel_comment")}
+                {...register("cancel_comment", { required: "Причина не может быть пустой" })}
+                className={styles.cancelReason}
+                error={
+                  touchedFields.cancel_reason && !watch("cancel_comment")
+                    ? "Причина не может быть пустой"
+                    : undefined
+                }
+              />
+            )}
+
+            {isLessonUnavailableReason(selectedReason) && (
+              <>
+                <Text bodySize="medium" className={styles.requiredCancelText}>
+                  {selectedReason === VisitCancelReasonEnum.TEACHER_SICK
+                    ? `На это занятие уже записано 10 человек. При отмене оно будет удалено из расписания для всех.`
+                    : "Если занятие было отменено, то его также необходимо отменить в системе."}
+                </Text>
+                {/* Schedule card */}
+                <div className={styles.scheduleCard}>
+                  <Text
+                    variant={TextVariant.HEADING}
+                    headingLevel="h8"
+                    className={styles.scheduleCardTitle}
+                  >
+                    {selectedVisit.lesson.name}
+                  </Text>
+                  <div className={styles.scheduleCardDetails}>
+                    <Text bodySize="small" fontWeight={600} className={styles.scheduleCardTime}>
+                      {formatTimeToUtc5(start)}
+                      {end ? `–${formatTimeToUtc5(end)}` : ""}
+                    </Text>
+                    <div className={styles.dot} />
+                    <Text bodySize="small" className={styles.secondaryText}>
+                      {formatAgeRange(
+                        selectedVisit.lesson.min_age_str,
+                        selectedVisit.lesson.max_age_str
+                      )}
+                    </Text>
+                    <div className={styles.dot} />
+                    <Text bodySize="small" className={styles.secondaryText}>
+                      Англ
+                    </Text>
+                    <div className={styles.dot} />
+                    <Text bodySize="small" className={styles.secondaryText}>
+                      Intermediate
+                    </Text>
+                    <div className={styles.dot} />
+                    <Text bodySize="small" className={styles.secondaryText}>
+                      Онлайн
+                    </Text>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </Dialog>
+      </ModalOverlay>
     </>
   )
 }
