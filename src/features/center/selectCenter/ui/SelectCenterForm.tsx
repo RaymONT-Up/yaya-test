@@ -23,7 +23,7 @@ export const SelectCenterForm = () => {
             key={item.id}
             id={item.id}
             address={item.address}
-            imageSrc={defaultCenterImage}
+            imageSrc={item.logo || defaultCenterImage}
             name={item.name}
             handleSelect={handleCenterSelect}
           />

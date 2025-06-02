@@ -1,13 +1,14 @@
-import { useAppSelector } from "@/app/config/store"
-import { RootState } from "@/app/config/store"
+import { getCenterId } from "@/entities/center"
+import { getToken } from "@/entities/currentSession"
+import { useRolePermissions } from "@/entities/role"
 import { RolePermissionKey } from "@/shared/types/role"
 
 export const useHasPermission = (key: RolePermissionKey): boolean => {
-  const permissions = useAppSelector(
-    (state: RootState) => state.currentSessionSliceReducer.permissions
-  )
+  const centerId = getCenterId()
+  const token = getToken()
+  const { data: res } = useRolePermissions({ token, centerId })
 
-  if (!permissions) return false
+  if (!res?.permissions) return false
 
-  return Boolean(permissions[key])
+  return Boolean(res.permissions[key])
 }

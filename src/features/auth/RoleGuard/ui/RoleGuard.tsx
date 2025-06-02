@@ -1,11 +1,11 @@
-import { useEffect } from "react"
-import { getRoleThunk } from "@/entities/currentSession"
+import { getToken } from "@/entities/currentSession"
 import { PageLoader } from "@/shared/ui/PageLoader/PageLoader"
-import { useAppDispatch, useAppSelector } from "@/app/config/store"
 import { JSX } from "react"
 import { Navigate } from "react-router-dom"
 import { RoutePath } from "@/shared/consts/routerPaths"
 import { RolePermissions } from "@/shared/types/role"
+import { useRolePermissions } from "@/entities/role"
+import { getCenterId } from "@/entities/center"
 
 interface RoleGuardProps {
   children: JSX.Element
@@ -13,21 +13,13 @@ interface RoleGuardProps {
 }
 
 export const RoleGuard = ({ children, permission }: RoleGuardProps) => {
-  const dispatch = useAppDispatch()
-  const { permissions, roleLoading, roleError } = useAppSelector(
-    (state) => state.currentSessionSliceReducer
-  )
+  const centerId = getCenterId()
+  const token = getToken()
+  const { data: res, isLoading, isError } = useRolePermissions({ token, centerId })
+  if (!token) return null
+  if (isLoading) return <PageLoader />
 
-  useEffect(() => {
-    if (!permissions && !roleError) {
-      dispatch(getRoleThunk())
-    }
-  }, [dispatch, permissions])
-
-  if (roleLoading || (!permissions && !roleError)) {
-    return <PageLoader />
-  }
-  if (roleError || !permissions || !permissions[permission]) {
+  if (isError || !res?.permissions || !res.permissions[permission]) {
     return <Navigate to={`${RoutePath.ERROR}?status_code=403`} />
   }
   return children

@@ -25,9 +25,9 @@ export const Header = () => {
       <div className={styles.header__inner}>
         <Logo width={80} height={34} />
         <div className={styles.actions}>
-          <div className={styles.selectCenter}>
-            <div ref={selectRef} className={styles.centerSelector} onClick={toggle}>
-              <img src={centerImg} alt="Центр" className={styles.image} />
+          <div className={styles.selectCenter} ref={selectRef}>
+            <div className={styles.centerSelector} onClick={toggle}>
+              <img src={currentCenter.logo || centerImg} alt="Центр" className={styles.image} />
               <div className={styles.centerInfo}>
                 <Text variant={TextVariant.HEADING} headingLevel="h8" className={styles.centerName}>
                   {currentCenter?.name || "Выберите центр"}

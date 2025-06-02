@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { fetchCenters } from './services/fetchCenters'
-import { Center } from '@/shared/types/center'
-import { isAxiosError } from 'axios'
-import { centerErrorByStatus, CenterErrorMessage } from './consts/centerError'
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { fetchCenters } from "./services/fetchCenters"
+import { Center } from "@/shared/types/center"
+import { isAxiosError } from "axios"
+import { centerErrorByStatus, CenterErrorMessage } from "./consts/centerError"
 
 interface CenterState {
   currentCenter: Center
@@ -19,11 +19,17 @@ const initialState: CenterState = {
 }
 
 const centerSlice = createSlice({
-  name: 'center',
+  name: "center",
   initialState,
   reducers: {
     setCurrentCenter: (state, action: PayloadAction<Center>) => {
       state.currentCenter = action.payload
+    },
+    resetCenters: (state) => {
+      state.currentCenter = {} as Center
+      state.center_list = []
+      state.isLoading = false
+      state.error = null
     }
   },
   extraReducers: (builder) => {
@@ -42,7 +48,7 @@ const centerSlice = createSlice({
         if (isAxiosError(action.error) && action.error.response) {
           const status = action.error.response.status
           state.error = centerErrorByStatus[status] || CenterErrorMessage.UNKNOWN
-        } else if (action.error.message === 'Network Error') {
+        } else if (action.error.message === "Network Error") {
           state.error = CenterErrorMessage.NETWORK_ERROR
         } else {
           state.error = CenterErrorMessage.UNKNOWN

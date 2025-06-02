@@ -5,7 +5,7 @@ import { Logo } from "@/shared/assets/svg/Logo"
 import { ErrorCodes, errorConfig, mapHttpStatusToErrorCode } from "@/shared/consts/errorConfig"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { RoutePath } from "@/shared/consts/routerPaths"
-import { useAppDispatch, useAppSelector } from "@/app/config/store"
+import { useAppDispatch } from "@/app/config/store"
 import { clearSession, removeToken } from "@/entities/currentSession"
 import { Button } from "@/shared/ui/Button"
 import { ArrowLeft } from "@/shared/assets/svg/ArrowLeft"
@@ -20,7 +20,6 @@ const ErrorPage = () => {
   } = errorConfig[mapHttpStatusToErrorCode(errorCode)] || errorConfig[ErrorCodes.UNKNOWN]
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const { roleError } = useAppSelector((state) => state.currentSessionSliceReducer)
   const handleAuthClick = () => {
     removeToken()
     dispatch(clearSession())
@@ -28,10 +27,7 @@ const ErrorPage = () => {
   }
   useEffect(() => {
     const isReload = performance.navigation.type === 1
-    // !TODO продумать логику как при ошибке 403 не редиректить на логин сразу а только при перезагрузке страницы
-    if (roleError) {
-      return
-    }
+
     if (isReload) {
       removeToken()
       dispatch(clearSession())
