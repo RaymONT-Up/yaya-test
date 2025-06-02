@@ -8,6 +8,7 @@ import { InfoBlock } from "@/shared/ui/InfoBlock/InfoBlock"
 import { Filter } from "@/shared/assets/svg/Filter"
 import { ReportTableThead } from "../ReportTableThead/ReportTableThead"
 import { TableSkeleton } from "@/widgets/reportTable/ui/TableSkeleton/TableSkeleton"
+import { Tooltip } from "@/shared/ui/Tooltip/Tooltip"
 
 export const ReportTable = () => {
   const dispatch = useAppDispatch()
@@ -64,32 +65,47 @@ export const ReportTable = () => {
                 </td>
                 <td>
                   <Text className={s.tableText} bodySize="small">
-                    {item.child_name}
+                    <Tooltip position="top" text={item.child_name}>
+                      {item.child_name}
+                    </Tooltip>
                   </Text>
                 </td>
                 <td>
                   <Text className={s.tableText} bodySize="small">
-                    {item.center_name}
+                    <Tooltip position="top" text={item.center_name}>
+                      {item.center_name}
+                    </Tooltip>
                   </Text>
                 </td>
                 <td>
                   <Text className={s.tableText} bodySize="small">
-                    {item.lesson_name}
+                    <Tooltip position="top" text={item.lesson_name}>
+                      {item.lesson_name}
+                    </Tooltip>
                   </Text>
                 </td>
                 <td>
                   <Text className={s.tableText} bodySize="small">
-                    {item.trainer_name}
+                    <Tooltip position="top" text={item.trainer_name}>
+                      {item.trainer_name}
+                    </Tooltip>
                   </Text>
                 </td>
                 <td>
                   <Text className={s.tableText} bodySize="small">
-                    {item.datetime_str.replace(/-/g, ".").replace(" ", " ")}–{item.end_time}
+                    <Tooltip
+                      position="top"
+                      text={`${item.datetime_str.replace(/-/g, ".").replace(" ", " ")}–${item.end_time}`}
+                    >
+                      {item.datetime_str.replace(/-/g, ".").replace(" ", " ")}–{item.end_time}
+                    </Tooltip>
                   </Text>
                 </td>
                 <td>
                   <Text className={s.tableText} bodySize="small">
-                    {item.earned} ₸
+                    <Tooltip position="top" text={`${item.earned} ₸`}>
+                      {item.earned} ₸
+                    </Tooltip>
                   </Text>
                 </td>
               </tr>

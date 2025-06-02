@@ -25,6 +25,8 @@ interface SelectLessonProps {
   showInput?: boolean //если инпут не показыватся то Popover или Menu показыаются всегда и видимостью управлять в компоненте который использует SelectLesson
   showResetBtn?: boolean
   selectName: string
+  width?: string | number
+  height?: string | number
 }
 
 const lessonTypeMap = {
@@ -42,7 +44,9 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
   isMultiply = false,
   showErrorMessage = false,
   showInput = true,
-  showResetBtn = false
+  showResetBtn = false,
+  width = "100%",
+  height = "360px"
 }) => {
   const { id } = useAppSelector(selectCurrentCenter)
   const { data: lessons = [], isError, isLoading } = useLessons(id)
@@ -170,7 +174,9 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
           onClose={close}
           selectAllText="Все секции"
           onChange={handleSelectMultiple}
-          width="100%"
+          width={width}
+          height={height}
+          className={styles.menuApaptive}
         />
       ) : (
         <PopoverSelect
@@ -182,7 +188,8 @@ export const SelectLesson: React.FC<SelectLessonProps> = ({
           options={options}
           onClose={close}
           onSelect={handleSelectSingle}
-          width="100%"
+          width={width}
+          height={height}
         />
       )}
     </div>

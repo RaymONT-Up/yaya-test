@@ -22,6 +22,7 @@ th {
 }
 
 td {
+  max-width: 0;
   padding: 21px 16px;
   border-top: 1px solid var(--border-gray-light);
   border-bottom: 1px solid var(--border-gray-light);
@@ -34,6 +35,8 @@ td {
 }
 
 .tableText {
+  display: block;
+  width: fit-content;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

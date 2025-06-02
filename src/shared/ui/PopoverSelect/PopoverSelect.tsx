@@ -19,6 +19,7 @@ interface PopoverSelectProps {
   onSelect: (option: SelectItem) => void
   onClose: () => void
   width?: string | number
+  height?: string | number
   showSearch?: boolean
   isLoading?: boolean
   error?: string
@@ -33,6 +34,7 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   onSelect,
   onClose,
   width = "360px",
+  height = "auto",
   showSearch = false,
   isLoading = false,
   error,
@@ -57,7 +59,11 @@ export const PopoverSelect: React.FC<PopoverSelectProps> = ({
   return (
     <div className={styles.popoverContainer}>
       {isOpen && (
-        <div className={clsx(styles.popoverContent, className)} ref={popoverRef} style={{ width }}>
+        <div
+          className={clsx(styles.popoverContent, className)}
+          ref={popoverRef}
+          style={{ width, height }}
+        >
           {showSearch && (
             <div className={styles.search}>
               <Input

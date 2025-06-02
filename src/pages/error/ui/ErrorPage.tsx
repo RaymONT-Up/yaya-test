@@ -7,6 +7,8 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import { RoutePath } from "@/shared/consts/routerPaths"
 import { useAppDispatch, useAppSelector } from "@/app/config/store"
 import { clearSession, removeToken } from "@/entities/currentSession"
+import { Button } from "@/shared/ui/Button"
+import { ArrowLeft } from "@/shared/assets/svg/ArrowLeft"
 
 const ErrorPage = () => {
   const [searchParams] = useSearchParams()
@@ -19,7 +21,11 @@ const ErrorPage = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { roleError } = useAppSelector((state) => state.currentSessionSliceReducer)
-
+  const handleAuthClick = () => {
+    removeToken()
+    dispatch(clearSession())
+    navigate(RoutePath.LOGIN)
+  }
   useEffect(() => {
     const isReload = performance.navigation.type === 1
     // !TODO продумать логику как при ошибке 403 не редиректить на логин сразу а только при перезагрузке страницы
@@ -39,6 +45,11 @@ const ErrorPage = () => {
       </div>
       <div className={styles.content}>
         <InfoBlock title={title} text={text} icon={<Icon />} />
+        {errorCode === 403 && (
+          <Button onClick={handleAuthClick} iconStart={<ArrowLeft />}>
+            Назад
+          </Button>
+        )}
       </div>
     </div>
   )

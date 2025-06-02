@@ -1,4 +1,5 @@
 import { Company } from "@/shared/assets/svg/Company"
+import { Lock } from "@/shared/assets/svg/Lock"
 
 export enum ErrorCodes {
   UNKNOWN = "UNKNOWN",
@@ -21,7 +22,7 @@ export const errorConfig = {
   [ErrorCodes.FORBIDDEN]: {
     title: "Доступ запрещен",
     text: "У вас нет доступа к этой странице.",
-    icon: Company
+    icon: Lock
   },
   [ErrorCodes.INTERNAL_ERROR]: {
     title: "Ошибка сервера",

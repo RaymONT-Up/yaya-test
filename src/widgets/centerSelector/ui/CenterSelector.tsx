@@ -15,10 +15,9 @@ import { useAppDispatch, useAppSelector } from "@/app/config/store"
 interface CenterSelectorProps {
   isOpen: boolean
   onSelect: () => void
-  ref?: React.Ref<HTMLDivElement>
 }
 
-export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect, ref }) => {
+export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect }) => {
   const dispatch = useAppDispatch()
   const centers = useAppSelector(selectCenters)
   const error = useAppSelector(selectCenterError)
@@ -59,7 +58,7 @@ export const CenterSelector: React.FC<CenterSelectorProps> = ({ isOpen, onSelect
   }
 
   return (
-    <div ref={ref} className={styles.wrapper}>
+    <div className={styles.wrapper}>
       {isOpen && (
         <PopoverSelect
           isLoading={isLoading}
