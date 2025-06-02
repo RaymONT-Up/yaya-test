@@ -87,9 +87,7 @@ export const router = createBrowserRouter([
     path: RoutePath.SELECT_CENTER,
     element: (
       <AuthGuard mustBe="authorized">
-        <RoleGuard permission={RolePermissionKeys.CENTER_VIEW}>
-          <Outlet />
-        </RoleGuard>
+        <Outlet />
       </AuthGuard>
     ),
     children: [

@@ -2,19 +2,13 @@ import { createSlice } from "@reduxjs/toolkit"
 import { CurrentSessionState } from "../types/currentSession.types"
 import { loginThunk } from "../services/loginThunk"
 import { logoutThunk } from "../services/logoutThunk"
-import { getRoleThunk } from "../services/getRoleThunk"
 
 const initialState: CurrentSessionState = {
   user_id: null,
   token: null,
   username: null,
   loading: false,
-  roleLoading: true,
-  error: null,
-  roleError: null,
-  role: null,
-  permissions: null,
-  role_display: null
+  error: null
 }
 
 const currentSessionSlice = createSlice({
@@ -25,9 +19,6 @@ const currentSessionSlice = createSlice({
       state.user_id = null
       state.token = null
       state.username = null
-      state.role = null
-      state.permissions = null
-      state.role_display = null
       state.loading = false
       state.error = null
     },
@@ -62,19 +53,6 @@ const currentSessionSlice = createSlice({
       .addCase(logoutThunk.rejected, (state, action) => {
         state.loading = false
         state.error = (action.payload as string) || "Ошибка входа"
-      })
-      .addCase(getRoleThunk.fulfilled, (state, action) => {
-        state.role = action.payload.role
-        state.permissions = action.payload.permissions
-        state.role_display = action.payload.role_display
-        state.roleLoading = false
-      })
-      .addCase(getRoleThunk.rejected, (state, action) => {
-        state.roleError = action.payload || "Ошибка получения роли"
-        state.roleLoading = false
-      })
-      .addCase(getRoleThunk.pending, (state) => {
-        state.roleLoading = true
       })
   }
 })
